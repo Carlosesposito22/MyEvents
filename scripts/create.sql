@@ -11,7 +11,7 @@ CREATE TABLE Categoria (
 
 CREATE TABLE Evento (
     id_evento INT PRIMARY KEY AUTO_INCREMENT,
-	titulo VARCHAR(100) NOT NULL,
+	titulo VARCHAR(300) NOT NULL,
     data_inicio DATE,
     data_fim DATE,
     carga_horaria INT,
@@ -73,7 +73,7 @@ CREATE TABLE Palestrante (
     id_palestrante INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
-    biografia VARCHAR(250),
+    biografia VARCHAR(1000),
     linkedin VARCHAR(100) UNIQUE,
     lattes VARCHAR(100) UNIQUE
 );
