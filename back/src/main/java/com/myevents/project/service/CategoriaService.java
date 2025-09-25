@@ -1,5 +1,6 @@
 package com.myevents.project.service;
 
+import com.myevents.project.dto.CategoriaDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,14 @@ public class CategoriaService {
         return repository.findById(id_categoria);
     }
 
-    public void save(Categoria categoria) {
+    public void save(CategoriaDTO categoria) {
         if (categoria.getNome() == null || categoria.getNome().trim().isEmpty()) {
             throw new IllegalArgumentException("O nome da categoria não pode ser nulo ou vazio.");
         }
         repository.save(categoria);
     }
 
-    public void update(int id_categoria, Categoria categoria) {
+    public void update(int id_categoria, CategoriaDTO categoria) {
         if (repository.findById(id_categoria).isEmpty()) {
             throw new RuntimeException("Categoria não encontrada com o ID: " + id_categoria);
         }

@@ -1,10 +1,9 @@
-package com.myevents.project.model;
+package com.myevents.project.dto;
 
 import lombok.Data;
 
 @Data
-public class Categoria {
-    private Integer id_categoria;
+public class CategoriaDTO {
     private String nome;
     private String descricao;
     private Integer id_categoria_pai;

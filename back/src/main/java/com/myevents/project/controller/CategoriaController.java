@@ -1,5 +1,6 @@
 package com.myevents.project.controller;
 
+import com.myevents.project.dto.CategoriaDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.service.CategoriaService;
 import org.springframework.http.HttpStatus;
@@ -21,13 +22,14 @@ public class CategoriaController {
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> findById(@PathVariable int id) {
         Optional<Categoria> categoria = service.findById(id);
-        return categoria.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return categoria.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody Categoria categoria) {
+    public ResponseEntity<String> save(@RequestBody CategoriaDTO categoriaDTO) {
         try {
-            service.save(categoria);
+            service.save(categoriaDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("Categoria criada com sucesso!");
         }
         catch (IllegalArgumentException e) {
@@ -36,7 +38,7 @@ public class CategoriaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable int id, @RequestBody Categoria categoria) {
+    public ResponseEntity<String> update(@PathVariable int id, @RequestBody CategoriaDTO categoria) {
         try {
             service.update(id, categoria);
             return ResponseEntity.ok("Categoria atualizada com sucesso!");

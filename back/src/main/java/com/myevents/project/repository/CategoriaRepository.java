@@ -1,5 +1,6 @@
 package com.myevents.project.repository;
 
+import com.myevents.project.dto.CategoriaDTO;
 import com.myevents.project.model.Categoria;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,7 +35,7 @@ public class CategoriaRepository {
         }
     }
 
-    public void save(Categoria categoria) {
+    public void save(CategoriaDTO categoria) {
         String sql = "INSERT INTO Categoria (nome, descricao, id_categoria_pai) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql,
                 categoria.getNome(),
@@ -42,7 +43,7 @@ public class CategoriaRepository {
                 categoria.getId_categoria_pai());
     }
 
-    public void update(int id_categoria, Categoria categoria) {
+    public void update(int id_categoria, CategoriaDTO categoria) {
         String sql = "UPDATE Categoria SET nome = ?, descricao = ?, id_categoria_pai = ? WHERE id_categoria = ?";
         jdbcTemplate.update(sql,
                 categoria.getNome(),
@@ -63,7 +64,7 @@ public class CategoriaRepository {
             categoria.setId_categoria(rs.getInt("id_categoria"));
             categoria.setNome(rs.getString("nome"));
             categoria.setDescricao(rs.getString("descricao"));
-            categoria.setId_categoria_pai(rs.getInt("id_categoria_pai"));
+            categoria.setId_categoria_pai(rs.getObject("id_categoria_pai", Integer.class));
             return categoria;
         }
     }
