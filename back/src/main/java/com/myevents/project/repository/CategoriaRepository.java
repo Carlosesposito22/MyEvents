@@ -5,14 +5,10 @@ import com.myevents.project.model.Categoria;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Optional;
 
 @Repository
@@ -40,7 +36,8 @@ public class CategoriaRepository {
         jdbcTemplate.update(sql,
                 categoria.getNome(),
                 categoria.getDescricao(),
-                categoria.getId_categoria_pai());
+                categoria.getId_categoria_pai()
+        );
     }
 
     public void update(int id_categoria, CategoriaDTO categoria) {
@@ -49,7 +46,8 @@ public class CategoriaRepository {
                 categoria.getNome(),
                 categoria.getDescricao(),
                 categoria.getId_categoria_pai(),
-                id_categoria);
+                id_categoria
+        );
     }
 
     public void deleteById(int id_categoria) {
