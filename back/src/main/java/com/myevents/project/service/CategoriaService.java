@@ -21,9 +21,7 @@ public class CategoriaService {
     }
 
     public void save(CategoriaDTO categoria) {
-        if (categoria.getNome() == null || categoria.getNome().trim().isEmpty()) {
-            throw new IllegalArgumentException("O nome da categoria não pode ser nulo ou vazio.");
-        }
+        validateCategoria(categoria, null);
         repository.save(categoria);
     }
 
@@ -31,6 +29,7 @@ public class CategoriaService {
         if (repository.findById(id_categoria).isEmpty()) {
             throw new RuntimeException("Categoria não encontrada com o ID: " + id_categoria);
         }
+        validateCategoria(categoria, id_categoria);
         repository.update(id_categoria, categoria);
     }
 
@@ -39,5 +38,28 @@ public class CategoriaService {
             throw new RuntimeException("Categoria não encontrada com o ID: " + id_categoria);
         }
         repository.deleteById(id_categoria);
+    }
+
+    private void validateCategoria(CategoriaDTO categoria, Integer currentId) {
+        if (categoria.getNome() == null || categoria.getNome().trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome da categoria é obrigatório.");
+        }
+
+        if (categoria.getNome().length() > 100) {
+            throw new IllegalArgumentException("O nome da categoria não pode exceder 100 caracteres.");
+        }
+
+        if (categoria.getDescricao() != null && categoria.getDescricao().length() > 200) {
+            throw new IllegalArgumentException("A descrição da categoria não pode exceder 200 caracteres.");
+        }
+
+        if (categoria.getId_categoria_pai() != null) {
+            if (categoria.getId_categoria_pai().equals(currentId)) {
+                throw new IllegalArgumentException("Uma categoria não pode ser pai de si mesma.");
+            }
+            if (repository.findById(categoria.getId_categoria_pai()).isEmpty()) {
+                throw new IllegalArgumentException("A categoria pai com o ID " + categoria.getId_categoria_pai() + " não existe.");
+            }
+        }
     }
 }
