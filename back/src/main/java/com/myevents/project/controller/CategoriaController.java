@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,6 +25,16 @@ public class CategoriaController {
         Optional<Categoria> categoria = service.findById(id);
         return categoria.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/subcategorias")
+    public ResponseEntity<?> getSubcategorias(@PathVariable int id) {
+        try {
+            List<Categoria> subcategorias = service.buscarSubcategorias(id);
+            return ResponseEntity.ok(subcategorias);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping

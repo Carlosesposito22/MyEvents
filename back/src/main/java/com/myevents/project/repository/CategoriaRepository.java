@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,6 +30,11 @@ public class CategoriaRepository {
         catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    public List<Categoria> findByCategoriaPaiId(int id_categoria_pai) {
+        String sql = "SELECT id_categoria, nome, descricao, id_categoria_pai FROM Categoria WHERE id_categoria_pai = ?";
+        return jdbcTemplate.query(sql, new CategoriaRowMapper(), id_categoria_pai);
     }
 
     public void save(CategoriaDTO categoria) {

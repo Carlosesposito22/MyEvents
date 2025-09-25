@@ -5,6 +5,7 @@ import com.myevents.project.model.Categoria;
 import com.myevents.project.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,13 @@ public class CategoriaService {
     public void save(CategoriaDTO categoria) {
         validateCategoria(categoria, null);
         repository.save(categoria);
+    }
+
+    public List<Categoria> buscarSubcategorias(int id_categoria_pai) {
+        if (repository.findById(id_categoria_pai).isEmpty()) {
+            throw new RuntimeException("A categoria pai com o ID " + id_categoria_pai + " não foi encontrada.");
+        }
+        return repository.findByCategoriaPaiId(id_categoria_pai);
     }
 
     public void update(int id_categoria, CategoriaDTO categoria) {
