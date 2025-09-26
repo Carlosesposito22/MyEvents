@@ -54,6 +54,12 @@ public class CategoriaRepository {
         return jdbcTemplate.query(sql, new CategoriaPaiRowMapper());
     }
 
+    public List<Categoria> findByNomeContaining(String nome) {
+        String sql = "SELECT * FROM Categoria WHERE LOWER(nome) LIKE LOWER(?)";
+        String search= "%" + nome + "%";
+        return jdbcTemplate.query(sql, new CategoriaRowMapper(), search);
+    }
+
     public void save(CategoriaDTO categoria) {
         String sql = "INSERT INTO Categoria (nome, descricao, id_categoria_pai) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql,

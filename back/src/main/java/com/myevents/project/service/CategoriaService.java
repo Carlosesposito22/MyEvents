@@ -6,6 +6,7 @@ import com.myevents.project.model.Categoria;
 import com.myevents.project.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,10 @@ public class CategoriaService {
 
     public List<CategoriaPaiDTO> findAllComNomesPai() {
         return repository.findAllComNomesPai();
+    }
+
+    public List<Categoria> findByNomeContaining(String nome) {
+        return repository.findByNomeContaining(nome);
     }
 
     public void update(int id_categoria, CategoriaDTO categoria) {

@@ -44,6 +44,12 @@ public class CategoriaController {
         return ResponseEntity.ok(lista);
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Categoria>> findByNome(@RequestParam("nome") String nome) {
+        List<Categoria> categorias = service.findByNomeContaining(nome);
+        return ResponseEntity.ok(categorias);
+    }
+
     @PostMapping
     public ResponseEntity<String> save(@RequestBody CategoriaDTO categoriaDTO) {
         try {
