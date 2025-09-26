@@ -1,5 +1,6 @@
 package com.myevents.project.service;
 
+import com.myevents.project.dto.EventoComCategoriaDTO;
 import com.myevents.project.dto.EventoDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.model.Evento;
@@ -40,6 +41,13 @@ public class EventoService {
         }
 
         return eventoRepository.findByDataBetween(dataInicio, dataFim);
+    }
+
+    public List<EventoComCategoriaDTO> findEventosByCategoriaId(int id_categoria) {
+        if (categoriaRepository.findById(id_categoria).isEmpty()) {
+            throw new RuntimeException("A categoria com o ID " + id_categoria + " não existe.");
+        }
+        return eventoRepository.findEventosByCategoriaId(id_categoria);
     }
 
     public void save(EventoDTO evento) {

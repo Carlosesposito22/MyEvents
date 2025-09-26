@@ -1,5 +1,6 @@
 package com.myevents.project.controller;
 
+import com.myevents.project.dto.EventoComCategoriaDTO;
 import com.myevents.project.dto.EventoDTO;
 import com.myevents.project.dto.SuccessResponseDTO;
 import com.myevents.project.model.Evento;
@@ -42,6 +43,12 @@ public class EventoController {
             @RequestParam(value = "dataFim", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim)
     {
         List<Evento> eventos = eventoService.findByDataBetween(dataInicio, dataFim);
+        return ResponseEntity.ok(eventos);
+    }
+
+    @GetMapping("/por-categoria/{id_categoria}")
+    public ResponseEntity<List<EventoComCategoriaDTO>> findEventosByCategoriaId(@PathVariable int id_categoria) {
+        List<EventoComCategoriaDTO> eventos = eventoService.findEventosByCategoriaId(id_categoria);
         return ResponseEntity.ok(eventos);
     }
 

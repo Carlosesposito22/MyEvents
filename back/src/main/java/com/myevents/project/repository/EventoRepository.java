@@ -1,5 +1,6 @@
 package com.myevents.project.repository;
 
+import com.myevents.project.dto.EventoComCategoriaDTO;
 import com.myevents.project.dto.EventoDTO;
 import com.myevents.project.model.Evento;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -42,6 +43,25 @@ public class EventoRepository {
     public List<Evento> findByDataBetween(LocalDate dataInicio, LocalDate dataFim) {
         String sql = "SELECT * FROM Evento WHERE data_inicio BETWEEN ? AND ?";
         return jdbcTemplate.query(sql, new EventoRowMapper(), dataInicio, dataFim);
+    }
+
+    public List<EventoComCategoriaDTO> findEventosByCategoriaId(int id_categoria) {
+        String sql = """
+            SELECT
+                e.id_evento,
+                e.titulo,
+                e.carga_horaria,
+                e.data_inicio,
+                e.data_fim,
+                c.nome AS nome_categoria
+            FROM
+                Evento e
+            INNER JOIN
+                Categoria c ON e.id_categoria = c.id_categoria
+            WHERE
+                c.id_categoria = ?;
+        """;
+        return jdbcTemplate.query(sql, new EventoComCategoriaRowMapper(), id_categoria);
     }
 
     public void save(EventoDTO evento) {
@@ -104,6 +124,20 @@ public class EventoRepository {
             evento.setEmail_duvidas(rs.getString("email_duvidas"));
             evento.setNumero_membros_comissao(rs.getInt("numero_membros_comissao"));
             return evento;
+        }
+    }
+
+    private static class EventoComCategoriaRowMapper implements RowMapper<EventoComCategoriaDTO> {
+        @Override
+        public EventoComCategoriaDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            EventoComCategoriaDTO dto = new EventoComCategoriaDTO();
+            dto.setId_evento(rs.getInt("id_evento"));
+            dto.setTitulo(rs.getString("titulo"));
+            dto.setCarga_horaria(rs.getObject("carga_horaria", Integer.class));
+            dto.setData_inicio(rs.getObject("data_inicio", java.time.LocalDate.class));
+            dto.setData_fim(rs.getObject("data_fim", java.time.LocalDate.class));
+            dto.setNome_categoria(rs.getString("nome_categoria"));
+            return dto;
         }
     }
 }
