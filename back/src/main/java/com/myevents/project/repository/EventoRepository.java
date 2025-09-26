@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,11 @@ public class EventoRepository {
         String sql = "SELECT * FROM Evento WHERE LOWER(titulo) LIKE LOWER(?)";
         String search= "%" + titulo + "%";
         return jdbcTemplate.query(sql, new EventoRowMapper(), search);
+    }
+
+    public List<Evento> findByDataBetween(LocalDate dataInicio, LocalDate dataFim) {
+        String sql = "SELECT * FROM Evento WHERE data_inicio BETWEEN ? AND ?";
+        return jdbcTemplate.query(sql, new EventoRowMapper(), dataInicio, dataFim);
     }
 
     public void save(EventoDTO evento) {

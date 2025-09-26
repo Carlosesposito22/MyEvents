@@ -7,6 +7,7 @@ import com.myevents.project.repository.CategoriaRepository;
 import com.myevents.project.repository.EventoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,18 @@ public class EventoService {
 
     public List<Evento> findByTituloContaining(String titulo) {
         return eventoRepository.findByTituloContaining(titulo);
+    }
+
+    public List<Evento> findByDataBetween(LocalDate dataInicio, LocalDate dataFim) {
+        if (dataInicio == null || dataFim == null) {
+            throw new IllegalArgumentException("As datas de início e fim do filtro são obrigatórias.");
+        }
+
+        if (dataInicio.isAfter(dataFim)) {
+            throw new IllegalArgumentException("A data de início do filtro não pode ser posterior à data de fim.");
+        }
+
+        return eventoRepository.findByDataBetween(dataInicio, dataFim);
     }
 
     public void save(EventoDTO evento) {

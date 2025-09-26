@@ -3,10 +3,12 @@ package com.myevents.project.controller;
 import com.myevents.project.dto.EventoDTO;
 import com.myevents.project.model.Evento;
 import com.myevents.project.service.EventoService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,39 +35,30 @@ public class EventoController {
         return ResponseEntity.ok(eventos);
     }
 
+    @GetMapping("/buscar-por-data")
+    public ResponseEntity<List<Evento>> getEventosPorPeriodo(
+            @RequestParam(value = "dataInicio", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(value = "dataFim", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim)
+    {
+        List<Evento> eventos = eventoService.findByDataBetween(dataInicio, dataFim);
+        return ResponseEntity.ok(eventos);
+    }
+
     @PostMapping
     public ResponseEntity<String> save(@RequestBody EventoDTO evento) {
-        try {
-            eventoService.save(evento);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Evento criado com sucesso!");
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        eventoService.save(evento);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Evento criado com sucesso!");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable int id, @RequestBody EventoDTO evento) {
-        try {
-            eventoService.update(id, evento);
-            return ResponseEntity.ok("Evento atualizado com sucesso!");
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        eventoService.update(id, evento);
+        return ResponseEntity.ok("Evento atualizado com sucesso!");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable int id) {
-        try {
-            eventoService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        eventoService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
