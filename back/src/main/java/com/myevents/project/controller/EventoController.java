@@ -7,29 +7,36 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/evento")
 public class EventoController {
 
-    private final EventoService service;
+    private final EventoService eventoService;
 
-    public EventoController(EventoService service) {
-        this.service = service;
+    public EventoController(EventoService eventoService) {
+        this.eventoService = eventoService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Evento> findById(@PathVariable int id) {
-        Optional<Evento> evento = service.findById(id);
+        Optional<Evento> evento = eventoService.findById(id);
         return evento.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Evento>> findByTitulo(@RequestParam("titulo") String titulo) {
+        List<Evento> eventos = eventoService.findByTituloContaining(titulo);
+        return ResponseEntity.ok(eventos);
     }
 
     @PostMapping
     public ResponseEntity<String> save(@RequestBody EventoDTO evento) {
         try {
-            service.save(evento);
+            eventoService.save(evento);
             return ResponseEntity.status(HttpStatus.CREATED).body("Evento criado com sucesso!");
         }
         catch (IllegalArgumentException e) {
@@ -40,7 +47,7 @@ public class EventoController {
     @PutMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable int id, @RequestBody EventoDTO evento) {
         try {
-            service.update(id, evento);
+            eventoService.update(id, evento);
             return ResponseEntity.ok("Evento atualizado com sucesso!");
         }
         catch (IllegalArgumentException e) {
@@ -54,7 +61,7 @@ public class EventoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable int id) {
         try {
-            service.deleteById(id);
+            eventoService.deleteById(id);
             return ResponseEntity.noContent().build();
         }
         catch (RuntimeException e) {

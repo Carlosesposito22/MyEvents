@@ -1,11 +1,13 @@
 package com.myevents.project.service;
 
 import com.myevents.project.dto.EventoDTO;
+import com.myevents.project.model.Categoria;
 import com.myevents.project.model.Evento;
 import com.myevents.project.repository.CategoriaRepository;
 import com.myevents.project.repository.EventoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +23,10 @@ public class EventoService {
 
     public Optional<Evento> findById(int id_evento) {
         return eventoRepository.findById(id_evento);
+    }
+
+    public List<Evento> findByTituloContaining(String titulo) {
+        return eventoRepository.findByTituloContaining(titulo);
     }
 
     public void save(EventoDTO evento) {

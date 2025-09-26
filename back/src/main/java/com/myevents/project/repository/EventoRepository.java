@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,11 +32,17 @@ public class EventoRepository {
         }
     }
 
+    public List<Evento> findByTituloContaining(String titulo) {
+        String sql = "SELECT * FROM Evento WHERE LOWER(titulo) LIKE LOWER(?)";
+        String search= "%" + titulo + "%";
+        return jdbcTemplate.query(sql, new EventoRowMapper(), search);
+    }
+
     public void save(EventoDTO evento) {
         String sql = "INSERT INTO Evento (titulo, data_inicio, data_fim, carga_horaria, " +
-                "limite_participantes, expectiva_participantes, numero_participantes, " +
-                "id_categoria, email_duvidas, numero_membros_comissao) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "limite_participantes, expectiva_participantes, numero_participantes, " +
+                    "id_categoria, email_duvidas, numero_membros_comissao) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
                 evento.getTitulo(),
                 evento.getData_inicio(),
@@ -52,9 +59,9 @@ public class EventoRepository {
 
     public void update(int id_evento, EventoDTO evento) {
         String sql = "UPDATE Evento SET titulo = ?, data_inicio = ?, data_fim = ?, carga_horaria = ?, " +
-                "limite_participantes = ?, expectiva_participantes = ?, numero_participantes = ?, " +
-                "id_categoria = ?, email_duvidas = ?, numero_membros_comissao = ? " +
-                "WHERE id_evento = ?";
+                    "limite_participantes = ?, expectiva_participantes = ?, numero_participantes = ?, " +
+                    "id_categoria = ?, email_duvidas = ?, numero_membros_comissao = ? " +
+                    "WHERE id_evento = ?";
         jdbcTemplate.update(sql,
                 evento.getTitulo(),
                 evento.getData_inicio(),
