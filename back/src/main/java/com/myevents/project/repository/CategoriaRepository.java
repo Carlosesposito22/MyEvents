@@ -1,6 +1,7 @@
 package com.myevents.project.repository;
 
 import com.myevents.project.dto.CategoriaDTO;
+import com.myevents.project.dto.CategoriaPaiDTO;
 import com.myevents.project.model.Categoria;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,6 +38,22 @@ public class CategoriaRepository {
         return jdbcTemplate.query(sql, new CategoriaRowMapper(), id_categoria_pai);
     }
 
+    public List<CategoriaPaiDTO> findAllComNomesPai() {
+        String sql = """
+                SELECT
+                    c1.nome AS categoria_nome,
+                    COALESCE(c2.nome, 'Categoria Raiz') AS pai_nome
+                FROM
+                    Categoria c1
+                LEFT JOIN
+                    Categoria c2 ON c1.id_categoria_pai = c2.id_categoria
+                ORDER BY
+                    pai_nome,
+                    categoria_nome;
+        """;
+        return jdbcTemplate.query(sql, new CategoriaPaiRowMapper());
+    }
+
     public void save(CategoriaDTO categoria) {
         String sql = "INSERT INTO Categoria (nome, descricao, id_categoria_pai) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql,
@@ -70,6 +87,16 @@ public class CategoriaRepository {
             categoria.setDescricao(rs.getString("descricao"));
             categoria.setId_categoria_pai(rs.getObject("id_categoria_pai", Integer.class));
             return categoria;
+        }
+    }
+
+    private static class CategoriaPaiRowMapper implements RowMapper<CategoriaPaiDTO> {
+        @Override
+        public CategoriaPaiDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            CategoriaPaiDTO dto = new CategoriaPaiDTO();
+            dto.setCategoria_nome(rs.getString("categoria_nome"));
+            dto.setPai_nome(rs.getString("pai_nome"));
+            return dto;
         }
     }
 }

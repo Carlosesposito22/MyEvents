@@ -1,6 +1,7 @@
 package com.myevents.project.service;
 
 import com.myevents.project.dto.CategoriaDTO;
+import com.myevents.project.dto.CategoriaPaiDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,10 @@ public class CategoriaService {
             throw new RuntimeException("A categoria pai com o ID " + id_categoria_pai + " não foi encontrada.");
         }
         return repository.findByCategoriaPaiId(id_categoria_pai);
+    }
+
+    public List<CategoriaPaiDTO> findAllComNomesPai() {
+        return repository.findAllComNomesPai();
     }
 
     public void update(int id_categoria, CategoriaDTO categoria) {

@@ -1,6 +1,7 @@
 package com.myevents.project.controller;
 
 import com.myevents.project.dto.CategoriaDTO;
+import com.myevents.project.dto.CategoriaPaiDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.service.CategoriaService;
 import org.springframework.http.HttpStatus;
@@ -35,6 +36,12 @@ public class CategoriaController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/hierarquia")
+    public ResponseEntity<List<CategoriaPaiDTO>> getCategoriasComNomesPai() {
+        List<CategoriaPaiDTO> lista = service.findAllComNomesPai();
+        return ResponseEntity.ok(lista);
     }
 
     @PostMapping
