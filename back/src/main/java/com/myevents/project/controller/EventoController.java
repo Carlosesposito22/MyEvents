@@ -1,6 +1,7 @@
 package com.myevents.project.controller;
 
 import com.myevents.project.dto.EventoDTO;
+import com.myevents.project.dto.SuccessResponseDTO;
 import com.myevents.project.model.Evento;
 import com.myevents.project.service.EventoService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -45,19 +46,19 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody EventoDTO evento) {
+    public ResponseEntity<SuccessResponseDTO> save(@RequestBody EventoDTO evento) {
         eventoService.save(evento);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Evento criado com sucesso!");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponseDTO("Evento criado com sucesso!"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable int id, @RequestBody EventoDTO evento) {
+    public ResponseEntity<SuccessResponseDTO> update(@PathVariable int id, @RequestBody EventoDTO evento) {
         eventoService.update(id, evento);
-        return ResponseEntity.ok("Evento atualizado com sucesso!");
+        return ResponseEntity.ok(new SuccessResponseDTO("Evento atualizado com sucesso!"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable int id) {
+    public ResponseEntity<Void> deleteById(@PathVariable int id) {
         eventoService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

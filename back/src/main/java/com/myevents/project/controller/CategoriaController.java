@@ -2,6 +2,7 @@ package com.myevents.project.controller;
 
 import com.myevents.project.dto.CategoriaDTO;
 import com.myevents.project.dto.CategoriaPaiDTO;
+import com.myevents.project.dto.SuccessResponseDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.service.CategoriaService;
 import org.springframework.http.HttpStatus;
@@ -29,14 +30,9 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}/subcategorias")
-    public ResponseEntity<?> getSubcategorias(@PathVariable int id) {
-        try {
-            List<Categoria> subcategorias = categoriaService.buscarSubcategorias(id);
-            return ResponseEntity.ok(subcategorias);
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<List<Categoria>> getSubcategorias(@PathVariable int id) {
+        List<Categoria> subcategorias = categoriaService.buscarSubcategorias(id);
+        return ResponseEntity.ok(subcategorias);
     }
 
     @GetMapping("/hierarquia")
@@ -52,35 +48,20 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody CategoriaDTO categoriaDTO) {
-        try {
-            categoriaService.save(categoriaDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Categoria criada com sucesso!");
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<SuccessResponseDTO> save(@RequestBody CategoriaDTO categoriaDTO) {
+        categoriaService.save(categoriaDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponseDTO("Categoria criada com sucesso!"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable int id, @RequestBody CategoriaDTO categoria) {
-        try {
-            categoriaService.update(id, categoria);
-            return ResponseEntity.ok("Categoria atualizada com sucesso!");
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<SuccessResponseDTO> update(@PathVariable int id, @RequestBody CategoriaDTO categoria) {
+        categoriaService.update(id, categoria);
+        return ResponseEntity.ok(new SuccessResponseDTO("Categoria atualizada com sucesso!"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable int id) {
-        try {
-            categoriaService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<Void> deleteById(@PathVariable int id) {
+        categoriaService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
