@@ -36,6 +36,8 @@
 <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarCategoria()">🔍 Buscar Categoria</button>
 <!-- Botão que abre o modal Editar Categoria -->
 <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditarCategoria()">✏️ Editar Categoria</button>
+<!-- Botão que abre o modal Remover Categoria -->
+<button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemoverCategoria()">🗑️ Remover Categoria</button>
 
 <!-- Modal de criar categoria -->
 <app-create-categoria *ngIf="mostrarModalCriarCategoria" (fechar)="fecharModalCriarCategoria()"></app-create-categoria>
@@ -43,3 +45,5 @@
 <app-find-categoria *ngIf="mostrarModalBuscarCategoria" (fechar)="fecharModalBuscarCategoria()"></app-find-categoria>
 <!-- Modal de editar categoria -->
 <app-update-categoria [open]="mostrarModalEditarCategoria" (fechar)="fecharModalEditarCategoria()"></app-update-categoria>
+<!-- Modal de remover categoria -->
+<app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
