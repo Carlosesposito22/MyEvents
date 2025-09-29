@@ -1,49 +1,39 @@
-<!-- Botão que abre o modal Buscar por ID -->
-<button class="abrir-modal-btn" (click)="abrirModal()">🔍 Buscar Evento</button>
-<!-- Botão que abre o modal Buscar por Categoria -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorCategoria()">🏷️ Buscar Eventos por Categoria</button>
-<!-- Botão que abre o modal Buscar por Título -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarTitulo()">🔠 Buscar Eventos por Título</button>
-<!-- Botão que abre o modal Buscar por Data -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorData()">📅 Buscar Eventos por Data</button>
-<!-- Botão que abre o modal Criar Evento -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriar()">🆕 Criar Evento</button>
-<!-- Botão que abre o modal Editar Evento -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditar()">✏️ Editar Evento</button>
-<!-- Botão que abre o modal Remover Evento -->
-<button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemover()">🗑️ Remover Evento</button>
+<!-- app.html -->
 
-<!-- Modal de evento por ID -->
-<app-evento *ngIf="mostrarModal" (fechar)="fecharModal()"></app-evento>
-<!-- Modal de evento por CATEGORIA -->
-<app-eventos-por-categoria *ngIf="mostrarModalPorCategoria" (fechar)="fecharModalPorCategoria()"></app-eventos-por-categoria>
-<!-- Modal de evento por TÍTULO -->
-<app-eventos-buscar *ngIf="mostrarModalBuscarTitulo" (fechar)="fecharModalBuscarTitulo()"></app-eventos-buscar>
-<!-- Modal de evento por DATA -->
-<app-eventos-por-data *ngIf="mostrarModalPorData" (fechar)="fecharModalPorData()"></app-eventos-por-data>
-<!-- Modal de criar evento -->
-<app-evento-criar *ngIf="mostrarModalCriar" (fechar)="fecharModalCriar()"></app-evento-criar>
-<!-- Modal de editar evento -->
-<app-evento-editar [open]="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
-<!-- Modal de remover evento -->
-<app-evento-remover *ngIf="mostrarModalRemover" (fechar)="fecharModalRemover()"></app-evento-remover>
+<ng-container *ngIf="router.url !== '/graficos'; else onlyGraficos">
+  <!-- Botões -->
+  <button class="abrir-modal-btn" (click)="abrirModal()">🔍 Buscar Evento</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorCategoria()">🏷️ Buscar Eventos por Categoria</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarTitulo()">🔠 Buscar Eventos por Título</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorData()">📅 Buscar Eventos por Data</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriar()">🆕 Criar Evento</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditar()">✏️ Editar Evento</button>
+  <button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemover()">🗑️ Remover Evento</button>
+  <br/>
+  <br/>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriarCategoria()">🆕 Criar Categoria</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarCategoria()">🔍 Buscar Categoria</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditarCategoria()">✏️ Editar Categoria</button>
+  <button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemoverCategoria()">🗑️ Remover Categoria</button>
+  <!-- Modais -->
+  <app-evento *ngIf="mostrarModal" (fechar)="fecharModal()"></app-evento>
+  <app-eventos-por-categoria *ngIf="mostrarModalPorCategoria" (fechar)="fecharModalPorCategoria()"></app-eventos-por-categoria>
+  <app-eventos-buscar *ngIf="mostrarModalBuscarTitulo" (fechar)="fecharModalBuscarTitulo()"></app-eventos-buscar>
+  <app-eventos-por-data *ngIf="mostrarModalPorData" (fechar)="fecharModalPorData()"></app-eventos-por-data>
+  <app-evento-criar *ngIf="mostrarModalCriar" (fechar)="fecharModalCriar()"></app-evento-criar>
+  <app-evento-editar [open]="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
+  <app-evento-remover *ngIf="mostrarModalRemover" (fechar)="fecharModalRemover()"></app-evento-remover>
+  <br/>
+  <br/>
+  <app-create-categoria *ngIf="mostrarModalCriarCategoria" (fechar)="fecharModalCriarCategoria()"></app-create-categoria>
+  <app-find-categoria *ngIf="mostrarModalBuscarCategoria" (fechar)="fecharModalBuscarCategoria()"></app-find-categoria>
+  <app-update-categoria [open]="mostrarModalEditarCategoria" (fechar)="fecharModalEditarCategoria()"></app-update-categoria>
+  <app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
 
-<br/>
-<br/>
-<!-- Botão que abre o modal Criar Categoria -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriarCategoria()">🆕 Criar Categoria</button>
-<!-- Botão que abre o modal Buscar Categoria -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarCategoria()">🔍 Buscar Categoria</button>
-<!-- Botão que abre o modal Editar Categoria -->
-<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditarCategoria()">✏️ Editar Categoria</button>
-<!-- Botão que abre o modal Remover Categoria -->
-<button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemoverCategoria()">🗑️ Remover Categoria</button>
+  <button [routerLink]="['/graficos']">Ir para Gráficos</button>
+  <router-outlet></router-outlet>
+</ng-container>
 
-<!-- Modal de criar categoria -->
-<app-create-categoria *ngIf="mostrarModalCriarCategoria" (fechar)="fecharModalCriarCategoria()"></app-create-categoria>
-<!-- Modal de buscar categoria -->
-<app-find-categoria *ngIf="mostrarModalBuscarCategoria" (fechar)="fecharModalBuscarCategoria()"></app-find-categoria>
-<!-- Modal de editar categoria -->
-<app-update-categoria [open]="mostrarModalEditarCategoria" (fechar)="fecharModalEditarCategoria()"></app-update-categoria>
-<!-- Modal de remover categoria -->
-<app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
+<ng-template #onlyGraficos>
+  <router-outlet></router-outlet>
+</ng-template>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { AppEventoComponent } from './app-evento.component';
 import { AppEventosPorCategoriaComponent } from './app-eventos-por-categoria.component';
 import { AppEventosBuscarComponent } from './app-eventos-buscar.component';
@@ -19,6 +20,8 @@ import { DeleteCategoria } from "./categoria/delete-categoria/delete-categoria";
   imports: [
     CommonModule,
     FormsModule,
+    RouterOutlet,
+    RouterLink,
     AppEventoComponent,
     AppEventosPorCategoriaComponent,
     AppEventosBuscarComponent,
@@ -47,6 +50,8 @@ export class AppComponent {
   mostrarModalBuscarCategoria = false;
   mostrarModalEditarCategoria = false;
   mostrarModalRemoverCategoria = false;
+
+  constructor(public router: Router) {}
 
   abrirModal(): void {
     this.mostrarModal = true;
