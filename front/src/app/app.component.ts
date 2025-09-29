@@ -8,6 +8,7 @@ import { AppEventosPorDataComponent } from './app-eventos-por-data.component';
 import { AppEventoCriarComponent } from './app-evento-criar.component';
 import { AppEventoEditarComponent } from './app-evento-editar.component';
 import { AppEventoRemoverComponent } from './app-evento-remover.component';
+import { CreateCategoria } from "./categoria/create-categoria/create-categoria";
 
 @Component({
   selector: 'app-root',
@@ -21,8 +22,9 @@ import { AppEventoRemoverComponent } from './app-evento-remover.component';
     AppEventosPorDataComponent,
     AppEventoCriarComponent,
     AppEventoEditarComponent,
-    AppEventoRemoverComponent
-  ],
+    AppEventoRemoverComponent,
+    CreateCategoria
+],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -34,6 +36,8 @@ export class AppComponent {
   mostrarModalCriar = false;
   mostrarModalEditar = false;
   mostrarModalRemover = false;
+
+  mostrarModalCriarCategoria = false;
 
   abrirModal(): void {
     this.mostrarModal = true;
@@ -71,11 +75,17 @@ export class AppComponent {
   fecharModalEditar(): void {
     this.mostrarModalEditar = false;
   }
-
   abrirModalRemover(): void {
     this.mostrarModalRemover = true;
   }
   fecharModalRemover(): void {
     this.mostrarModalRemover = false;
+  }
+  //#####################################
+  abrirModalCriarCategoria(): void {
+    this.mostrarModalCriarCategoria = true;
+  }
+  fecharModalCriarCategoria(): void {
+    this.mostrarModalCriarCategoria = false;
   }
 }

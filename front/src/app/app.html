@@ -27,3 +27,10 @@
 <app-evento-editar [open]="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
 <!-- Modal de remover evento -->
 <app-evento-remover *ngIf="mostrarModalRemover" (fechar)="fecharModalRemover()"></app-evento-remover>
+
+<br/>
+<br/>
+<!-- Botão que abre o modal Criar Categoria -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriarCategoria()">🆕 Criar Categoria</button>
+<!-- Modal de criar categoria -->
+<app-create-categoria *ngIf="mostrarModalCriarCategoria" (fechar)="fecharModalCriarCategoria()"></app-create-categoria>
