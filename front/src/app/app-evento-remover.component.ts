@@ -12,7 +12,8 @@ import { HttpClient } from '@angular/common/http';
 export class AppEventoRemoverComponent {
   @Output() fechar = new EventEmitter<void>();
   idEvento: number | null = null;
-  resultado: any = null;
+  
+  mensagemSucesso: string = '';
   error: string = '';
   loading: boolean = false;
 
@@ -20,17 +21,23 @@ export class AppEventoRemoverComponent {
 
   removerEvento(): void {
     this.error = '';
-    this.resultado = null;
+    this.mensagemSucesso = '';
+    
     if (!this.idEvento) {
       this.error = 'Informe o ID do evento!';
       return;
     }
+
     this.loading = true;
     this.http.delete<any>(`http://localhost:8080/evento/${this.idEvento}`)
       .subscribe({
         next: (res: any) => {
-          this.resultado = res;
           this.loading = false;
+          this.mensagemSucesso = 'Evento removido com sucesso!';
+
+          setTimeout(() => {
+            this.fechar.emit();
+          }, 3000); 
         },
         error: (_: any) => {
           this.error = 'Erro ao remover evento.';
