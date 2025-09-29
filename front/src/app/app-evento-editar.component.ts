@@ -7,54 +7,7 @@ import { HttpClient } from '@angular/common/http';
   selector: 'app-evento-editar',
   imports: [CommonModule, FormsModule],
   templateUrl: 'app-evento-editar.component.html',
-  styles: [`
-    .modal-overlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      padding: 20px;
-    }
-    .modal-content{
-      background: #fff;
-      border-radius: 8px;
-      max-width: 820px;
-      width: 100%;
-      padding: 18px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.28);
-      position: relative;
-    }
-    .modal-close{
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: transparent;
-      border: none;
-      font-size: 1.15rem;
-      cursor: pointer;
-    }
-    .titulo-pagina{ margin: 4px 0 12px 0; font-size: 1.4rem; }
-
-    .evento-form-row{ display:flex; flex-direction: column; gap: 12px; }
-    .form-row-two{ display:flex; gap:12px; }
-    .form-row-search{ display:flex; gap:10px; align-items:center; margin-bottom:10px; }
-    .form-group{ display:flex; flex-direction:column; flex:1; }
-    .form-group label{ font-size: 0.95rem; margin-bottom:6px; }
-    .evento-input{ width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d0d7de; box-sizing:border-box; }
-    .modal-footer{ display:flex; justify-content:flex-end; margin-top:6px; }
-    .evento-btn{ background:#4aa0ff; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
-    .evento-erro{ color:#9b1c1c; margin-top:6px; }
-    .loading{ color:#333; display:flex; gap:6px; align-items:center; }
-    .spinner{ width:12px;height:12px;border-radius:50%;border:2px solid #ccc;border-top-color:#333; animation:spin 0.8s linear infinite; display:inline-block; }
-    @keyframes spin{ to{ transform:rotate(360deg) } }
-
-    .sucesso-box{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px; min-height:100px; }
-    .sucesso-icone{ font-size:2.1rem; color:#1ec773; }
-    .sucesso-texto{ font-weight:700; color:#0084ff; font-size:1.1rem; }
-  `]
+  styleUrls: ['app.css']
 })
 export class AppEventoEditarComponent {
   @Input() open = false;

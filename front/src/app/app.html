@@ -32,5 +32,10 @@
 <br/>
 <!-- Botão que abre o modal Criar Categoria -->
 <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriarCategoria()">🆕 Criar Categoria</button>
+<!-- Botão que abre o modal Buscar Categoria -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarCategoria()">🔍 Buscar Evento</button>
+
 <!-- Modal de criar categoria -->
 <app-create-categoria *ngIf="mostrarModalCriarCategoria" (fechar)="fecharModalCriarCategoria()"></app-create-categoria>
+<!-- Modal de buscar categoria -->
+<app-find-categoria *ngIf="mostrarModalBuscarCategoria" (fechar)="fecharModalBuscarCategoria()"></app-find-categoria>
