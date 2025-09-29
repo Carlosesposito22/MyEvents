@@ -1,0 +1,212 @@
+<style>
+  body, :host {
+    font-family: 'Segoe UI', Arial, sans-serif !important;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+  }
+  .graficos-main {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 16px 40px 16px;
+    position: relative; /* Novo! para position absolute do botão funcionar */
+  }
+  .voltar-topo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #1661c7;
+    background: #eaf2ff;
+    border-radius: 900px;
+    padding: 8px 20px 8px 15px;
+    width: fit-content;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.22s;
+    box-shadow: 0 1.5px 8px #aad7f334;
+    border: 1.5px solid #d4e5fd;
+    user-select: none;
+    position: absolute;  /* Novo: botão absoluto no container!!! */
+    left: 0;
+    top: 0;
+    margin-top: 0px;
+    margin-left: 0px;
+    z-index: 20;
+  }
+  .voltar-topo:hover {
+    background: #dcecff;
+    color: #003979;
+    box-shadow: 0 4px 15px #a9cafd38;
+  }
+  .seta-voltar {
+    font-size: 1.22em;
+    margin-right: 3px;
+    margin-top: 1px;
+    font-weight: 700;
+    filter: drop-shadow(0 2px 6px #d0eaff80);
+  }
+  .graficos-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #1863bb;
+    text-align: center;
+    margin: 0 0 40px 0;
+    letter-spacing: 2px;
+    text-shadow: 1px 3px 8px #dceafb70;
+    /* não precisa mudar */
+  }
+  .graficos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 36px;
+    justify-content: center;
+  }
+  .grafico-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 7px 32px #08478615, 0 1.5px 5px #4698e810;
+    width: 250px;
+    height: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 18px 14px 18px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .grafico-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 12px 34px #0854e030;
+    z-index: 9;
+  }
+  .grafico-img {
+    width: 190px;
+    height: 125px;
+    background: linear-gradient(90deg,#e5efff 40%,#eaf5fc 100%);
+    border-radius: 14px;
+    margin-top: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.8px solid #dfe7fa;
+    box-shadow: 0 1.5px 7px #d6eaff40;
+    object-fit: contain;
+    cursor:pointer;
+  }
+  .grafico-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    transition: filter .1s;
+  }
+  .grafico-label {
+    margin-top: 12px;
+    color: #234777dd;
+    font-size: 1.14rem;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 0 1px 4px #e6eef980;
+  }
+  /* MODAL */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: #0009;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadein-bg .3s;
+  }
+  @keyframes fadein-bg { from { opacity: 0; } to { opacity: 1; } }
+  .modal-content {
+    max-width: 89vw;
+    max-height: 88vh;
+    background: #fff;
+    border-radius: 22px;
+    padding: 32px 38px 26px 38px;
+    position: relative;
+    box-shadow: 0 20px 60px #06294b60;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: modalin .22s cubic-bezier(.42,0,.37,1.49);
+  }
+  @keyframes modalin {
+    from { opacity: 0; transform: scale(.93);}
+    to { opacity:1; transform: scale(1);}
+  }
+  .modal-x {
+    position: absolute;
+    right: 18px; top: 14px;
+    font-size: 2.2rem;
+    background: #e8eff85c;
+    color: #1863bb;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px #b3d6f628;
+    transition: background .2s;
+  }
+  .modal-x:hover {
+    background: #d7eaff;
+    color: #1e2589;
+  }
+  .modal-img {
+    max-width: 75vw;
+    max-height: 64vh;
+    margin-bottom: 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px #aec8f840;
+    background: #f4f7fd;
+    object-fit: contain;
+  }
+  .modal-titulo {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #1359b8;
+    text-align: center;
+    max-width: 78vw;
+    margin-bottom: 2px;
+    letter-spacing: 1px;
+  }
+  @media (max-width: 700px) {
+    .modal-content {padding:19px 3vw;}
+    .modal-img {max-width:95vw;max-height:42vh;}
+    .modal-titulo {font-size:1.2rem;}
+    .voltar-topo {
+      position: static;
+      margin-bottom: 14px;
+      margin-left: 0;
+    }
+  }
+</style>
+<div class="graficos-main">
+  <div class="voltar-topo" (click)="voltarHome()" title="Voltar para a Página Inicial">
+    <span class="seta-voltar">&#8592;</span>
+    Voltar
+  </div>
+  <h1 class="graficos-title">Análise Gráfica</h1>
+  <div class="graficos-grid">
+    <div class="grafico-card" *ngFor="let graf of graficos" (click)="abrirModal(graf)">
+      <div class="grafico-img">
+        <img [src]="graf.src" [alt]="graf.titulo">
+      </div>
+      <div class="grafico-label">{{graf.titulo}}</div>
+    </div>
+  </div>
+</div>
+<!-- MODAL -->
+<div *ngIf="modalAberto" class="modal-bg" (click)="fecharModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="modal-x" (click)="fecharModal()" title="Fechar">×</button>
+    <div class="modal-titulo">{{graficoModal?.titulo}}</div>
+    <img class="modal-img" [src]="graficoModal?.src" [alt]="graficoModal?.titulo">
+  </div>
+</div>
