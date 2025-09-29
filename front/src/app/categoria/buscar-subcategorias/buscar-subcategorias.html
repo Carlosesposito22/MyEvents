@@ -1,0 +1,40 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="close()">✖</button>
+    <h2 class="titulo-pagina">🔎 Buscar Subcategorias por ID Pai</h2>
+
+    <div class="evento-form-row">
+      <input
+        type="number"
+        [(ngModel)]="idCategoriaPai"
+        placeholder="Digite o ID da categoria pai..."
+        [disabled]="loading"
+        class="evento-input flex-grow"
+        (keyup.enter)="buscarSubcategorias()"
+      />
+      <button (click)="buscarSubcategorias()" [disabled]="loading" class="evento-btn">
+        {{ loading ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <span class="spinner"></span> Carregando Subcategorias...
+    </div>
+
+    <div *ngIf="error && !loading" class="evento-erro">
+      ⚠️ {{ error }}
+    </div>
+    
+    <div *ngIf="subcategorias && subcategorias.length > 0 && !loading">
+      <div *ngFor="let sub of subcategorias" class="evento-card">
+        <h3 class="evento-titulo">🏷️ {{ sub.nome }}</h3>
+        
+        <div class="evento-detalhes">
+            <div class="detalhe"><strong>ID da Subcategoria:</strong> {{ sub.id_categoria }}</div>
+            <div class="detalhe"><strong>Descrição:</strong> {{ sub.descricao }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

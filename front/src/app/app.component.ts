@@ -14,6 +14,7 @@ import { FindCategoria } from "./categoria/find-categoria/find-categoria";
 import { UpdateCategoria } from "./categoria/update-categoria/update-categoria";
 import { DeleteCategoria } from "./categoria/delete-categoria/delete-categoria";
 import { BuscarCategoria } from "./categoria/buscar-categoria/buscar-categoria";
+import { BuscarSubcategoriasComponent } from "./categoria/buscar-subcategorias/buscar-subcategorias";
 
 @Component({
   selector: 'app-root',
@@ -34,7 +35,8 @@ import { BuscarCategoria } from "./categoria/buscar-categoria/buscar-categoria";
     FindCategoria,
     UpdateCategoria,
     DeleteCategoria,
-    BuscarCategoria
+    BuscarCategoria,
+    BuscarSubcategoriasComponent
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -53,6 +55,7 @@ export class AppComponent {
   mostrarModalBuscarCategoria = false;
   mostrarModalEditarCategoria = false;
   mostrarModalRemoverCategoria = false;
+  mostrarModalSubcategoriasAberto = false;
 
   constructor(public router: Router) {}
 
@@ -128,5 +131,11 @@ export class AppComponent {
   }
   fecharModalBuscarNomeCategoria(): void {
     this.mostrarModalBuscarNomeCategoria = false;
+  }
+  abrirModalSubCategorias(): void {
+    this.mostrarModalSubcategoriasAberto = true;
+  }
+  fecharModalSubCategorias(): void {
+    this.mostrarModalSubcategoriasAberto = false;
   }
 }
