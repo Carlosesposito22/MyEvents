@@ -1,0 +1,38 @@
+<div class="modal-overlay" (click)="fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="fechar.emit()">✖</button>
+    <h2 class="titulo-pagina">🔠 Buscar Categorias por Nome</h2>
+
+    <div class="evento-form-row">
+      <input
+        type="text"
+        [(ngModel)]="nome"
+        placeholder="Digite o nome da categoria..."
+        [disabled]="loading"
+        class="evento-input flex-grow"
+      />
+      <button (click)="buscar()" [disabled]="loading" class="evento-btn">
+        {{ loading ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <span class="spinner"></span> Carregando Categorias...
+    </div>
+    <div *ngIf="error && !loading" class="evento-erro">
+      ⚠️ {{ error }}
+    </div>
+
+    <div *ngIf="categorias && categorias.length > 0 && !loading">
+      <div *ngFor="let categoria of categorias" class="evento-card">
+        <h3 class="evento-titulo">🏷️ {{ categoria.nome }}</h3>
+        
+        <div class="evento-detalhes">
+            <div class="detalhe"><strong>Descricao:</strong> {{ categoria.descricao }}</div>
+            <div class="detalhe"><strong>Id Categoria:</strong> {{ categoria.id_categoria}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

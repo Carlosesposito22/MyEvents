@@ -13,6 +13,7 @@ import { CreateCategoria } from "./categoria/create-categoria/create-categoria";
 import { FindCategoria } from "./categoria/find-categoria/find-categoria";
 import { UpdateCategoria } from "./categoria/update-categoria/update-categoria";
 import { DeleteCategoria } from "./categoria/delete-categoria/delete-categoria";
+import { BuscarCategoria } from "./categoria/buscar-categoria/buscar-categoria";
 
 @Component({
   selector: 'app-root',
@@ -32,7 +33,8 @@ import { DeleteCategoria } from "./categoria/delete-categoria/delete-categoria";
     CreateCategoria,
     FindCategoria,
     UpdateCategoria,
-    DeleteCategoria
+    DeleteCategoria,
+    BuscarCategoria
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -45,6 +47,7 @@ export class AppComponent {
   mostrarModalCriar = false;
   mostrarModalEditar = false;
   mostrarModalRemover = false;
+  mostrarModalBuscarNomeCategoria = false;
 
   mostrarModalCriarCategoria = false;
   mostrarModalBuscarCategoria = false;
@@ -119,5 +122,11 @@ export class AppComponent {
   }
   fecharModalRemoverCategoria(): void {
     this.mostrarModalRemoverCategoria = false;
+  }
+  abrirModalBuscarNomeCategoria(): void {
+    this.mostrarModalBuscarNomeCategoria = true;
+  }
+  fecharModalBuscarNomeCategoria(): void {
+    this.mostrarModalBuscarNomeCategoria = false;
   }
 }

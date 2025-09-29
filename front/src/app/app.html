@@ -15,6 +15,7 @@
   <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarCategoria()">🔍 Buscar Categoria</button>
   <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditarCategoria()">✏️ Editar Categoria</button>
   <button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemoverCategoria()">🗑️ Remover Categoria</button>
+  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarNomeCategoria()">🔠 Buscar Categorias por Nome</button>
   <!-- Modais -->
   <app-evento *ngIf="mostrarModal" (fechar)="fecharModal()"></app-evento>
   <app-eventos-por-categoria *ngIf="mostrarModalPorCategoria" (fechar)="fecharModalPorCategoria()"></app-eventos-por-categoria>
@@ -29,7 +30,8 @@
   <app-find-categoria *ngIf="mostrarModalBuscarCategoria" (fechar)="fecharModalBuscarCategoria()"></app-find-categoria>
   <app-update-categoria [open]="mostrarModalEditarCategoria" (fechar)="fecharModalEditarCategoria()"></app-update-categoria>
   <app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
-
+  <app-buscar-categoria *ngIf="mostrarModalBuscarNomeCategoria" (fechar)="fecharModalBuscarNomeCategoria()"></app-buscar-categoria>
+  
   <button [routerLink]="['/graficos']">Ir para Gráficos</button>
   <router-outlet></router-outlet>
 </ng-container>
