@@ -1,0 +1,86 @@
+<div class="modal-overlay" (click)="!eventoCarregado && !resultado && fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <!-- Botão fechar (só mostra se não está com formulário de edição nem mostrando sucesso) -->
+    <button *ngIf="!eventoCarregado && !resultado" class="modal-close" (click)="fechar.emit()">✖</button>
+    <h2 *ngIf="!eventoCarregado && !resultado" class="titulo-pagina">✏️ Editar Evento</h2>
+
+    <!-- ETAPA 1: Busca por ID igual Buscar Evento -->
+    <div *ngIf="!eventoCarregado && !resultado">
+      <div class="evento-form-row">
+        <input
+          type="number"
+          [(ngModel)]="idEvento"
+          placeholder="Digite o ID do evento..."
+          [disabled]="carregandoEvento || loading"
+          class="evento-input flex-grow"
+        />
+        <button
+          (click)="buscarEvento()"
+          [disabled]="carregandoEvento || loading"
+          class="evento-btn"
+          type="button">
+          {{ carregandoEvento ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </div>
+      <div *ngIf="carregandoEvento" class="loading">
+        <span class="spinner"></span> Carregando evento...
+      </div>
+      <div *ngIf="error && !carregandoEvento && !loading" class="evento-erro">
+        ⚠️ {{ error }}
+      </div>
+    </div>
+
+    <!-- ETAPA 2: Formulário de edição se eventoCarregado -->
+    <form *ngIf="eventoCarregado && !resultado" (ngSubmit)="editarEvento()" #eventoForm="ngForm" autocomplete="off">
+      <div class="evento-form-row" style="flex-direction: column; gap: 16px;">
+        <input type="text" [(ngModel)]="evento.titulo" name="titulo" placeholder="Título" required class="evento-input"/>
+        <div style="display: flex; gap: 10px;">
+          <input type="date" [(ngModel)]="evento.data_inicio" name="data_inicio" required class="evento-input"/>
+          <input type="date" [(ngModel)]="evento.data_fim" name="data_fim" required class="evento-input"/>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <input type="number" [(ngModel)]="evento.carga_horaria" name="carga_horaria" required class="evento-input" placeholder="Carga Horária"/>
+          <input type="number" [(ngModel)]="evento.limite_participantes" name="limite_participantes" required class="evento-input" placeholder="Limite Participantes"/>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <input type="number" [(ngModel)]="evento.expectiva_participantes" name="expectiva_participantes" required class="evento-input" placeholder="Expectativa Participantes"/>
+          <input type="number" [(ngModel)]="evento.numero_participantes" name="numero_participantes" required class="evento-input" placeholder="Número Participantes"/>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <input type="number" [(ngModel)]="evento.id_categoria" name="id_categoria" required class="evento-input" placeholder="ID Categoria"/>
+          <input type="number" [(ngModel)]="evento.numero_membros_comissao" name="numero_membros_comissao" required class="evento-input" placeholder="Nº Membros Comissão"/>
+        </div>
+        <input type="email" [(ngModel)]="evento.email_duvidas" name="email_duvidas" placeholder="Email Dúvidas" required class="evento-input"/>
+      </div>
+      <div class="modal-footer">
+        <button class="evento-btn" [disabled]="loading || eventoForm.invalid" type="submit">
+          {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
+        </button>
+      </div>
+      <div *ngIf="error && !loading" class="evento-erro" style="margin-top:6px;">
+        ⚠️ {{ error }}
+      </div>
+      <div *ngIf="loading" class="loading">
+        <span class="spinner"></span> Salvando alterações...
+      </div>
+    </form>
+
+    <!-- ETAPA 3: Sucesso -->
+    <div *ngIf="resultado && !loading" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;">
+      <div style="font-size:2.3rem; color:#1EC773; margin-bottom:5px; animation:popscale 0.17s;">
+        ✅
+      </div>
+      <div style="font-size:1.7rem;font-weight:800;color:#0084ff;margin-bottom:18px;text-align:center;">
+        Evento editado com sucesso!
+      </div>
+      <button class="evento-btn" style="min-width:120px;" (click)="fechar.emit()">Fechar</button>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes popscale {
+    from { transform: scale(0.8); opacity:0.2;}
+    to { transform: scale(1); opacity:1;}
+  }
+</style>

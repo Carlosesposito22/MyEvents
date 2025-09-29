@@ -1,0 +1,33 @@
+<div class="modal-overlay" (click)="fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()" style="border-top:3px solid #e74c3c">
+    <!-- Botão fechar -->
+    <button class="modal-close" (click)="fechar.emit()">✖</button>
+    <h2 class="titulo-pagina" style="color:#e74c3c">🗑️ Remover Evento</h2>
+    <div class="evento-form-row">
+      <input
+        type="number"
+        [(ngModel)]="idEvento"
+        placeholder="Digite o ID do evento para remover..."
+        [disabled]="loading"
+        class="evento-input flex-grow"
+      />
+      <button
+        (click)="removerEvento()"
+        [disabled]="loading"
+        class="evento-btn"
+        style="background:#e74c3c"
+      >
+        {{ loading ? 'Removendo...' : 'Remover' }}
+      </button>
+    </div>
+    <div *ngIf="loading" class="loading">
+      <span class="spinner"></span> Removendo evento...
+    </div>
+    <div *ngIf="resultado && !loading">
+      <h4 style="color:green">✅ Evento removido!</h4>
+    </div>
+    <div *ngIf="error && !loading" class="evento-erro" style="color:#e74c3c">
+      ⚠️ {{ error }}
+    </div>
+  </div>
+</div>

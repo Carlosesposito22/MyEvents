@@ -1,0 +1,29 @@
+<!-- Botão que abre o modal Buscar por ID -->
+<button class="abrir-modal-btn" (click)="abrirModal()">🔍 Buscar Evento</button>
+<!-- Botão que abre o modal Buscar por Categoria -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorCategoria()">🏷️ Buscar Eventos por Categoria</button>
+<!-- Botão que abre o modal Buscar por Título -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarTitulo()">🔠 Buscar Eventos por Título</button>
+<!-- Botão que abre o modal Buscar por Data -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorData()">📅 Buscar Eventos por Data</button>
+<!-- Botão que abre o modal Criar Evento -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriar()">🆕 Criar Evento</button>
+<!-- Botão que abre o modal Editar Evento -->
+<button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditar()">✏️ Editar Evento</button>
+<!-- Botão que abre o modal Remover Evento -->
+<button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemover()">🗑️ Remover Evento</button>
+
+<!-- Modal de evento por ID -->
+<app-evento *ngIf="mostrarModal" (fechar)="fecharModal()"></app-evento>
+<!-- Modal de evento por CATEGORIA -->
+<app-eventos-por-categoria *ngIf="mostrarModalPorCategoria" (fechar)="fecharModalPorCategoria()"></app-eventos-por-categoria>
+<!-- Modal de evento por TÍTULO -->
+<app-eventos-buscar *ngIf="mostrarModalBuscarTitulo" (fechar)="fecharModalBuscarTitulo()"></app-eventos-buscar>
+<!-- Modal de evento por DATA -->
+<app-eventos-por-data *ngIf="mostrarModalPorData" (fechar)="fecharModalPorData()"></app-eventos-por-data>
+<!-- Modal de criar evento -->
+<app-evento-criar *ngIf="mostrarModalCriar" (fechar)="fecharModalCriar()"></app-evento-criar>
+<!-- Modal de editar evento -->
+<app-evento-editar *ngIf="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
+<!-- Modal de remover evento -->
+<app-evento-remover *ngIf="mostrarModalRemover" (fechar)="fecharModalRemover()"></app-evento-remover>

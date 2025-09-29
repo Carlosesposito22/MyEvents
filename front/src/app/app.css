@@ -1,0 +1,308 @@
+.centralizado {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.caixa {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 32px 0 rgba(60,72,88, 0.17);
+  padding: 32px 40px;
+  max-width: 900px;
+  min-width: 420px;
+}
+h2, h3 {
+  margin-top: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-weight: bold;
+}
+.search-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.input-id {
+  padding: 8px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  border: 1px solid #b4b4b4;
+  outline: none;
+  flex: 1;
+}
+.btn {
+  padding: 8px 22px;
+  background: #5d9cec;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn:disabled {
+  background: #8bbcf5;
+  cursor: not-allowed;
+}
+.btn:hover:enabled {
+  background: #467fcf;
+}
+.evento-tabela {
+  margin-top: 12px;
+}
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  background: #f4f8fb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 12px 10px;
+  border: 1px solid #d8e1e8;
+  font-size: 1rem;
+}
+th {
+  background-color: #e9effc;
+  font-weight: bold;
+  color: #3762a8;
+}
+tr:nth-child(even) td {
+  background-color: #f5fafe;
+}
+.erro {
+  color: #d33;
+  margin-top: 16px;
+  font-weight: bold;
+}
+.loading {
+  font-size: 1.1rem;
+  margin: 16px auto;
+  text-align: center;
+  color: #4682b4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+}
+.spinner {
+  border: 4px solid #e9effc;
+  border-top: 4px solid #5d9cec;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+.evento-container {
+  max-width: 800px;
+  margin: 48px auto 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 6px 24px #aaa2;
+  padding: 28px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.evento-form-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.evento-input {
+  flex: 1; /* <--- ocupa 100% do espaço restante */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.evento-input:focus {
+  border: 1.5px solid #5294ea;
+  background: #eef6ff;
+}
+
+.evento-btn {
+  flex-shrink: 0; /* <--- impede de esticar */
+  padding: 10px 18px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.evento-btn:disabled {
+  cursor: not-allowed;
+  background: #bde2ff;
+  color: #666;
+}
+.evento-btn:hover:not(:disabled) {
+  background: linear-gradient(90deg, #0084ff 70%, #13a1ff 100%);
+}
+
+.evento-loading {
+  padding: 12px 0;
+  font-size: 16px;
+  color: #0084ff;
+}
+.evento-erro {
+  margin-top: 12px;
+  color: #dd3333;
+  font-weight: bold;
+  font-size: 15px;
+}
+/* Limite e barra de rolagem interna para conteúdo do modal (ex: muitos cards) */
+.modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  /* o resto das suas regras já existentes ficam igual */
+}
+.table-scroll-x {
+  overflow-x: auto;
+  margin-top: 12px;
+  background: #f6faff;
+  border: 1px solid #e8eef4;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+.evento-table {
+  width: max-content;
+  min-width: 600px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.evento-table th {
+  background: #13a1ff;
+  color: #fff;
+  padding: 8px 10px;
+  font-size: 14px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #0084ff;
+}
+.evento-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eef5ff;
+  font-size: 15px;
+  color: #27374d;
+}
+.evento-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Novo estilo para card --- */
+.titulo-pagina {
+  font-size: 1.6rem;
+  margin-bottom: 18px;
+  color: #27374d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evento-card {
+  margin-top: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  padding: 22px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.evento-titulo {
+  font-size: 1.4rem;
+  margin: 0 0 8px 0;
+  color: #0084ff;
+  font-weight: bold;
+}
+
+.evento-subtitulo {
+  font-size: 1rem;
+  margin-bottom: 18px;
+  color: #555;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Overlay com fundo embaçado */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Conteúdo do modal */
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 650px;
+  width: 100%;
+  box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.25);
+  position: relative;
+  transform-origin: center;
+  animation: scaleIn 0.25s ease;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Botão fechar (X) */
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+.modal-close:hover {
+  color: #000;
+}
+
+/* Rodapé do modal */
+.modal-footer {
+  margin-top: 20px;
+  text-align: right;
+}
+.btn-fechar {
+  background: #f05454;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.btn-fechar:hover {
+  background: #d94343;
+}

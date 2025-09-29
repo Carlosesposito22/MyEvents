@@ -1,0 +1,54 @@
+<div class="modal-overlay" (click)="fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+    <!-- Botão fechar -->
+    <button class="modal-close" (click)="fechar.emit()">✖</button>
+    <h2 class="titulo-pagina">📅 Buscar Eventos por Data</h2>
+
+    <div class="evento-form-row">
+      <input
+        type="date"
+        [(ngModel)]="dataInicio"
+        [disabled]="loading"
+        class="evento-input"
+      />
+      <span style="align-self:center;">até</span>
+      <input
+        type="date"
+        [(ngModel)]="dataFim"
+        [disabled]="loading"
+        class="evento-input"
+      />
+      <button (click)="buscar()" [disabled]="loading" class="evento-btn">
+        {{ loading ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading">
+      <span class="spinner"></span> Carregando eventos...
+    </div>
+    <!-- Erro -->
+    <div *ngIf="error && !loading" class="evento-erro">
+      ⚠️ {{ error }}
+    </div>
+
+    <!-- Resultados -->
+    <div *ngIf="eventos && eventos.length > 0 && !loading">
+      <div *ngFor="let evento of eventos" class="evento-card">
+        <h3 class="evento-titulo">🎫 {{ evento.titulo }}</h3>
+        <p class="evento-subtitulo">
+          <strong>Período:</strong> {{ evento.data_inicio }} → {{ evento.data_fim }}
+        </p>
+        <div class="evento-detalhes">
+          <div class="detalhe"><strong>Carga Horária:</strong> {{ evento.carga_horaria }}h</div>
+          <div class="detalhe"><strong>Limite:</strong> {{ evento.limite_participantes }}</div>
+          <div class="detalhe"><strong>Esperados:</strong> {{ evento.expectiva_participantes }}</div>
+          <div class="detalhe"><strong>Inscritos:</strong> {{ evento.numero_participantes }}</div>
+          <div class="detalhe"><strong>Categoria:</strong> {{ evento.id_categoria }}</div>
+          <div class="detalhe"><strong>Email:</strong> {{ evento.email_duvidas }}</div>
+          <div class="detalhe"><strong>Membros Comissão:</strong> {{ evento.numero_membros_comissao }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
