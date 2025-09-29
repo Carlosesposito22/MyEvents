@@ -1,0 +1,65 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="close()">✖</button>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2 class="titulo-pagina">🎖️ Hierarquia de Categorias</h2>
+    </div>
+
+    <div *ngIf="loading" class="loading" style="min-height: 200px; justify-content: center;">
+      <span class="spinner"></span> Carregando hierarquia...
+    </div>
+
+    <div *ngIf="error && !loading" class="evento-erro" style="min-height: 200px; text-align: center;">
+      ⚠️ {{ error }}
+    </div>
+    
+    <div *ngIf="!loading && !error && chavesPais.length > 0" class="lista-hierarquia">
+      
+      <div *ngFor="let paiNome of chavesPais" class="grupo-categoria">
+        <h2 class="pai-titulo">
+          {{ paiNome === 'Categoria Raiz' ? '⭐' : '📁' }} {{ paiNome }}
+        </h2>
+        
+        <ul class="lista-filhas">
+          <li *ngFor="let categoriaNome of categoriasAgrupadas[paiNome]">
+            <strong>{{ categoriaNome }}</strong>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .lista-hierarquia {
+    margin-top: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 5px;
+  }
+  .grupo-categoria {
+    margin-bottom: 18px;
+  }
+  .pai-titulo {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #007acc;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+    margin: 0 0 10px 0;
+  }
+  .lista-filhas {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  .lista-filhas li {
+    padding: 6px 0;
+    border-bottom: 1px dashed #e0e0e0;
+    font-size: 0.95rem;
+  }
+  .lista-filhas li:last-child {
+    border-bottom: none;
+  }
+</style>
