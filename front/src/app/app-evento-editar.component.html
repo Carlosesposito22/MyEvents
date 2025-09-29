@@ -1,86 +1,143 @@
-<div class="modal-overlay" (click)="!eventoCarregado && !resultado && fechar.emit()">
+<div *ngIf="open" class="modal-overlay" (click)="onOverlayClick()">
   <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
 
-    <!-- Botão fechar (só mostra se não está com formulário de edição nem mostrando sucesso) -->
-    <button *ngIf="!eventoCarregado && !resultado" class="modal-close" (click)="fechar.emit()">✖</button>
-    <h2 *ngIf="!eventoCarregado && !resultado" class="titulo-pagina">✏️ Editar Evento</h2>
+    <!-- ETAPA 1: buscar evento -->
+    <ng-container *ngIf="!eventoCarregado && !resultado; else editarOuSucesso">
+      <button class="modal-close" (click)="close()">✖</button>
+      <h2 class="titulo-pagina">✏️ Editar Evento</h2>
 
-    <!-- ETAPA 1: Busca por ID igual Buscar Evento -->
-    <div *ngIf="!eventoCarregado && !resultado">
-      <div class="evento-form-row">
-        <input
-          type="number"
-          [(ngModel)]="idEvento"
-          placeholder="Digite o ID do evento..."
-          [disabled]="carregandoEvento || loading"
-          class="evento-input flex-grow"
-        />
-        <button
-          (click)="buscarEvento()"
-          [disabled]="carregandoEvento || loading"
-          class="evento-btn"
-          type="button">
+      <div class="evento-form-row" style="flex-direction: row; gap: 10px;">
+        <div class="form-group" style="flex:1;">
+          <label for="idEvento">ID do Evento</label>
+          <input id="idEvento"
+                 type="number"
+                 [(ngModel)]="idEvento"
+                 placeholder="Digite o ID do evento..."
+                 [disabled]="carregandoEvento || loading"
+                 class="evento-input"/>
+        </div>
+        <button (click)="buscarEvento()"
+                [disabled]="carregandoEvento || loading"
+                class="evento-btn"
+                type="button">
           {{ carregandoEvento ? 'Buscando...' : 'Buscar' }}
         </button>
       </div>
-      <div *ngIf="carregandoEvento" class="loading">
+
+      <div *ngIf="carregandoEvento" class="loading" style="justify-content:center;">
         <span class="spinner"></span> Carregando evento...
       </div>
+
       <div *ngIf="error && !carregandoEvento && !loading" class="evento-erro">
         ⚠️ {{ error }}
       </div>
-    </div>
+    </ng-container>
 
-    <!-- ETAPA 2: Formulário de edição se eventoCarregado -->
-    <form *ngIf="eventoCarregado && !resultado" (ngSubmit)="editarEvento()" #eventoForm="ngForm" autocomplete="off">
-      <div class="evento-form-row" style="flex-direction: column; gap: 16px;">
-        <input type="text" [(ngModel)]="evento.titulo" name="titulo" placeholder="Título" required class="evento-input"/>
-        <div style="display: flex; gap: 10px;">
-          <input type="date" [(ngModel)]="evento.data_inicio" name="data_inicio" required class="evento-input"/>
-          <input type="date" [(ngModel)]="evento.data_fim" name="data_fim" required class="evento-input"/>
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <input type="number" [(ngModel)]="evento.carga_horaria" name="carga_horaria" required class="evento-input" placeholder="Carga Horária"/>
-          <input type="number" [(ngModel)]="evento.limite_participantes" name="limite_participantes" required class="evento-input" placeholder="Limite Participantes"/>
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <input type="number" [(ngModel)]="evento.expectiva_participantes" name="expectiva_participantes" required class="evento-input" placeholder="Expectativa Participantes"/>
-          <input type="number" [(ngModel)]="evento.numero_participantes" name="numero_participantes" required class="evento-input" placeholder="Número Participantes"/>
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <input type="number" [(ngModel)]="evento.id_categoria" name="id_categoria" required class="evento-input" placeholder="ID Categoria"/>
-          <input type="number" [(ngModel)]="evento.numero_membros_comissao" name="numero_membros_comissao" required class="evento-input" placeholder="Nº Membros Comissão"/>
-        </div>
-        <input type="email" [(ngModel)]="evento.email_duvidas" name="email_duvidas" placeholder="Email Dúvidas" required class="evento-input"/>
-      </div>
-      <div class="modal-footer">
-        <button class="evento-btn" [disabled]="loading || eventoForm.invalid" type="submit">
-          {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
-        </button>
-      </div>
-      <div *ngIf="error && !loading" class="evento-erro" style="margin-top:6px;">
-        ⚠️ {{ error }}
-      </div>
-      <div *ngIf="loading" class="loading">
-        <span class="spinner"></span> Salvando alterações...
-      </div>
-    </form>
+    <!-- ETAPA 2: formulário OU sucesso -->
+    <ng-template #editarOuSucesso>
+      <button class="modal-close" (click)="close()">✖</button>
+      <h2 class="titulo-pagina">✏️ Editar Evento</h2>
 
-    <!-- ETAPA 3: Sucesso -->
-    <div *ngIf="resultado && !loading" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;">
-      <div style="font-size:2.3rem; color:#1EC773; margin-bottom:5px; animation:popscale 0.17s;">
-        ✅
+      <!-- Formulário edição -->
+      <form *ngIf="eventoCarregado && !resultado" (ngSubmit)="editarEvento()" #eventoForm="ngForm" autocomplete="off">
+        <div class="evento-form-row" style="flex-direction: column; gap: 16px;">
+
+          <div class="form-group">
+            <label for="titulo">Título</label>
+            <input id="titulo" type="text" [(ngModel)]="evento.titulo" name="titulo" placeholder="Digite o título" required class="evento-input"/>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex:1;">
+              <label for="data_inicio">Data Início</label>
+              <input id="data_inicio" type="date" [(ngModel)]="evento.data_inicio" name="data_inicio" required class="evento-input"/>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="data_fim">Data Fim</label>
+              <input id="data_fim" type="date" [(ngModel)]="evento.data_fim" name="data_fim" required class="evento-input"/>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex:1;">
+              <label for="carga_horaria">Carga Horária</label>
+              <input id="carga_horaria" type="number" [(ngModel)]="evento.carga_horaria" name="carga_horaria" placeholder="Ex: 40" required class="evento-input"/>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="limite_participantes">Limite Participantes</label>
+              <input id="limite_participantes" type="number" [(ngModel)]="evento.limite_participantes" name="limite_participantes" placeholder="Ex: 100" required class="evento-input"/>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex:1;">
+              <label for="expectiva_participantes">Expectativa Participantes</label>
+              <input id="expectiva_participantes" type="number" [(ngModel)]="evento.expectiva_participantes" name="expectiva_participantes" placeholder="Ex: 80" required class="evento-input"/>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="numero_participantes">Número Participantes</label>
+              <input id="numero_participantes" type="number" [(ngModel)]="evento.numero_participantes" name="numero_participantes" placeholder="Ex: 75" required class="evento-input"/>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex:1;">
+              <label for="id_categoria">ID Categoria</label>
+              <input id="id_categoria" type="number" [(ngModel)]="evento.id_categoria" name="id_categoria" placeholder="Digite o ID da categoria" required class="evento-input"/>
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="numero_membros_comissao">Nº Membros Comissão</label>
+              <input id="numero_membros_comissao" type="number" [(ngModel)]="evento.numero_membros_comissao" name="numero_membros_comissao" placeholder="Ex: 5" required class="evento-input"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email_duvidas">Email Dúvidas</label>
+            <input id="email_duvidas" type="email" [(ngModel)]="evento.email_duvidas" name="email_duvidas" placeholder="email@exemplo.com" required class="evento-input"/>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="evento-btn" [disabled]="loading || eventoForm.invalid" type="submit">
+            {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="loading" style="justify-content:center;">
+          <span class="spinner"></span> Salvando alterações...
+        </div>
+
+        <div *ngIf="error && !loading" class="evento-erro">
+          ⚠️ {{ error }}
+        </div>
+      </form>
+
+      <!-- Sucesso -->
+      <div *ngIf="resultado && !loading" class="evento-criado-final" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;">
+        <div style="font-size:2.7rem; color:#16a34a; margin-bottom:10px; animation: popscale 0.18s;">
+          🎉
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:#0084ff; margin-bottom:22px; text-align:center;">
+          Evento editado com sucesso!
+        </div>
+        <button class="evento-btn" style="margin-top:0;min-width:120px;" (click)="close()">Fechar</button>
       </div>
-      <div style="font-size:1.7rem;font-weight:800;color:#0084ff;margin-bottom:18px;text-align:center;">
-        Evento editado com sucesso!
-      </div>
-      <button class="evento-btn" style="min-width:120px;" (click)="fechar.emit()">Fechar</button>
-    </div>
+    </ng-template>
+
   </div>
 </div>
+
 <style>
   @keyframes popscale {
-    from { transform: scale(0.8); opacity:0.2;}
+    from { transform: scale(0.7); opacity:0.2;}
     to { transform: scale(1); opacity:1;}
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .form-group label {
+    font-weight: 500;
+    margin-bottom: 4px;
   }
 </style>

@@ -15,15 +15,15 @@ export class AppEventoCriarComponent {
 
   evento = {
     titulo: '',
-    data_inicio: '',
-    data_fim: '',
-    carga_horaria: 0,
-    limite_participantes: 0,
-    expectiva_participantes: 0,
-    numero_participantes: 0,
-    id_categoria: 0,
+    data_inicio: null as string | null,
+    data_fim: null as string | null,
+    carga_horaria: null as number | null,
+    limite_participantes: null as number | null,
+    expectiva_participantes: null as number | null,
+    numero_participantes: null as number | null,
+    id_categoria: null as number | null,
     email_duvidas: '',
-    numero_membros_comissao: 0
+    numero_membros_comissao: null as number | null
   };
   resultado: any = null;
   error: string = '';

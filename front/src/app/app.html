@@ -24,6 +24,6 @@
 <!-- Modal de criar evento -->
 <app-evento-criar *ngIf="mostrarModalCriar" (fechar)="fecharModalCriar()"></app-evento-criar>
 <!-- Modal de editar evento -->
-<app-evento-editar *ngIf="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
+<app-evento-editar [open]="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
 <!-- Modal de remover evento -->
 <app-evento-remover *ngIf="mostrarModalRemover" (fechar)="fecharModalRemover()"></app-evento-remover>

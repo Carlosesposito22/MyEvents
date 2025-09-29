@@ -1,93 +1,145 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CommonModule, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-evento-editar',
-  standalone: true,
-  imports: [CommonModule, FormsModule, NgIf],
-  templateUrl: './app-evento-editar.component.html'
+  imports: [CommonModule, FormsModule],
+  templateUrl: 'app-evento-editar.component.html',
+  styles: [`
+    .modal-overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 20px;
+    }
+    .modal-content{
+      background: #fff;
+      border-radius: 8px;
+      max-width: 820px;
+      width: 100%;
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+      position: relative;
+    }
+    .modal-close{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+    .titulo-pagina{ margin: 4px 0 12px 0; font-size: 1.4rem; }
+
+    .evento-form-row{ display:flex; flex-direction: column; gap: 12px; }
+    .form-row-two{ display:flex; gap:12px; }
+    .form-row-search{ display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+    .form-group{ display:flex; flex-direction:column; flex:1; }
+    .form-group label{ font-size: 0.95rem; margin-bottom:6px; }
+    .evento-input{ width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d0d7de; box-sizing:border-box; }
+    .modal-footer{ display:flex; justify-content:flex-end; margin-top:6px; }
+    .evento-btn{ background:#4aa0ff; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
+    .evento-erro{ color:#9b1c1c; margin-top:6px; }
+    .loading{ color:#333; display:flex; gap:6px; align-items:center; }
+    .spinner{ width:12px;height:12px;border-radius:50%;border:2px solid #ccc;border-top-color:#333; animation:spin 0.8s linear infinite; display:inline-block; }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+
+    .sucesso-box{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px; min-height:100px; }
+    .sucesso-icone{ font-size:2.1rem; color:#1ec773; }
+    .sucesso-texto{ font-weight:700; color:#0084ff; font-size:1.1rem; }
+  `]
 })
 export class AppEventoEditarComponent {
+  @Input() open = false;
   @Output() fechar = new EventEmitter<void>();
 
   idEvento: number | null = null;
+  eventoCarregado = false;
+  resultado: any = null;
+  loading = false;
+  carregandoEvento = false;
+  error = '';
+
   evento = {
     titulo: '',
-    data_inicio: '',
-    data_fim: '',
-    carga_horaria: 0,
-    limite_participantes: 0,
-    expectiva_participantes: 0,
-    numero_participantes: 0,
-    id_categoria: 0,
-    email_duvidas: '',
-    numero_membros_comissao: 0
+    data_inicio: null as string | null,
+    data_fim: null as string | null,
+    carga_horaria: null as number | null,
+    limite_participantes: null as number | null,
+    expectiva_participantes: null as number | null,
+    numero_participantes: null as number | null,
+    id_categoria: null as number | null,
+    numero_membros_comissao: null as number | null,
+    email_duvidas: ''
   };
-  resultado: any = null;
-  error: string = '';
-  loading: boolean = false;
-  carregandoEvento: boolean = false;
-  eventoCarregado: boolean = false;
 
   constructor(private http: HttpClient) {}
 
-  buscarEvento() {
-    this.error = '';
-    this.resultado = null;
-    this.eventoCarregado = false;
-    if (this.idEvento == null || isNaN(this.idEvento)) {
-      this.error = 'Informe um ID numérico do evento!';
-      return;
+  onOverlayClick(){
+    if(!this.carregandoEvento && !this.loading){
+      this.close();
     }
+  }
+
+  close(){
+    this.open = false;
+    this.eventoCarregado = false;
+    this.resultado = null;
+    this.error = '';
+    this.fechar.emit();
+  }
+
+  buscarEvento(){
+    if(!this.idEvento){ this.error = 'Informe um ID válido.'; return; }
+    this.error = '';
     this.carregandoEvento = true;
+    this.eventoCarregado = false;
+
     this.http.get<any>(`http://localhost:8080/evento/${this.idEvento}`)
       .subscribe({
-        next: (evento) => {
-          if (!evento) {
-            this.error = 'Evento não encontrado.';
-            this.carregandoEvento = false;
-            return;
-          }
+        next: (res) => {
           this.evento = {
-            titulo: evento.titulo || '',
-            data_inicio: evento.data_inicio || '',
-            data_fim: evento.data_fim || '',
-            carga_horaria: evento.carga_horaria || 0,
-            limite_participantes: evento.limite_participantes || 0,
-            expectiva_participantes: evento.expectiva_participantes || 0,
-            numero_participantes: evento.numero_participantes || 0,
-            id_categoria: evento.id_categoria || 0,
-            email_duvidas: evento.email_duvidas || '',
-            numero_membros_comissao: evento.numero_membros_comissao || 0
+            titulo: res.titulo ?? '',
+            data_inicio: res.data_inicio ?? null,
+            data_fim: res.data_fim ?? null,
+            carga_horaria: res.carga_horaria ?? null,
+            limite_participantes: res.limite_participantes ?? null,
+            expectiva_participantes: res.expectiva_participantes ?? null,
+            numero_participantes: res.numero_participantes ?? null,
+            id_categoria: res.id_categoria ?? null,
+            numero_membros_comissao: res.numero_membros_comissao ?? null,
+            email_duvidas: res.email_duvidas ?? ''
           };
           this.eventoCarregado = true;
           this.carregandoEvento = false;
         },
-        error: (_) => {
-          this.error = 'Evento não encontrado.';
+        error: (err) => {
+          this.error = 'Evento não encontrado ou erro ao buscar.';
           this.carregandoEvento = false;
         }
       });
   }
 
-  editarEvento(): void {
+  editarEvento(){
+    if(!this.idEvento){ this.error = 'ID inválido.'; return; }
     this.error = '';
-    this.resultado = null;
-    if (!this.idEvento || !this.eventoCarregado) {
-      this.error = 'Busque e carregue um evento primeiro!';
-      return;
-    }
     this.loading = true;
+
     this.http.put<any>(`http://localhost:8080/evento/${this.idEvento}`, this.evento)
       .subscribe({
         next: (res) => {
           this.resultado = res;
           this.loading = false;
         },
-        error: (_) => {
-          this.error = 'Erro ao editar evento.';
+        error: () => {
+          this.error = 'Erro ao salvar alterações.';
           this.loading = false;
         }
       });

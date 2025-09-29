@@ -33,7 +33,7 @@ export class AppComponent {
   mostrarModalPorData = false;
   mostrarModalCriar = false;
   mostrarModalEditar = false;
-  mostrarModalRemover = false; // ADICIONADO para o modal de remover
+  mostrarModalRemover = false;
 
   abrirModal(): void {
     this.mostrarModal = true;
@@ -72,7 +72,6 @@ export class AppComponent {
     this.mostrarModalEditar = false;
   }
 
-  // ADICIONADO: métodos para o modal de remover
   abrirModalRemover(): void {
     this.mostrarModalRemover = true;
   }
