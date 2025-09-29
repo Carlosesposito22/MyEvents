@@ -1,0 +1,146 @@
+<div *ngIf="open" class="modal-overlay" (click)="onOverlayClick()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <!-- ETAPA 1: Buscar categoria -->
+    <ng-container *ngIf="!categoriaCarregado && !resultado; else editarOuSucesso">
+      <button class="modal-close" (click)="close()">✖</button>
+      <h2 class="titulo-pagina">✏️ Editar Categoria</h2>
+
+      <div class="evento-form-row" style="flex-direction: row; gap: 10px;">
+        <div class="form-group" style="flex:1;">
+          <label for="idCategoria">ID da Categoria</label>
+          <input id="idCategoria"
+                 type="number"
+                 [(ngModel)]="idCategoria"
+                 placeholder="Digite o ID da categoria..."
+                 [disabled]="carregandoCategoria || loading"
+                 class="evento-input"/>
+        </div>
+        <button (click)="buscarCategoria()"
+                [disabled]="carregandoCategoria || loading"
+                class="evento-btn"
+                type="button">
+          {{ carregandoCategoria ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </div>
+
+      <div *ngIf="carregandoCategoria" class="loading" style="justify-content:center;">
+        <span class="spinner"></span> Carregando categoria...
+      </div>
+
+      <div *ngIf="error && !carregandoCategoria && !loading" class="evento-erro">
+        ⚠️ {{ error }}
+      </div>
+    </ng-container>
+
+    <!-- ETAPA 2: Formulário de edição OU tela de sucesso -->
+    <ng-template #editarOuSucesso>
+      <button class="modal-close" (click)="close()">✖</button>
+      <h2 class="titulo-pagina">✏️ Editar Categoria</h2>
+
+      <!-- Formulário de edição -->
+      <form *ngIf="categoriaCarregado && !resultado" (ngSubmit)="editarCategoria()" #categoriaForm="ngForm" autocomplete="off">
+        <div class="evento-form-row" style="flex-direction: column; gap: 16px;">
+
+          <!-- Campo Nome -->
+          <div class="form-group">
+            <label for="nome">Nome da Categoria</label>
+            <input id="nome" type="text" [(ngModel)]="categoria.nome" name="nome" placeholder="Digite o nome da categoria" required class="evento-input"/>
+          </div>
+
+          <!-- Campo Descrição -->
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input id="descricao" type="text" [(ngModel)]="categoria.descricao" name="descricao" placeholder="Digite a descrição" required class="evento-input"/>
+          </div>
+
+          <!-- Campo ID Categoria Pai -->
+          <div class="form-group">
+            <label for="id_categoria_pai">ID da Categoria Pai (opcional)</label>
+            <input id="id_categoria_pai" type="number" [(ngModel)]="categoria.id_categoria_pai" name="id_categoria_pai" placeholder="Deixe em branco se for raiz" class="evento-input"/>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="evento-btn" [disabled]="loading || categoriaForm.invalid" type="submit">
+            {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="loading" style="justify-content:center;">
+          <span class="spinner"></span> Salvando alterações...
+        </div>
+
+        <div *ngIf="error && !loading" class="evento-erro">
+          ⚠️ {{ error }}
+        </div>
+      </form>
+
+      <!-- Tela de Sucesso -->
+      <div *ngIf="resultado && !loading" class="evento-criado-final" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;">
+        <div style="font-size:2.7rem; color:#16a34a; margin-bottom:10px; animation: popscale 0.18s;">
+          🎉
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:#0084ff; margin-bottom:22px; text-align:center;">
+          Categoria editada com sucesso!
+        </div>
+        <button class="evento-btn" style="margin-top:0;min-width:120px;" (click)="close()">Fechar</button>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<style>
+  @keyframes popscale {
+    from { transform: scale(0.7); opacity:0.2;}
+    to { transform: scale(1); opacity:1;}
+  }
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 20px;
+  }
+  .modal-content{
+    background: #fff;
+    border-radius: 8px;
+    max-width: 820px;
+    width: 100%;
+    padding: 18px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+    position: relative;
+  }
+  .modal-close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.15rem;
+    cursor: pointer;
+  }
+  .titulo-pagina{ margin: 4px 0 12px 0; font-size: 1.4rem; }
+
+  .evento-form-row{ display:flex; flex-direction: column; gap: 12px; }
+  .form-row-two{ display:flex; gap:12px; }
+  .form-row-search{ display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+  .form-group{ display:flex; flex-direction:column; flex:1; }
+  .form-group label{ font-size: 0.95rem; margin-bottom:6px; }
+  .evento-input{ width:100%; padding:8px 10px; border-radius:6px; border:1px solid #d0d7de; box-sizing:border-box; }
+  .modal-footer{ display:flex; justify-content:flex-end; margin-top:6px; }
+  .evento-btn{ background:#4aa0ff; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
+  .evento-erro{ color:#9b1c1c; margin-top:6px; }
+  .loading{ color:#333; display:flex; gap:6px; align-items:center; }
+  .spinner{ width:12px;height:12px;border-radius:50%;border:2px solid #ccc;border-top-color:#333; animation:spin 0.8s linear infinite; display:inline-block; }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
+  .sucesso-box{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px; min-height:100px; }
+  .sucesso-icone{ font-size:2.1rem; color:#1ec773; }
+  .sucesso-texto{ font-weight:700; color:#0084ff; font-size:1.1rem; }
+</style>

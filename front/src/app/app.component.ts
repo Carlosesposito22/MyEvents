@@ -10,6 +10,7 @@ import { AppEventoEditarComponent } from './app-evento-editar.component';
 import { AppEventoRemoverComponent } from './app-evento-remover.component';
 import { CreateCategoria } from "./categoria/create-categoria/create-categoria";
 import { FindCategoria } from "./categoria/find-categoria/find-categoria";
+import { UpdateCategoria } from "./categoria/update-categoria/update-categoria";
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,8 @@ import { FindCategoria } from "./categoria/find-categoria/find-categoria";
     AppEventoEditarComponent,
     AppEventoRemoverComponent,
     CreateCategoria,
-    FindCategoria
+    FindCategoria,
+    UpdateCategoria
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -41,6 +43,7 @@ export class AppComponent {
 
   mostrarModalCriarCategoria = false;
   mostrarModalBuscarCategoria = false;
+  mostrarModalEditarCategoria = false;
 
   abrirModal(): void {
     this.mostrarModal = true;
@@ -96,5 +99,11 @@ export class AppComponent {
   }
   fecharModalBuscarCategoria(): void {
     this.mostrarModalBuscarCategoria = false;
+  }
+  abrirModalEditarCategoria(): void {
+    this.mostrarModalEditarCategoria = true;
+  }
+  fecharModalEditarCategoria(): void {
+    this.mostrarModalEditarCategoria = false;
   }
 }
