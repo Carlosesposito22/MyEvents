@@ -1,24 +1,306 @@
 <!-- app.html -->
+<div *ngIf="router.url !== '/graficos'; else onlyGraficos">
+  <style>
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      align-items: stretch;
+      padding: 32px 2vw 0;
+      min-height: 80vh;
+      background: linear-gradient(120deg, #fffbe6 20%, #f5fafa 80%);
+      animation: fadeInMain 0.6s;
+      flex-direction: row;
+    }
+    .col-cards-group {
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    /* As .card-area agora não expande tudo! */
+    .card-area {
+      flex: 1 1 330px;
+      max-width: 420px;
+      background: #fff;
+      box-shadow: 0 3px 32px rgba(68, 68, 120, 0.13), 0 1.5px 0 #faf1cb;
+      border-radius: 17px;
+      padding: 32px 24px 38px;
+      min-width: 315px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+      min-height: 430px;
+    }
+    .card-area:hover {
+      box-shadow: 0 6px 60px #ecc94922, 0 0 0 #fff;
+    }
+    .area-title {
+      font-size: 1.6rem;
+      letter-spacing: 0.3px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      color: #363e57;
+      text-shadow: 0 1px 0 #fff7d9cc;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      animation: fadeInTitle 0.9s;
+    }
+    /* --- Botões dos EVENTOS e CATEGORIAS --- */
+    .botoes-area {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .custom-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 18px;
+      background: linear-gradient(90deg,#f9f7ea 80%,#f6eecf);
+      border: none;
+      border-radius: 10px;
+      font-size: 1.07rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 2px 18px #e1e1e144;
+      transition: box-shadow 0.15s, transform 0.15s, background 0.19s;
+      outline: none;
+      color: #353e51;
+      position: relative;
+      overflow: hidden;
+      font-family: inherit;
+      text-align: left;
+    }
+    .custom-btn:active {transform: scale(0.97);}
+    .custom-btn:hover:not(.critical) {
+      box-shadow: 0 7px 30px #ffd3121b;
+      background: linear-gradient(90deg, #fcf2c4 80%, #f7eadb);
+    }
+    /* Remover = critical */
+    .custom-btn.critical {
+      background: linear-gradient(90deg,#ff5555 60%,#ff8585 100%);
+      color: #fff !important;
+      box-shadow: 0 2px 16px #ff888866;
+      font-weight: 800;
+      border: none;
+      position: relative;
+      justify-content:left;
+    }
+    .custom-btn.critical:before {
+      content: "🛑";
+      font-size: 1.15em;
+      margin-right: 8px;
+    }
+    .custom-btn.critical:hover {
+      background: linear-gradient(90deg,#e60023 70%,#ff6666 100%);
+      box-shadow: 0 7px 42px #ff2e2e44;
+      color: #fff;
+      filter: brightness(1.08);
+    }
+    /* badge */
+    .custom-btn .new-badge {
+      color: #fff;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: .71em;
+      margin-right: 5px;
+      font-weight: bold;
+      letter-spacing: .01em;
+    }
+    /* ----------- GRÁFICOS CARD ------------- */
+    .graficos-area {
+      box-shadow: 0 5px 40px #c7edff29, 0 1.5px 0 #eaf5fd;
+      background: linear-gradient(120deg, #e9ffff 50%, #d4eeff 100%);
+      margin: 0 auto;
+      margin-bottom: 32px;
+      min-width: 350px;
+      max-width: 980px;
+      width: 80vw;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 26px 36px 32px;
+      position: relative;
+    }
+    .grafic-card {
+      width: 100%;
+      min-height: 140px;
+      padding: 14px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+    }
+    .graficos-info {
+      font-size: 1.19rem;
+      margin: 0 0 2px;
+      color: #467399ee;
+      text-align: center;
+      font-weight: 600;
+    }
+    .graficos-detail-link {
+      color: #19abc9;
+      font-size: .99rem;
+      margin-top: 0px;
+      display: block;
+      font-weight: 400;
+      text-align: center;
+      letter-spacing: .02em;
+      margin-bottom: 4px;
+    }
+    .graficos-btn {
+      margin: 0 auto;
+      min-width: 200px;
+      font-size: 1.13rem;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #55aaff 65%, #a3e5ff 100%);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      outline: none;
+      box-shadow: 0 2px 19px #a2eaff33;
+      padding: 15px 35px;
+      transition: box-shadow 0.14s, background 0.21s, transform 0.11s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .graficos-btn:hover {
+      background: linear-gradient(90deg, #1676b7 75%, #59d3ff 100%);
+      box-shadow: 0 7px 31px #0fa4fa3e;
+      transform: scale(1.04);
+      color: #fff;
+    }
+    .graficos-chart-minibg {
+      position: absolute;
+      bottom: 8px; right: 17px;
+      opacity:.13;
+      z-index:0;
+    }
+    .divider-v {
+      width: 0;
+      min-width: 32px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .divider-v span {
+      display: block;
+      position: absolute;
+      left: 45%;
+      top: 18%;
+      height: 64%;
+      width: 3.5px;
+      border-radius: 100px;
+      background: linear-gradient(180deg, #fae56c97 40%, #dce0f1ee 60%);
+      box-shadow: 0 0 32px #fce58293;
+      animation: dividerGrow 1s;
+    }
+    /* Responsivo (mobile) */
+    @media (max-width: 900px) {
+      .main-container {flex-direction: column; gap:22px;}
+      .col-cards-group {flex-direction: column; gap:22px;}
+      .divider-v {display:none;}
+      .graficos-area {max-width:94vw;}
+    }
+  </style>
+  <div class="main-container">
+    <!-- Cards lado a lado -->
+    <div class="col-cards-group">
+      <!-- Área de Eventos -->
+      <section class="card-area">
+        <div class="area-title">✨ Eventos</div>
+        <div class="botoes-area">
+          <button class="custom-btn" (click)="abrirModal()">
+            <span class="label-icon">🔍</span> Buscar Evento
+          </button>
+          <button class="custom-btn" (click)="abrirModalPorCategoria()">
+            <span class="label-icon">🏷️</span> Buscar Eventos por Categoria
+          </button>
+          <button class="custom-btn" (click)="abrirModalBuscarTitulo()">
+            <span class="label-icon">🔠</span> Buscar Eventos por Título
+          </button>
+          <button class="custom-btn" (click)="abrirModalPorData()">
+            <span class="label-icon">📅</span> Buscar Eventos por Data
+          </button>
+          <button class="custom-btn" (click)="abrirModalCriar()">
+            <span class="new-badge">✨</span> Criar Evento
+          </button>
+          <button class="custom-btn" (click)="abrirModalEditar()">
+            <span class="label-icon">✏️</span> Editar Evento
+          </button>
+          <button class="custom-btn critical" (click)="abrirModalRemover()">
+            Remover Evento
+          </button>
+        </div>
+      </section>
+      <div class="divider-v"><span></span></div>
+      <!-- Área de Categorias -->
+      <section class="card-area">
+        <div class="area-title">🏷️ Categorias</div>
+        <div class="botoes-area">
+          <button class="custom-btn" (click)="abrirModalBuscarCategoria()">
+            <span class="label-icon">🔍</span> Buscar Categoria
+          </button>
+          <button class="custom-btn" (click)="abrirModalSubCategorias()">
+            <span class="label-icon">🔍</span> Buscar Subcategorias
+          </button>
 
-<ng-container *ngIf="router.url !== '/graficos'; else onlyGraficos">
-  <!-- Botões -->
-  <button class="abrir-modal-btn" (click)="abrirModal()">🔍 Buscar Evento</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorCategoria()">🏷️ Buscar Eventos por Categoria</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarTitulo()">🔠 Buscar Eventos por Título</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalPorData()">📅 Buscar Eventos por Data</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriar()">🆕 Criar Evento</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditar()">✏️ Editar Evento</button>
-  <button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemover()">🗑️ Remover Evento</button>
-  <br/>
-  <br/>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCriarCategoria()">🆕 Criar Categoria</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarCategoria()">🔍 Buscar Categoria</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalEditarCategoria()">✏️ Editar Categoria</button>
-  <button class="abrir-modal-btn" style="margin-left:8px; background:#e74c3c; color:#fff" (click)="abrirModalRemoverCategoria()">🗑️ Remover Categoria</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalBuscarNomeCategoria()">🔠 Buscar Categorias por Nome</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalSubCategorias()">🔍 Buscar Subcategorias</button>
-  <button class="abrir-modal-btn" style="margin-left:8px" (click)="abrirModalCategoriaHierarquia()">🎖️ Hierarquia Categoria</button>
-  <!-- Modais -->
+          <button class="custom-btn" (click)="abrirModalBuscarNomeCategoria()">
+            <span class="label-icon">🔠</span> Buscar Categorias por Nome
+          </button>
+          <button class="custom-btn" (click)="abrirModalCategoriaHierarquia()">
+            <span class="label-icon">🎖️</span> Hierarquia Categoria
+          </button>
+          <button class="custom-btn" (click)="abrirModalCriarCategoria()">
+            <span class="new-badge">✨</span> Criar Categoria
+          </button>
+          <button class="custom-btn" (click)="abrirModalEditarCategoria()">
+            <span class="label-icon">✏️</span> Editar Categoria
+          </button>
+          <button class="custom-btn critical" (click)="abrirModalRemoverCategoria()">
+            Remover Categoria
+          </button>
+        </div>
+      </section>
+    </div>
+    <!-- Card de Gráficos ABAIXO -->
+    <section class="graficos-area">
+      <div class="area-title">📊 Gráficos & Estatísticas</div>
+      <div class="grafic-card">
+        <div class="graficos-info">
+          Visualize relatórios de eventos e tendências
+        </div>
+        <button class="graficos-btn" [routerLink]="['/graficos']">
+          <span aria-hidden="true" style="font-size:1.13em;">📈</span> Ir para Gráficos
+        </button>
+        <svg class="graficos-chart-minibg" width="90" height="44" aria-hidden="true">
+          <polyline points="5,39 19,15 37,26 65,6 88,36"
+                    stroke="#42a8ff" stroke-width="5" stroke-linecap="round" fill="none" />
+          <circle cx="65" cy="6" r="5" fill="#3dc9ed"/>
+          <circle cx="19" cy="15" r="5" fill="#b2e9fe"/>
+        </svg>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modais (mesma ordem anterior!) -->
   <app-evento *ngIf="mostrarModal" (fechar)="fecharModal()"></app-evento>
   <app-eventos-por-categoria *ngIf="mostrarModalPorCategoria" (fechar)="fecharModalPorCategoria()"></app-eventos-por-categoria>
   <app-eventos-buscar *ngIf="mostrarModalBuscarTitulo" (fechar)="fecharModalBuscarTitulo()"></app-eventos-buscar>
@@ -26,20 +308,18 @@
   <app-evento-criar *ngIf="mostrarModalCriar" (fechar)="fecharModalCriar()"></app-evento-criar>
   <app-evento-editar [open]="mostrarModalEditar" (fechar)="fecharModalEditar()"></app-evento-editar>
   <app-evento-remover *ngIf="mostrarModalRemover" (fechar)="fecharModalRemover()"></app-evento-remover>
-  <br/>
-  <br/>
+
   <app-create-categoria *ngIf="mostrarModalCriarCategoria" (fechar)="fecharModalCriarCategoria()"></app-create-categoria>
   <app-find-categoria *ngIf="mostrarModalBuscarCategoria" (fechar)="fecharModalBuscarCategoria()"></app-find-categoria>
   <app-update-categoria [open]="mostrarModalEditarCategoria" (fechar)="fecharModalEditarCategoria()"></app-update-categoria>
-  <app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
+
   <app-buscar-categoria *ngIf="mostrarModalBuscarNomeCategoria" (fechar)="fecharModalBuscarNomeCategoria()"></app-buscar-categoria>
   <app-buscar-subcategorias [open]="mostrarModalSubcategoriasAberto" (fechar)="fecharModalSubCategorias()"></app-buscar-subcategorias>
   <app-hierarquia-categorias [open]="mostrarModalCategoriaHierarquia" (fechar)="fecharModalCategoriaHierarquia()"></app-hierarquia-categorias>
+  <app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
 
-  <button [routerLink]="['/graficos']">Ir para Gráficos</button>
   <router-outlet></router-outlet>
-</ng-container>
-
+</div>
 <ng-template #onlyGraficos>
   <router-outlet></router-outlet>
 </ng-template>
