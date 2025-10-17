@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { GraficosComponent } from './graficos.component'; // ajuste o caminho se necessário!
+import { GraficosComponent } from './grafico/graficos.component'; // ajuste o caminho se necessário!
 
 export const routes: Routes = [
   // ...outras rotas

@@ -5,16 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-  selector: 'app-eventos-por-categoria',
+  selector: 'app-eventos-buscar',
   standalone: true,
   imports: [CommonModule, FormsModule, NgIf, NgFor],
-  templateUrl: './app-eventos-por-categoria.component.html',
-  styleUrls: ['./app.css']
+  templateUrl: './app-eventos-buscar.component.html',
+  styleUrls: ['../../app.css']
 })
-export class AppEventosPorCategoriaComponent {
+export class AppEventosBuscarComponent {
   @Output() fechar = new EventEmitter<void>();
 
-  idCategoria: number | null = null;
+  titulo: string = '';
   eventos: any[] | null = null;
   error: string = '';
   loading: boolean = false;
@@ -24,17 +24,17 @@ export class AppEventosPorCategoriaComponent {
   buscar(): void {
     this.error = '';
     this.eventos = null;
-    if (this.idCategoria == null || isNaN(this.idCategoria)) {
-      this.error = 'Digite um ID de categoria válido.';
+    if (!this.titulo || !this.titulo.trim()) {
+      this.error = 'Digite um título para pesquisar!';
       return;
     }
     this.loading = true;
-    this.http.get<any[]>(`http://localhost:8080/evento/por-categoria/${this.idCategoria}`)
+    this.http.get<any[]>(`http://localhost:8080/evento/buscar?titulo=${encodeURIComponent(this.titulo)}`)
       .subscribe({
         next: (res) => {
           if (!res || res.length === 0) {
             this.eventos = null;
-            this.error = 'Nenhum evento encontrado para essa categoria.';
+            this.error = 'Nenhum evento encontrado com esse título.';
           } else {
             this.eventos = res;
             this.error = '';
@@ -42,7 +42,7 @@ export class AppEventosPorCategoriaComponent {
           this.loading = false;
         },
         error: (_) => {
-          this.error = 'Erro ao buscar eventos para essa categoria.';
+          this.error = 'Erro ao buscar eventos pelo título.';
           this.loading = false;
         }
       });

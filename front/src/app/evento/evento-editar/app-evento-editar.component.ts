@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
   selector: 'app-evento-editar',
   imports: [CommonModule, FormsModule],
   templateUrl: 'app-evento-editar.component.html',
-  styleUrls: ['app.css']
+  styleUrls: ['../../app.css']
 })
 export class AppEventoEditarComponent {
   @Input() open = false;

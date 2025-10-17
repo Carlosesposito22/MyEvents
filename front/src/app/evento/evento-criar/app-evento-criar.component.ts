@@ -8,7 +8,7 @@ import { CommonModule, NgIf } from '@angular/common';
   standalone: true,
   imports: [CommonModule, FormsModule, NgIf],
   templateUrl: './app-evento-criar.component.html',
-  styleUrls: ['./app.css']
+  styleUrls: ['../../app.css']
 })
 export class AppEventoCriarComponent {
   @Output() fechar = new EventEmitter<void>();
