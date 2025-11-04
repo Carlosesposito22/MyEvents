@@ -1,0 +1,73 @@
+<div class="modal-overlay" (click)="!resultado && fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <ng-container *ngIf="!resultado; else sucessoCriado">
+      <button class="modal-close" (click)="fechar.emit()">✖</button>
+      
+      <h2 class="titulo-pagina">🆕 Criar Atividade</h2>
+
+      <form (ngSubmit)="criarAtividade()" #atividadeForm="ngForm" autocomplete="off">
+        <div class="evento-form-row" style="flex-direction: column; gap: 16px;">
+
+          <input type="text" [(ngModel)]="atividade.titulo" name="titulo" placeholder="Título da Atividade" required class="evento-input"/>
+          
+          <div style="display: flex; gap: 10px;">
+            <input type="number" [(ngModel)]="atividade.id_evento" name="id_evento" placeholder="ID do Evento" required class="evento-input" style="width: 50%;"/>
+            <input type="number" [(ngModel)]="atividade.id_tipoAtividade" name="id_tipoAtividade" placeholder="ID Tipo de Atividade" required class="evento-input" style="width: 50%;"/>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <input type="number" [(ngModel)]="atividade.limite_vagas" name="limite_vagas" placeholder="Limite de Vagas (opcional)" class="evento-input" style="width: 50%;"/>
+            <input type="number" [(ngModel)]="atividade.carga_horaria" name="carga_horaria" placeholder="Carga Horária (h) (opcional)" class="evento-input" style="width: 50%;"/>
+          </div>
+
+          <input type="text" [(ngModel)]="atividade.link_transmissao_atividade" name="link_transmissao_atividade" placeholder="Link da Transmissão (opcional)" class="evento-input"/>
+          
+          <textarea [(ngModel)]="atividade.descricao" name="descricao" placeholder="Descrição da Atividade (opcional)" class="evento-input" rows="3"></textarea>
+        
+        </div>
+        
+        <div class="modal-footer">
+          <button class="evento-btn" [disabled]="loading || atividadeForm.invalid" type="submit">
+            {{ loading ? 'Criando...' : 'Criar Atividade' }}
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="loading" class="loading" style="justify-content:center;">
+        <span class="spinner"></span> Criando atividade...
+      </div>
+
+      <div *ngIf="error && !loading" class="evento-erro">
+        ⚠️ {{ error }}
+      </div>
+    </ng-container>
+
+    <ng-template #sucessoCriado>
+      <div class="evento-criado-final" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;">
+        <div style="font-size:2.7rem; color:#16a34a; margin-bottom:10px; animation: popscale 0.18s;">
+          🎉
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:#0084ff; margin-bottom:22px; text-align:center;">
+          Atividade criada com sucesso!
+        </div>
+        <button class="evento-btn" style="margin-top:0;min-width:120px;" (click)="fechar.emit()">Fechar</button>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<style>
+  @keyframes popscale {
+    from { transform: scale(0.7); opacity:0.2;}
+    to { transform: scale(1); opacity:1;}
+  }
+
+  .evento-input[rows] {
+    font-family: inherit;
+    padding: 10px 14px;
+    resize: vertical;
+    min-height: 60px;
+  }
+</style>

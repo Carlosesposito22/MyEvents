@@ -279,6 +279,31 @@
           </button>
         </div>
       </section>
+      <div class="divider-v"><span></span></div>
+      <!-- Área de Atividade -->
+      <section class="card-area">
+        <div class="area-title">🗓️ Atividades</div>
+        <div class="botoes-area">
+      
+          <button class="custom-btn" (click)="abrirModalCriarAtividade()">
+            <span class="new-badge">✨</span> Criar Atividade
+          </button>
+          <!--
+          <button class="custom-btn" (click)="abrirModalBuscarAtividade()">
+            <span class="label-icon">🔍</span> Buscar Atividade (por ID)
+          </button>
+          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
+            <span class="label-icon">✨</span> Listar Atividades de um Evento
+          </button>
+          <button class="custom-btn" (click)="abrirModalEditarAtividade()">
+            <span class="label-icon">✏️</span> Editar Atividade
+          </button>
+          <button class="custom-btn critical" (click)="abrirModalRemoverAtividade()">
+            Remover Atividade
+          </button>
+          -->
+        </div>
+      </section>
     </div>
     <!-- Card de Gráficos ABAIXO -->
     <section class="graficos-area">
@@ -317,6 +342,16 @@
   <app-buscar-subcategorias [open]="mostrarModalSubcategoriasAberto" (fechar)="fecharModalSubCategorias()"></app-buscar-subcategorias>
   <app-hierarquia-categorias [open]="mostrarModalCategoriaHierarquia" (fechar)="fecharModalCategoriaHierarquia()"></app-hierarquia-categorias>
   <app-delete-categoria *ngIf="mostrarModalRemoverCategoria" (fechar)="fecharModalRemoverCategoria()"></app-delete-categoria>
+
+  <app-create-atividade *ngIf="mostrarModalCriarAtividade" (fechar)="fecharModalCriarAtividade()"></app-create-atividade>
+  <!-- 
+    (Adicione os outros componentes de modal para Atividade aqui quando os tiver)
+    
+    <app-find-atividade *ngIf="mostrarModalBuscarAtividade" (fechar)="fecharModalBuscarAtividade()"></app-find-atividade>
+    <app-atividades-por-evento *ngIf="mostrarModalListarAtividadesEvento" (fechar)="fecharModalListarAtividadesEvento()"></app-atividades-por-evento>
+    <app-update-atividade *ngIf="mostrarModalEditarAtividade" (fechar)="fecharModalEditarAtividade()"></app-update-atividade>
+    <app-delete-atividade *ngIf="mostrarModalRemoverAtividade" (fechar)="fecharModalRemoverAtividade()"></app-delete-atividade>
+  -->
 
   <router-outlet></router-outlet>
 </div>
