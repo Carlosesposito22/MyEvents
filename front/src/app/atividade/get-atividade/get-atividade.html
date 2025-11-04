@@ -1,0 +1,41 @@
+<div class="modal-overlay" (click)="fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="fechar.emit()">✖</button>
+    <h2 class="titulo-pagina">🔍 Buscar Atividade por ID</h2>
+
+    <div class="evento-form-row">
+      <input
+        type="number"
+        [(ngModel)]="atividadeId"
+        placeholder="Digite o ID da atividade..."
+        [disabled]="loading"
+        class="evento-input flex-grow"
+      />
+      <button (click)="buscarAtividade()" [disabled]="loading" class="evento-btn">
+        {{ loading ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <span class="spinner"></span> Carregando atividade...
+    </div>
+
+    <div *ngIf="error && !loading" class="evento-erro">
+      ⚠️ {{ error }}
+    </div>
+
+    <div *ngIf="atividade && !loading" class="evento-card">
+      <h3 class="evento-titulo">🗓️ {{ atividade.titulo }}</h3>
+
+      <div class="evento-detalhes">
+        <div class="detalhe"><strong>ID Evento:</strong> {{ atividade.id_evento }}</div>
+        <div class="detalhe"><strong>ID Tipo:</strong> {{ atividade.id_tipoAtividade }}</div>
+        <div class="detalhe"><strong>Descricao:</strong> {{ atividade.descricao }}</div>
+        <div class="detalhe"><strong>Vagas:</strong> {{ atividade.limite_vagas || 'N/A' }}</div>
+        <div class="detalhe"><strong>Carga (h):</strong> {{ atividade.carga_horaria || 'N/A' }}</div>
+        <div class="detalhe"><strong>Link:</strong> {{ atividade.link_transmissao_atividade || 'N/A' }}</div>
+      </div>
+    </div>
+  </div>
+</div>
