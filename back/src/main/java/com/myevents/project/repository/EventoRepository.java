@@ -118,7 +118,7 @@ public class EventoRepository {
             evento.setData_fim(rs.getDate("data_fim").toLocalDate());
             evento.setCarga_horaria(rs.getObject("carga_horaria", Integer.class));
             evento.setLimite_participantes(rs.getInt("limite_participantes"));
-            evento.setExpectiva_participantes(rs.getInt("expectiva_participantes"));
+            evento.setExpectiva_participantes(rs.getInt("expectativa_participantes"));
             evento.setNumero_participantes(rs.getInt("numero_participantes"));
             evento.setId_categoria(rs.getInt("id_categoria"));
             evento.setEmail_duvidas(rs.getString("email_duvidas"));
