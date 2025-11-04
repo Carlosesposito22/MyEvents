@@ -17,6 +17,7 @@ import { BuscarCategoria } from "./categoria/buscar-categoria/buscar-categoria";
 import { BuscarSubcategoriasComponent } from "./categoria/buscar-subcategorias/buscar-subcategorias";
 import { HierarquiaCategorias } from "./categoria/hierarquia-categorias/hierarquia-categorias";
 import { CreateAtividade } from "./atividade/create-atividade/create-atividade";
+import { BuscarAtividade } from "./atividade/buscar-atividade/buscar-atividade";
 
 @Component({
   selector: 'app-root',
@@ -40,7 +41,8 @@ import { CreateAtividade } from "./atividade/create-atividade/create-atividade";
     BuscarCategoria,
     BuscarSubcategoriasComponent,
     HierarquiaCategorias,
-    CreateAtividade
+    CreateAtividade,
+    BuscarAtividade
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -63,6 +65,7 @@ export class AppComponent {
   mostrarModalCategoriaHierarquia = false;
 
   mostrarModalCriarAtividade = false;
+  mostrarModalBuscarAtividade = false;
 
   constructor(public router: Router) {}
 
@@ -157,5 +160,11 @@ export class AppComponent {
   }
   fecharModalCriarAtividade(): void {
     this.mostrarModalCriarAtividade = false;
+  }
+  abrirModalBuscarAtividade(): void {
+    this.mostrarModalBuscarAtividade = true;
+  }
+  fecharModalBuscarAtividade(): void {
+    this.mostrarModalBuscarAtividade = false;
   }
 }
