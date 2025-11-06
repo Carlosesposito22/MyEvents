@@ -300,13 +300,14 @@
           <button class="custom-btn" (click)="abrirModalEditarAtividade()">
             <span class="label-icon">✏️</span> Editar Atividade
           </button>
-          <!--
-          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
-            <span class="label-icon">✨</span> Listar Atividades de um Evento
-          </button>
 
           <button class="custom-btn critical" (click)="abrirModalRemoverAtividade()">
             Remover Atividade
+          </button>
+          
+          <!--
+          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
+            <span class="label-icon">✨</span> Listar Atividades de um Evento
           </button>
           -->
         </div>
@@ -354,10 +355,10 @@
   <app-buscar-atividade *ngIf="mostrarModalBuscarAtividadeTitulo" (fechar)="fecharModalBuscarAtividadePorTitulo()"></app-buscar-atividade>
   <app-get-atividade *ngIf="mostrarModalBuscarAtividade" (fechar)="fecharModalBuscarAtividade()"></app-get-atividade>
   <app-update-atividade [open]="mostrarModalEditarAtividade" (fechar)="fecharModalEditarAtividade()"></app-update-atividade>
+  <app-delete-atividade *ngIf="mostrarModalRemoverAtividade" (fechar)="fecharModalRemoverAtividade()"></app-delete-atividade>
 
   <!-- 
     <app-atividades-por-evento *ngIf="mostrarModalListarAtividadesEvento" (fechar)="fecharModalListarAtividadesEvento()"></app-atividades-por-evento>
-    <app-delete-atividade *ngIf="mostrarModalRemoverAtividade" (fechar)="fecharModalRemoverAtividade()"></app-delete-atividade>
   -->
 
   <router-outlet></router-outlet>

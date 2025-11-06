@@ -20,6 +20,7 @@ import { CreateAtividade } from "./atividade/create-atividade/create-atividade";
 import { BuscarAtividade } from "./atividade/buscar-atividade/buscar-atividade";
 import { GetAtividade } from "./atividade/get-atividade/get-atividade";
 import { UpdateAtividade } from "./atividade/update-atividade/update-atividade";
+import { DeleteAtividade } from "./atividade/delete-atividade/delete-atividade";
 
 @Component({
   selector: 'app-root',
@@ -46,7 +47,8 @@ import { UpdateAtividade } from "./atividade/update-atividade/update-atividade";
     CreateAtividade,
     BuscarAtividade,
     GetAtividade,
-    UpdateAtividade
+    UpdateAtividade,
+    DeleteAtividade
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -72,6 +74,7 @@ export class AppComponent {
   mostrarModalBuscarAtividadeTitulo = false;
   mostrarModalBuscarAtividade = false;
   mostrarModalEditarAtividade = false;
+  mostrarModalRemoverAtividade = false;
 
   constructor(public router: Router) {}
 
@@ -184,5 +187,11 @@ export class AppComponent {
   }
   fecharModalEditarAtividade(): void {
     this.mostrarModalEditarAtividade = false;
+  }
+  abrirModalRemoverAtividade(): void {
+    this.mostrarModalRemoverAtividade = true;
+  }
+  fecharModalRemoverAtividade(): void {
+    this.mostrarModalRemoverAtividade = false;
   }
 }
