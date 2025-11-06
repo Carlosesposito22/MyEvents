@@ -1,0 +1,241 @@
+<div *ngIf="open" class="modal-overlay" (click)="onOverlayClick()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <ng-container *ngIf="!atividadeCarregada && !resultado; else editarOuSucesso">
+      <button class="modal-close" (click)="close()">✖</button>
+      <h2 class="titulo-pagina">✏️ Editar Atividade</h2>
+
+      <div class="evento-form-row" style="flex-direction: row; gap: 10px; align-items: flex-end;">
+        <div class="form-group" style="flex:1;">
+          <label for="idAtividade">ID da Atividade</label>
+          <input id="idAtividade"
+                 type="number"
+                 [(ngModel)]="idAtividade"
+                 placeholder="Digite o ID da atividade..."
+                 [disabled]="carregandoAtividade || loading"
+                 class="evento-input"/>
+        </div>
+        <button (click)="buscarAtividade()"
+                [disabled]="carregandoAtividade || loading"
+                class="evento-btn"
+                style="height: 35px;"
+                type="button">
+          {{ carregandoAtividade ? 'Buscando...' : 'Buscar' }}
+        </button>
+      </div>
+
+      <div *ngIf="carregandoAtividade" class="loading" style="justify-content:center;">
+        <span class="spinner"></span> Carregando atividade...
+      </div>
+
+      <div *ngIf="error && !carregandoAtividade && !loading" class="evento-erro">
+        ⚠️ {{ error }}
+      </div>
+    </ng-container>
+
+    <ng-template #editarOuSucesso>
+      <button class="modal-close" (click)="close()">✖</button>
+      <h2 class="titulo-pagina">✏️ Editando Atividade (ID: {{idAtividade}})</h2>
+
+      <form *ngIf="atividadeCarregada && !resultado" (ngSubmit)="editarAtividade()" #atividadeForm="ngForm" autocomplete="off">
+        <div class="evento-form-row" style="flex-direction: column; gap: 16px;">
+
+          <div class="form-group">
+            <label for="titulo">Título da Atividade</label>
+            <input id="titulo" type="text" [(ngModel)]="atividade.titulo" name="titulo" placeholder="Digite o título" required class="evento-input"/>
+          </div>
+
+          <div style="display: flex; gap: 16px;">
+            <div class="form-group" style="flex: 1;">
+              <label for="id_evento">ID do Evento</label>
+              <input id="id_evento" type="number" [(ngModel)]="atividade.id_evento" name="id_evento" placeholder="ID do Evento" required class="evento-input"/>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="id_tipoAtividade">ID Tipo de Atividade</label>
+              <input id="id_tipoAtividade" type="number" [(ngModel)]="atividade.id_tipoAtividade" name="id_tipoAtividade" placeholder="ID do Tipo" required class="evento-input"/>
+            </div>
+          </div>
+
+           <div style="display: flex; gap: 16px;">
+            <div class="form-group" style="flex: 1;">
+              <label for="limite_vagas">Limite de Vagas (opcional)</label>
+              <input id="limite_vagas" type="number" [(ngModel)]="atividade.limite_vagas" name="limite_vagas" placeholder="Nº de vagas" class="evento-input"/>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="carga_horaria">Carga Horária (h) (opcional)</label>
+              <input id="carga_horaria" type="number" [(ngModel)]="atividade.carga_horaria" name="carga_horaria" placeholder="Carga em horas" class="evento-input"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="link_transmissao_atividade">Link da Transmissão (opcional)</label>
+            <input id="link_transmissao_atividade" type="text" [(ngModel)]="atividade.link_transmissao_atividade" name="link_transmissao_atividade" placeholder="http://..." class="evento-input"/>
+          </div>
+
+          <div class="form-group">
+            <label for="descricao">Descrição (opcional)</label>
+            <textarea id="descricao" [(ngModel)]="atividade.descricao" name="descricao" placeholder="Digite a descrição" class="evento-input" rows="3"></textarea>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="evento-btn" [disabled]="loading || atividadeForm.invalid" type="submit">
+            {{ loading ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+
+        <div *ngIf="loading" class="loading" style="justify-content:center;">
+          <span class="spinner"></span> Salvando alterações...
+        </div>
+
+        <div *ngIf="error && !loading" class="evento-erro">
+          ⚠️ {{ error }}
+        </div>
+      </form>
+
+      <div *ngIf="resultado && !loading" class="evento-criado-final" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;">
+        <div style="font-size:2.7rem; color:#16a34a; margin-bottom:10px; animation: popscale 0.18s;">
+          🎉
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:#0084ff; margin-bottom:22px; text-align:center;">
+          Atividade editada com sucesso!
+        </div>
+        <button class="evento-btn" style="margin-top:0;min-width:120px;" (click)="close()">Fechar</button>
+      </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<style>
+  @keyframes popscale {
+    from { transform: scale(0.7); opacity:0.2;}
+    to { transform: scale(1); opacity:1;}
+  }
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 20px;
+  }
+  .modal-content{
+    background: #fff;
+    border-radius: 17px;
+    max-width: 550px;
+    width: 100%;
+    padding: 24px 28px 28px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-close{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #f1f1f1;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+  }
+  .modal-close:hover {
+    background: #e0e0e0;
+    color: #111;
+  }
+  .titulo-pagina{ margin: 4px 0 20px 0; font-size: 1.6rem; font-weight: 800; color: #363e57; }
+
+  .evento-form-row{ display:flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .form-group{ display:flex; flex-direction:column; flex:1; }
+  .form-group label{ 
+    font-size: 0.95rem; 
+    margin-bottom: 6px; 
+    color: #4a5568;
+    font-weight: 600;
+  }
+  .evento-input{ 
+    width:100%; 
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #d0d7de; 
+    box-sizing:border-box; 
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .evento-input:focus {
+    border-color: #0084ff;
+    box-shadow: 0 0 0 3px #0084ff30;
+    outline: none;
+  }
+  .evento-input[rows] {
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .modal-footer{ display:flex; justify-content:flex-end; margin-top: 20px; }
+  
+  .evento-btn{ 
+    background: linear-gradient(90deg, #0084ff 65%, #42a8ff 100%);
+    color:white; 
+    border:none; 
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor:pointer; 
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition: all 0.2s;
+    box-shadow: 0 3px 15px #0084ff3b;
+  }
+  .evento-btn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 5px 20px #0084ff55;
+  }
+  .evento-btn:disabled {
+    background: #b0b0b0;
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: none;
+  }
+
+  .evento-erro{ 
+    color:#d90000;
+    margin-top: 12px; 
+    background: #ffebeb;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+  }
+  .loading{ 
+    color:#333; 
+    display:flex; 
+    gap: 8px;
+    align-items:center; 
+    justify-content: center;
+    font-size: 1.05rem;
+    margin-top: 12px;
+  }
+  .spinner{ 
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    border:3px solid #ccc;
+    border-top-color:#0084ff;
+    animation:spin 0.8s linear infinite; 
+    display:inline-block; 
+  }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+
+</style>

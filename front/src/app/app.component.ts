@@ -19,6 +19,7 @@ import { HierarquiaCategorias } from "./categoria/hierarquia-categorias/hierarqu
 import { CreateAtividade } from "./atividade/create-atividade/create-atividade";
 import { BuscarAtividade } from "./atividade/buscar-atividade/buscar-atividade";
 import { GetAtividade } from "./atividade/get-atividade/get-atividade";
+import { UpdateAtividade } from "./atividade/update-atividade/update-atividade";
 
 @Component({
   selector: 'app-root',
@@ -44,7 +45,8 @@ import { GetAtividade } from "./atividade/get-atividade/get-atividade";
     HierarquiaCategorias,
     CreateAtividade,
     BuscarAtividade,
-    GetAtividade
+    GetAtividade,
+    UpdateAtividade
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -69,6 +71,7 @@ export class AppComponent {
   mostrarModalCriarAtividade = false;
   mostrarModalBuscarAtividadeTitulo = false;
   mostrarModalBuscarAtividade = false;
+  mostrarModalEditarAtividade = false;
 
   constructor(public router: Router) {}
 
@@ -175,5 +178,11 @@ export class AppComponent {
   }
   fecharModalBuscarAtividade(): void {
     this.mostrarModalBuscarAtividade = false;
+  }
+  abrirModalEditarAtividade(): void {
+    this.mostrarModalEditarAtividade= true;
+  }
+  fecharModalEditarAtividade(): void {
+    this.mostrarModalEditarAtividade = false;
   }
 }
