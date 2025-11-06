@@ -288,13 +288,17 @@
           <button class="custom-btn" (click)="abrirModalBuscarAtividade()">
             <span class="label-icon">🔍</span> Buscar Atividade
           </button>
-      
-          <button class="custom-btn" (click)="abrirModalCriarAtividade()">
-            <span class="new-badge">✨</span> Criar Atividade
-          </button>
           
           <button class="custom-btn" (click)="abrirModalBuscarAtividadePorTitulo()">
             <span class="label-icon">🔍</span> Buscar Atividade por Título
+          </button>
+
+          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
+            <span class="label-icon">✨</span> Listar Atividades de um Evento
+          </button>
+
+          <button class="custom-btn" (click)="abrirModalCriarAtividade()">
+            <span class="new-badge">✨</span> Criar Atividade
           </button>
 
           <button class="custom-btn" (click)="abrirModalEditarAtividade()">
@@ -304,12 +308,6 @@
           <button class="custom-btn critical" (click)="abrirModalRemoverAtividade()">
             Remover Atividade
           </button>
-          
-          <!--
-          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
-            <span class="label-icon">✨</span> Listar Atividades de um Evento
-          </button>
-          -->
         </div>
       </section>
     </div>
@@ -356,10 +354,7 @@
   <app-get-atividade *ngIf="mostrarModalBuscarAtividade" (fechar)="fecharModalBuscarAtividade()"></app-get-atividade>
   <app-update-atividade [open]="mostrarModalEditarAtividade" (fechar)="fecharModalEditarAtividade()"></app-update-atividade>
   <app-delete-atividade *ngIf="mostrarModalRemoverAtividade" (fechar)="fecharModalRemoverAtividade()"></app-delete-atividade>
-
-  <!-- 
-    <app-atividades-por-evento *ngIf="mostrarModalListarAtividadesEvento" (fechar)="fecharModalListarAtividadesEvento()"></app-atividades-por-evento>
-  -->
+  <app-atividades-por-evento *ngIf="mostrarModalListarAtividadesEvento" (fechar)="fecharModalListarAtividadesEvento()"></app-atividades-por-evento>
 
   <router-outlet></router-outlet>
 </div>
