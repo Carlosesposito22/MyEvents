@@ -316,7 +316,7 @@
         <div class="area-title">💁 Palestrante</div>
         <div class="botoes-area">
 
-          <button class="custom-btn" (click)="abrirModalCriarPalestrante()">
+          <button class="custom-btn" (click)="abrirModalBuscarPalestrante()">
             <span class="label-icon">🔍</span> Buscar Palestrante
           </button>
           
@@ -324,16 +324,12 @@
             <span class="label-icon">🔍</span> Buscar Palestrante por Nome
           </button>
 
-          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
-            <span class="label-icon">✨</span> Listar Atividades de um Evento
+          <button class="custom-btn" (click)="abrirModalCriarPalestrante()">
+            <span class="new-badge">✨</span> Criar Palestrante
           </button>
 
-          <button class="custom-btn" (click)="abrirModalCriarAtividade()">
-            <span class="new-badge">✨</span> Criar Atividade
-          </button>
-
-          <button class="custom-btn" (click)="abrirModalEditarAtividade()">
-            <span class="label-icon">✏️</span> Editar Atividade
+          <button class="custom-btn" (click)="abrirModalEditarPalestrante()">
+            <span class="label-icon">✏️</span> Editar Palestrante
           </button>
 
           <button class="custom-btn critical" (click)="abrirModalRemoverAtividade()">
@@ -387,8 +383,10 @@
   <app-delete-atividade *ngIf="mostrarModalRemoverAtividade" (fechar)="fecharModalRemoverAtividade()"></app-delete-atividade>
   <app-atividades-por-evento *ngIf="mostrarModalListarAtividadesEvento" (fechar)="fecharModalListarAtividadesEvento()"></app-atividades-por-evento>
 
-  <app-get-palestrante *ngIf="mostrarModalCriarPalestrante" (fechar)="fecharModalCriarPalestrante()"></app-get-palestrante>
+  <app-get-palestrante *ngIf="mostrarModalBuscarPalestrante" (fechar)="fecharModalBuscarPalestrante()"></app-get-palestrante>
   <app-buscar-palestrante *ngIf="mostrarModalBuscarPalestranteNome" (fechar)="fecharModalBuscarPalestrantePorNome()"></app-buscar-palestrante>
+  <app-create-palestrante *ngIf="mostrarModalCriarPalestrante" (fechar)="fecharModalCriarPalestrante()"></app-create-palestrante>
+  <app-update-palestrante [open]="mostrarModalEditarPalestrante" (fechar)="fecharModalEditarPalestrante()"></app-update-palestrante>
 
   <router-outlet></router-outlet>
 </div>

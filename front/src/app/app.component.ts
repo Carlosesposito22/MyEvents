@@ -24,6 +24,8 @@ import { DeleteAtividade } from "./atividade/delete-atividade/delete-atividade";
 import { AtividadesPorEvento } from "./atividade/atividades-por-evento/atividades-por-evento";
 import { GetPalestrante } from "./palestrante/get-palestrante/get-palestrante";
 import { BuscarPalestrante } from "./palestrante/buscar-palestrante/buscar-palestrante";
+import { CreatePalestrante } from "./palestrante/create-palestrante/create-palestrante";
+import { UpdatePalestrante } from "./palestrante/update-palestrante/update-palestrante";
 
 @Component({
   selector: 'app-root',
@@ -54,7 +56,9 @@ import { BuscarPalestrante } from "./palestrante/buscar-palestrante/buscar-pales
     DeleteAtividade,
     AtividadesPorEvento,
     GetPalestrante,
-    BuscarPalestrante
+    BuscarPalestrante,
+    CreatePalestrante,
+    UpdatePalestrante
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -83,8 +87,10 @@ export class AppComponent {
   mostrarModalRemoverAtividade = false;
   mostrarModalListarAtividadesEvento = false;
 
-  mostrarModalCriarPalestrante = false;
+  mostrarModalBuscarPalestrante = false;
   mostrarModalBuscarPalestranteNome = false;
+  mostrarModalCriarPalestrante = false;
+  mostrarModalEditarPalestrante = false;
 
   constructor(public router: Router) {}
 
@@ -211,16 +217,28 @@ export class AppComponent {
     this.mostrarModalListarAtividadesEvento = false;
   }
   // Palestrante -------------------------------#
-  abrirModalCriarPalestrante(): void {
-    this.mostrarModalCriarPalestrante = true;
+  abrirModalBuscarPalestrante(): void {
+    this.mostrarModalBuscarPalestrante = true;
   }
-  fecharModalCriarPalestrante(): void {
-    this.mostrarModalCriarPalestrante = false;
+  fecharModalBuscarPalestrante(): void {
+    this.mostrarModalBuscarPalestrante = false;
   }
   abrirModalBuscarPalestrantePorNome(): void {
     this.mostrarModalBuscarPalestranteNome = true;
   }
   fecharModalBuscarPalestrantePorNome(): void {
     this.mostrarModalBuscarPalestranteNome = false;
+  }
+  abrirModalCriarPalestrante(): void {
+    this.mostrarModalCriarPalestrante = true;
+  }
+  fecharModalCriarPalestrante(): void {
+    this.mostrarModalCriarPalestrante = false;
+  }
+  abrirModalEditarPalestrante(): void {
+    this.mostrarModalEditarPalestrante = true;
+  }
+  fecharModalEditarPalestrante(): void {
+    this.mostrarModalEditarPalestrante = false;
   }
 }
