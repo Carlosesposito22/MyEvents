@@ -34,7 +34,7 @@
         
         <div class="detalhe">
           <strong>Email:</strong> 
-          <a [href]="'mailto:' + palestrante.email" *ngIf="palestrante.email">{{ palestrante.email }}</a>
+          <p *ngIf="palestrante.email">{{ palestrante.email }}</p>
           <span *ngIf="!palestrante.email">N/A</span>
         </div>
         
@@ -42,13 +42,13 @@
         
         <div class="detalhe">
           <strong>LinkedIn:</strong>
-          <a [href]="palestrante.linkedin" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.linkedin">Acessar Perfil</a>
+          <p *ngIf="palestrante.linkedin">{{ palestrante.linkedin }}</p>
           <span *ngIf="!palestrante.linkedin">N/A</span>
         </div>
         
         <div class="detalhe">
           <strong>Lattes:</strong>
-          <a [href]="palestrante.lattes" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.lattes">Acessar Currículo</a>
+          <p *ngIf="palestrante.lattes">{{ palestrante.lattes }}</p>
           <span *ngIf="!palestrante.lattes">N/A</span>
         </div>
         

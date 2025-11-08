@@ -33,15 +33,15 @@
         <div class="evento-detalhes">
             <div class="detalhe"><strong>ID:</strong> {{ palestrante.id_palestrante }}</div>
             <div class="detalhe"><strong>Email:</strong> {{ palestrante.email || 'N/A' }}</div>
-            <div class="detalhe"><strong>Bio:</strong> {{ palestrante.biografia | slice:0:100 }}{{ palestrante.biografia?.length > 100 ? '...' : '' }}</div>
+            <div class="detalhe"><strong>Bio:</strong> {{ palestrante.biografia}}</div>
             <div class="detalhe">
               <strong>LinkedIn:</strong>
-              <a [href]="palestrante.linkedin" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.linkedin">Acessar</a>
+              <a [href]="palestrante.linkedin" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.linkedin"> {{ palestrante.linkedin }}</a>
               <span *ngIf="!palestrante.linkedin">N/A</span>
             </div>
             <div class="detalhe">
               <strong>Lattes:</strong>
-              <a [href]="palestrante.lattes" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.lattes">Acessar</a>
+              <a [href]="palestrante.lattes" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.lattes"> {{ palestrante.lattes }}</a>
               <span *ngIf="!palestrante.lattes">N/A</span>
             </div>
         </div>
