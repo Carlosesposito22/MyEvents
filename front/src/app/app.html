@@ -332,8 +332,8 @@
             <span class="label-icon">✏️</span> Editar Palestrante
           </button>
 
-          <button class="custom-btn critical" (click)="abrirModalRemoverAtividade()">
-            Remover Atividade
+          <button class="custom-btn critical" (click)="abrirModalRemoverPalestrante()">
+            Remover Palestrante
           </button>
         </div>
       </section>
@@ -387,6 +387,7 @@
   <app-buscar-palestrante *ngIf="mostrarModalBuscarPalestranteNome" (fechar)="fecharModalBuscarPalestrantePorNome()"></app-buscar-palestrante>
   <app-create-palestrante *ngIf="mostrarModalCriarPalestrante" (fechar)="fecharModalCriarPalestrante()"></app-create-palestrante>
   <app-update-palestrante [open]="mostrarModalEditarPalestrante" (fechar)="fecharModalEditarPalestrante()"></app-update-palestrante>
+  <app-delete-palestrante *ngIf="mostrarModalRemoverPalestrante" (fechar)="fecharModalRemoverPalestrante()"></app-delete-palestrante>
 
   <router-outlet></router-outlet>
 </div>

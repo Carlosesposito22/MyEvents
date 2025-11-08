@@ -26,6 +26,7 @@ import { GetPalestrante } from "./palestrante/get-palestrante/get-palestrante";
 import { BuscarPalestrante } from "./palestrante/buscar-palestrante/buscar-palestrante";
 import { CreatePalestrante } from "./palestrante/create-palestrante/create-palestrante";
 import { UpdatePalestrante } from "./palestrante/update-palestrante/update-palestrante";
+import { DeletePalestrante } from "./palestrante/delete-palestrante/delete-palestrante";
 
 @Component({
   selector: 'app-root',
@@ -58,7 +59,8 @@ import { UpdatePalestrante } from "./palestrante/update-palestrante/update-pales
     GetPalestrante,
     BuscarPalestrante,
     CreatePalestrante,
-    UpdatePalestrante
+    UpdatePalestrante,
+    DeletePalestrante
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -91,6 +93,7 @@ export class AppComponent {
   mostrarModalBuscarPalestranteNome = false;
   mostrarModalCriarPalestrante = false;
   mostrarModalEditarPalestrante = false;
+  mostrarModalRemoverPalestrante = false;
 
   constructor(public router: Router) {}
 
@@ -240,5 +243,11 @@ export class AppComponent {
   }
   fecharModalEditarPalestrante(): void {
     this.mostrarModalEditarPalestrante = false;
+  }
+  abrirModalRemoverPalestrante(): void {
+    this.mostrarModalRemoverPalestrante = true;
+  }
+  fecharModalRemoverPalestrante(): void {
+    this.mostrarModalRemoverPalestrante = false;
   }
 }
