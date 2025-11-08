@@ -310,6 +310,37 @@
           </button>
         </div>
       </section>
+      <div class="divider-v"><span></span></div>
+      <!-- Área de Palestrante -->
+      <section class="card-area">
+        <div class="area-title">💁 Palestrante</div>
+        <div class="botoes-area">
+
+          <button class="custom-btn" (click)="abrirModalCriarPalestrante()">
+            <span class="label-icon">🔍</span> Buscar Palestrante
+          </button>
+          
+          <button class="custom-btn" (click)="abrirModalBuscarPalestrantePorNome()">
+            <span class="label-icon">🔍</span> Buscar Palestrante por Nome
+          </button>
+
+          <button class="custom-btn" (click)="abrirModalListarAtividadesEvento()">
+            <span class="label-icon">✨</span> Listar Atividades de um Evento
+          </button>
+
+          <button class="custom-btn" (click)="abrirModalCriarAtividade()">
+            <span class="new-badge">✨</span> Criar Atividade
+          </button>
+
+          <button class="custom-btn" (click)="abrirModalEditarAtividade()">
+            <span class="label-icon">✏️</span> Editar Atividade
+          </button>
+
+          <button class="custom-btn critical" (click)="abrirModalRemoverAtividade()">
+            Remover Atividade
+          </button>
+        </div>
+      </section>
     </div>
     <!-- Card de Gráficos ABAIXO -->
     <section class="graficos-area">
@@ -355,6 +386,9 @@
   <app-update-atividade [open]="mostrarModalEditarAtividade" (fechar)="fecharModalEditarAtividade()"></app-update-atividade>
   <app-delete-atividade *ngIf="mostrarModalRemoverAtividade" (fechar)="fecharModalRemoverAtividade()"></app-delete-atividade>
   <app-atividades-por-evento *ngIf="mostrarModalListarAtividadesEvento" (fechar)="fecharModalListarAtividadesEvento()"></app-atividades-por-evento>
+
+  <app-get-palestrante *ngIf="mostrarModalCriarPalestrante" (fechar)="fecharModalCriarPalestrante()"></app-get-palestrante>
+  <app-buscar-palestrante *ngIf="mostrarModalBuscarPalestranteNome" (fechar)="fecharModalBuscarPalestrantePorNome()"></app-buscar-palestrante>
 
   <router-outlet></router-outlet>
 </div>

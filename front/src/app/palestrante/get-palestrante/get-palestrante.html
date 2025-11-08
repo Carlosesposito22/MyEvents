@@ -1,0 +1,201 @@
+<div class="modal-overlay" (click)="fechar.emit()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="fechar.emit()">✖</button>
+    <h2 class="titulo-pagina">🔍 Buscar Palestrante por ID</h2>
+
+    <div class="evento-form-row">
+      <input
+        type="number"
+        [(ngModel)]="palestranteId"
+        placeholder="Digite o ID do palestrante..."
+        [disabled]="loading"
+        class="evento-input flex-grow"
+      />
+      <button (click)="buscarPalestrante()" [disabled]="loading" class="evento-btn">
+        {{ loading ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <span class="spinner"></span> Carregando palestrante...
+    </div>
+
+    <div *ngIf="error && !loading" class="evento-erro">
+      ⚠️ {{ error }}
+    </div>
+
+    <div *ngIf="palestrante && !loading" class="evento-card">
+      <h3 class="evento-titulo">👤 {{ palestrante.nome }}</h3>
+
+      <div class="evento-detalhes">
+        
+        <div class="detalhe"><strong>ID:</strong> {{ palestrante.id_palestrante }}</div>
+        
+        <div class="detalhe">
+          <strong>Email:</strong> 
+          <a [href]="'mailto:' + palestrante.email" *ngIf="palestrante.email">{{ palestrante.email }}</a>
+          <span *ngIf="!palestrante.email">N/A</span>
+        </div>
+        
+        <div class="detalhe"><strong>Biografia:</strong> {{ palestrante.biografia || 'N/A' }}</div>
+        
+        <div class="detalhe">
+          <strong>LinkedIn:</strong>
+          <a [href]="palestrante.linkedin" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.linkedin">Acessar Perfil</a>
+          <span *ngIf="!palestrante.linkedin">N/A</span>
+        </div>
+        
+        <div class="detalhe">
+          <strong>Lattes:</strong>
+          <a [href]="palestrante.lattes" target="_blank" rel="noopener noreferrer" *ngIf="palestrante.lattes">Acessar Currículo</a>
+          <span *ngIf="!palestrante.lattes">N/A</span>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+ .modal-overlay{
+   position: fixed;
+   inset: 0;
+   background: rgba(0,0,0,0.45);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   z-index: 99999;
+   padding: 20px;
+ }
+ .modal-content{
+   background: #fff;
+   border-radius: 17px;
+   max-width: 600px; 
+   width: 100%;
+   padding: 24px 28px 28px;
+   box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+   position: relative;
+ }
+ .modal-close{
+   position: absolute;
+   top: 14px;
+   right: 14px;
+   background: #f1f1f1;
+   border: none;
+   font-size: 1rem;
+   cursor: pointer;
+   width: 26px;
+   height: 26px;
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: #555;
+ }
+ .modal-close:hover { background: #e0e0e0; color: #111; }
+ .titulo-pagina{ margin: 4px 0 20px 0; font-size: 1.6rem; font-weight: 800; color: #363e57; }
+
+ .evento-form-row{ 
+   display:flex; 
+   flex-direction: row; 
+   gap: 10px; 
+   margin-bottom: 16px; 
+   align-items: center;
+ }
+ .evento-input{
+   width:100%;
+   padding: 10px 14px;
+   border-radius: 10px;
+   border: 1px solid #d0d7de;
+   box-sizing:border-box;
+   font-size: 1rem;
+   flex-grow: 1;
+ }
+ .evento-btn{
+   background: linear-gradient(90deg, #0084ff 65%, #42a8ff 100%);
+   color:white;
+   border:none;
+   padding: 10px 18px;
+   border-radius: 10px;
+   cursor:pointer;
+   font-weight: 700;
+   font-size: 1rem;
+   transition: all 0.2s;
+   height: 42px;
+ }
+ .evento-btn:disabled { background: #b0b0b0; cursor: not-allowed; }
+
+ .evento-erro{
+   color:#d90000;
+   margin-top: 12px;
+   background: #ffebeb;
+   padding: 10px 14px;
+   border-radius: 8px;
+   font-weight: 500;
+   text-align: center;
+ }
+ .loading{
+   color:#333;
+   display:flex;
+   gap: 8px;
+   align-items:center;
+   justify-content: center;
+   font-size: 1.05rem;
+   margin-top: 12px;
+ }
+ .spinner{
+   width:16px;
+   height:16px;
+   border-radius:50%;
+   border:3px solid #ccc;
+   border-top-color:#0084ff;
+   animation:spin 0.8s linear infinite;
+   display:inline-block;
+ }
+ @keyframes spin{ to{ transform:rotate(360deg) } }
+ 
+ .evento-card {
+   background: #fafafa;
+   border: 1px solid #eee;
+   border-radius: 10px;
+   padding: 16px;
+   margin-top: 16px;
+ }
+ .evento-titulo {
+   font-size: 1.25rem;
+   font-weight: 700;
+   color: #0084ff;
+   margin: 0 0 12px 0;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+ }
+ .evento-detalhes {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+ }
+ .detalhe {
+   font-size: 0.95rem;
+   color: #333;
+   display: flex;
+   align-items: baseline;
+   line-height: 1.4;
+ }
+ .detalhe strong {
+   color: #111;
+   font-weight: 600;
+   min-width: 80px; 
+   display: inline-block;
+   margin-right: 5px;
+ }
+ .detalhe a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+ }
+ .detalhe a:hover {
+    text-decoration: underline;
+ }
+</style>

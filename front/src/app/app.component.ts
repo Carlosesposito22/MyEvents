@@ -22,6 +22,8 @@ import { GetAtividade } from "./atividade/get-atividade/get-atividade";
 import { UpdateAtividade } from "./atividade/update-atividade/update-atividade";
 import { DeleteAtividade } from "./atividade/delete-atividade/delete-atividade";
 import { AtividadesPorEvento } from "./atividade/atividades-por-evento/atividades-por-evento";
+import { GetPalestrante } from "./palestrante/get-palestrante/get-palestrante";
+import { BuscarPalestrante } from "./palestrante/buscar-palestrante/buscar-palestrante";
 
 @Component({
   selector: 'app-root',
@@ -50,7 +52,9 @@ import { AtividadesPorEvento } from "./atividade/atividades-por-evento/atividade
     GetAtividade,
     UpdateAtividade,
     DeleteAtividade,
-    AtividadesPorEvento
+    AtividadesPorEvento,
+    GetPalestrante,
+    BuscarPalestrante
 ],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
@@ -78,6 +82,9 @@ export class AppComponent {
   mostrarModalEditarAtividade = false;
   mostrarModalRemoverAtividade = false;
   mostrarModalListarAtividadesEvento = false;
+
+  mostrarModalCriarPalestrante = false;
+  mostrarModalBuscarPalestranteNome = false;
 
   constructor(public router: Router) {}
 
@@ -202,5 +209,18 @@ export class AppComponent {
   }
   fecharModalListarAtividadesEvento(): void {
     this.mostrarModalListarAtividadesEvento = false;
+  }
+  // Palestrante -------------------------------#
+  abrirModalCriarPalestrante(): void {
+    this.mostrarModalCriarPalestrante = true;
+  }
+  fecharModalCriarPalestrante(): void {
+    this.mostrarModalCriarPalestrante = false;
+  }
+  abrirModalBuscarPalestrantePorNome(): void {
+    this.mostrarModalBuscarPalestranteNome = true;
+  }
+  fecharModalBuscarPalestrantePorNome(): void {
+    this.mostrarModalBuscarPalestranteNome = false;
   }
 }
