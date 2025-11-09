@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LocaisNaoUtilizados } from "../locais-nao-utilizados/locais-nao-utilizados";
 import { PalestrantesEspecialidades } from "../palestrantes-especialidades/palestrantes-especialidades";
+import { EventosAcimaMedia } from "../eventos-acima-media/eventos-acima-media";
 
 @Component({
   selector: 'app-index-consulta',
@@ -10,7 +11,8 @@ import { PalestrantesEspecialidades } from "../palestrantes-especialidades/pales
   imports: [
     CommonModule,
     LocaisNaoUtilizados,
-    PalestrantesEspecialidades
+    PalestrantesEspecialidades,
+    EventosAcimaMedia
 ],
   templateUrl: './index-consultas.html',
   styleUrls: ['./index-consultas.css'] 

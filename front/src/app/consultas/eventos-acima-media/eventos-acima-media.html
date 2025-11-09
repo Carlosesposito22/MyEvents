@@ -1,0 +1,117 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()" style="max-width: 800px;">
+
+    <button class="modal-close" (click)="close()">✖</button>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2 class="titulo-pagina">📈 Eventos Acima da Média</h2>
+    </div>
+
+    <div *ngIf="loading" class="loading" style="min-height: 400px; justify-content: center;">
+      <span class="spinner"></span> Carregando dados e gráfico...
+    </div>
+
+    <div *ngIf="error && !loading" class="evento-erro" style="min-height: 400px; text-align: center;">
+      ⚠️ {{ error }}
+    </div>
+    
+    <div *ngIf="!loading && !error && eventos.length === 0" class="evento-vazio" style="min-height: 400px;">
+      <span style="font-size: 1.5rem;">📊</span>
+      <strong>Nenhum evento acima da média.</strong>
+      <p>Todos os eventos estão dentro ou abaixo da média de participantes.</p>
+    </div>
+
+    <div *ngIf="!loading && !error && eventos.length > 0" class="grafico-container">
+      
+      <div #chartContainer class="chart-div"></div>
+
+      <h3 class="subtitulo-tabela">Dados Brutos</h3>
+      
+      <div class="table-container-modal">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título do Evento</th>
+              <th>Participantes Reais</th>
+              <th>Expectativa</th>
+              <th>Diferença</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let evento of eventos">
+              <td>{{ evento.id_evento }}</td>
+              <td>{{ evento.titulo }}</td>
+              <td>{{ evento.numero_participantes }}</td>
+              <td>{{ evento.expectativa_participantes }}</td>
+              
+              <td [style.color]="(evento.numero_participantes - evento.expectativa_participantes) >= 0 ? 'green' : 'red'">
+                <strong>
+                  {{ (evento.numero_participantes - evento.expectativa_participantes) > 0 ? '+' : '' }}
+                  {{ evento.numero_participantes - evento.expectativa_participantes }}
+                </strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .grafico-container {
+    width: 100%;
+    margin-top: 15px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  /* Container do Gráfico */
+  .chart-div {
+    width: 100%;
+    min-height: 400px; /* Altura mínima para o gráfico respirar */
+    margin-bottom: 25px;
+  }
+
+  .subtitulo-tabela {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f0;
+    margin: 20px 0 15px 0;
+  }
+
+  /* Estilos da tabela (reutilizados) */
+  .table-container-modal {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .table-container-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .table-container-modal th,
+  .table-container-modal td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  .table-container-modal th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+  }
+  .table-container-modal tr:last-child td {
+    border-bottom: none;
+  }
+  /* Alinhar texto da primeira coluna (título) */
+  .table-container-modal td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
+  }
+</style>
