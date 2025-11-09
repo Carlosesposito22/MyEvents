@@ -1,4 +1,4 @@
-<div *ngIf="router.url !== '/graficos'; else onlyGraficos" class="dashboard-container">
+<div *ngIf="!router.url.startsWith('/graficos') && !router.url.startsWith('/consultas'); else onlyDashboard" class="dashboard-container">
 
   <br/>
   <br/>
@@ -120,6 +120,14 @@
       <span class="grafico-link">Acessar Gráficos ➔</span>
     </section>
 
+    <section class="dash-card dash-card-graficos" style="background: linear-gradient(100deg, #226d44d8 0%, #226d44 100%);" [routerLink]="['/consultas']">
+      <div>
+        <h3>💾 Consultas & Views</h3>
+        <p>Execute consultas complexas e acesse views do banco.</p>
+      </div>
+      <span class="grafico-link">Acessar Consultas ➔</span>
+    </section>
+
   </main>
 
   <app-evento *ngIf="mostrarModal" (fechar)="fecharModal()"></app-evento>
@@ -151,10 +159,9 @@
   <app-update-palestrante [open]="mostrarModalEditarPalestrante" (fechar)="fecharModalEditarPalestrante()"></app-update-palestrante>
   <app-delete-palestrante *ngIf="mostrarModalRemoverPalestrante" (fechar)="fecharModalRemoverPalestrante()"></app-delete-palestrante>
 
-  <router-outlet></router-outlet>
 </div>
 
-<ng-template #onlyGraficos>
+<ng-template #onlyDashboard>
   <router-outlet></router-outlet>
 </ng-template>
 

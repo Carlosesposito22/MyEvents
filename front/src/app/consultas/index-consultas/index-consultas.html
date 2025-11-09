@@ -1,0 +1,35 @@
+<div class="voltar-topo" (click)="voltarHome()" title="Voltar para a Página Inicial">
+    <span class="seta-voltar">&#8592;</span>
+    Voltar
+</div>
+
+<style>
+  .voltar-topo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #1661c7;
+    background: #eaf2ff;
+    border-radius: 900px;
+    padding: 8px 20px 8px 15px;
+    width: fit-content;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.22s;
+    box-shadow: 0 1.5px 8px #aad7f334;
+    border: 1.5px solid #d4e5fd;
+    user-select: none;
+    position: absolute;  /* Novo: botão absoluto no container!!! */
+    left: 0;
+    top: 0;
+    margin-top: 0px;
+    margin-left: 0px;
+    z-index: 20;
+  }
+  .voltar-topo:hover {
+    background: #dcecff;
+    color: #003979;
+    box-shadow: 0 4px 15px #a9cafd38;
+  }
+</style>
