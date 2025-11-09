@@ -5,6 +5,7 @@ import { LocaisNaoUtilizados } from "../locais-nao-utilizados/locais-nao-utiliza
 import { PalestrantesEspecialidades } from "../palestrantes-especialidades/palestrantes-especialidades";
 import { EventosAcimaMedia } from "../eventos-acima-media/eventos-acima-media";
 import { AtividadesFiltradas } from "../atividades-filtradas/atividades-filtradas";
+import { ViewDetalhesEventos } from "../view-detalhes-eventos/view-detalhes-eventos";
 
 @Component({
   selector: 'app-index-consulta',
@@ -14,7 +15,8 @@ import { AtividadesFiltradas } from "../atividades-filtradas/atividades-filtrada
     LocaisNaoUtilizados,
     PalestrantesEspecialidades,
     EventosAcimaMedia,
-    AtividadesFiltradas
+    AtividadesFiltradas,
+    ViewDetalhesEventos
 ],
   templateUrl: './index-consultas.html',
   styleUrls: ['./index-consultas.css'] 
