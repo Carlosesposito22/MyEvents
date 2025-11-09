@@ -42,7 +42,7 @@
                 </button>
 
                 <button class="dash-btn" (click)="abrirModalViewGradeAtividades()">
-                    <span class="label-icon">🗓️</span> Grade de Atividades (Geral)
+                    <span class="label-icon">🗓️</span> Grade de Atividades
                 </button>
 
             </div>
@@ -55,5 +55,6 @@
     <app-eventos-acima-media [open]="mostrarModalEventosAcimaMedia" (fechar)="fecharModalEventosAcimaMedia()"></app-eventos-acima-media>
     <app-atividades-filtradas [open]="mostrarModalAtividadesFiltradas"(fechar)="fecharModalAtividadesFiltradas()"></app-atividades-filtradas>
     <app-view-detalhes-eventos [open]="mostrarModalViewDetalhesEventos" (fechar)="fecharModalViewDetalhesEventos()"></app-view-detalhes-eventos>
+    <app-view-grade-atividades [open]="mostrarModalViewGradeAtividades" (fechar)="fecharModalViewGradeAtividades()"></app-view-grade-atividades>
 
 </div>

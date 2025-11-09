@@ -6,6 +6,7 @@ import { PalestrantesEspecialidades } from "../palestrantes-especialidades/pales
 import { EventosAcimaMedia } from "../eventos-acima-media/eventos-acima-media";
 import { AtividadesFiltradas } from "../atividades-filtradas/atividades-filtradas";
 import { ViewDetalhesEventos } from "../view-detalhes-eventos/view-detalhes-eventos";
+import { ViewGradeAtividades } from "../view-grade-atividades/view-grade-atividades";
 
 @Component({
   selector: 'app-index-consulta',
@@ -16,7 +17,8 @@ import { ViewDetalhesEventos } from "../view-detalhes-eventos/view-detalhes-even
     PalestrantesEspecialidades,
     EventosAcimaMedia,
     AtividadesFiltradas,
-    ViewDetalhesEventos
+    ViewDetalhesEventos,
+    ViewGradeAtividades
 ],
   templateUrl: './index-consultas.html',
   styleUrls: ['./index-consultas.css'] 
