@@ -1,0 +1,146 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+
+    <button class="modal-close" (click)="close()">✖</button>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2 class="titulo-pagina">🧑‍🏫 Palestrantes e Especialidades</h2>
+    </div>
+
+    <div *ngIf="loading" class="loading" style="min-height: 250px; justify-content: center;">
+      <span class="spinner"></span> Carregando dados...
+    </div>
+
+    <div *ngIf="error && !loading" class="evento-erro" style="min-height: 250px; text-align: center;">
+      ⚠️ {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error && isEmpty()" class="evento-vazio" style="min-height: 250px;">
+      <span style="font-size: 1.5rem;">🤷</span>
+      <strong>Nenhum palestrante ou especialidade encontrado.</strong>
+    </div>
+
+    <div *ngIf="!loading && !error && !isEmpty()" class="resultado-container">
+
+      <div class="grupo-resultado" *ngIf="combinados.length > 0">
+        <h3 class="grupo-titulo com-borda">
+          <span class="icone-titulo">✅</span> Associações Ativas
+        </h3>
+        <div class="table-container-associacoes">
+          <table>
+            <thead>
+              <tr>
+                <th>Palestrante</th>
+                <th>Especialidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of combinados">
+                <td>{{ item.palestrante }}</td>
+                <td>{{ item.especialidade }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grupo-resultado" *ngIf="palestrantesOciosos.length > 0">
+        <h3 class="grupo-titulo">
+          <span class="icone-titulo">🧑‍🏫</span> Palestrantes Sem Especialidade
+        </h3>
+        <ul class="lista-simples">
+          <li *ngFor="let nome of palestrantesOciosos">{{ nome }}</li>
+        </ul>
+      </div>
+
+      <div class="grupo-resultado" *ngIf="especialidadesOciosas.length > 0">
+        <h3 class="grupo-titulo">
+          <span class="icone-titulo">🏷️</span> Especialidades Sem Palestrante
+        </h3>
+        <ul class="lista-simples">
+          <li *ngFor="let nome of especialidadesOciosas">{{ nome }}</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .resultado-container {
+    margin-top: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .grupo-resultado {
+    margin-bottom: 25px;
+  }
+  .grupo-resultado:last-child {
+    margin-bottom: 5px;
+  }
+
+  .grupo-titulo {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .grupo-titulo.com-borda {
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
+  .icone-titulo {
+    font-size: 1.3rem;
+  }
+
+  .lista-simples {
+    list-style-type: none;
+    padding-left: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 15px;
+  }
+  .lista-simples li {
+    background-color: #f4f7fa;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .table-container-associacoes {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden; 
+  }
+  .table-container-associacoes table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .table-container-associacoes th,
+  .table-container-associacoes td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.95rem;
+  }
+  .table-container-associacoes th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+  }
+  .table-container-associacoes tr:last-child td {
+    border-bottom: none;
+  }
+  .table-container-associacoes td:first-child {
+    font-weight: 500;
+    color: #007acc;
+  }
+</style>

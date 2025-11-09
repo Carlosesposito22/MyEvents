@@ -2,14 +2,16 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LocaisNaoUtilizados } from "../locais-nao-utilizados/locais-nao-utilizados";
+import { PalestrantesEspecialidades } from "../palestrantes-especialidades/palestrantes-especialidades";
 
 @Component({
   selector: 'app-index-consulta',
   standalone: true,
   imports: [
     CommonModule,
-    LocaisNaoUtilizados
-  ],
+    LocaisNaoUtilizados,
+    PalestrantesEspecialidades
+],
   templateUrl: './index-consultas.html',
   styleUrls: ['./index-consultas.css'] 
 })
