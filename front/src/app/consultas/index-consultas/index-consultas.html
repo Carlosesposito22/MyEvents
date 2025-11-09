@@ -1,35 +1,55 @@
-<div class="voltar-topo" (click)="voltarHome()" title="Voltar para a Página Inicial">
-    <span class="seta-voltar">&#8592;</span>
-    Voltar
-</div>
+<div class="dashboard-container">
 
-<style>
-  .voltar-topo {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #1661c7;
-    background: #eaf2ff;
-    border-radius: 900px;
-    padding: 8px 20px 8px 15px;
-    width: fit-content;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s, box-shadow 0.22s;
-    box-shadow: 0 1.5px 8px #aad7f334;
-    border: 1.5px solid #d4e5fd;
-    user-select: none;
-    position: absolute;  /* Novo: botão absoluto no container!!! */
-    left: 0;
-    top: 0;
-    margin-top: 0px;
-    margin-left: 0px;
-    z-index: 20;
-  }
-  .voltar-topo:hover {
-    background: #dcecff;
-    color: #003979;
-    box-shadow: 0 4px 15px #a9cafd38;
-  }
-</style>
+    <div class="voltar-topo" (click)="voltarHome()">
+        <span class="seta-voltar">← Voltar para o Dashboard</span>
+    </div>
+
+    <main class="dash-grid">
+
+        <section class="dash-card">
+            <div class="dash-card-header">
+                <h3>💾 Consultas Avançadas</h3>
+            </div>
+            <div class="dash-card-body">
+
+                <button class="dash-btn" (click)="abrirModalLocaisNaoUtilizados()">
+                    <span class="label-icon">🏢</span> Ver Locais Não Utilizados
+                </button>
+
+                <button class="dash-btn" (click)="abrirModalPalestrantesEspecialidades()">
+                    <span class="label-icon">🧑‍🏫</span> Palestrantes e Especialidades
+                </button>
+
+                <button class="dash-btn" (click)="abrirModalEventosAcimaMedia()">
+                    <span class="label-icon">📈</span> Eventos Acima da Média
+                </button>
+
+                <button class="dash-btn" (click)="abrirModalAtividadesFiltradas()">
+                    <span class="label-icon">🔍</span> Atividades por Categoria e Data
+                </button>
+
+            </div>
+        </section>
+
+        <section class="dash-card">
+            <div class="dash-card-header">
+                <h3>📄 Views do Banco de Dados</h3>
+            </div>
+            <div class="dash-card-body">
+
+                <button class="dash-btn" (click)="abrirModalViewDetalhesEventos()">
+                    <span class="label-icon">ℹ️</span> Detalhes Completos dos Eventos
+                </button>
+
+                <button class="dash-btn" (click)="abrirModalViewGradeAtividades()">
+                    <span class="label-icon">🗓️</span> Grade de Atividades (Geral)
+                </button>
+
+            </div>
+        </section>
+
+    </main>
+
+    <app-locais-nao-utilizados [open]="mostrarModalLocaisNaoUtilizados" (fechar)="fecharModalLocaisNaoUtilizados()"></app-locais-nao-utilizados>
+
+</div>
