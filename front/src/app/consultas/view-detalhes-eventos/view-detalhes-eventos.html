@@ -18,6 +18,11 @@
               (click)="setModo('busca')">
         Buscar por ID
       </button>
+      <button class="tab-btn" 
+              [class.active]="modo === 'grafico'" 
+              (click)="setModo('grafico')">
+        📊 Gráfico
+      </button>
     </div>
 
     <div *ngIf="modo === 'lista'" class="tab-content">
@@ -85,69 +90,46 @@
             {{ eventoEncontrado.titulo }}
             <span>(ID: {{ eventoEncontrado.id_evento }})</span>
           </h3>
-          
           <div class="detalhes-grid" style="border-bottom: 1px dashed #ccc; padding-bottom: 18px;">
-            <div>
-              <label>Categoria</label>
-              <strong>{{ eventoEncontrado.nomeCategoria || 'N/A' }}</strong>
-            </div>
-            <div>
-              <label>Data Início</label>
-              <strong>{{ eventoEncontrado.data_inicio | date:'dd/MM/yyyy' }}</strong>
-            </div>
-            <div>
-              <label>Data Fim</label>
-              <strong>{{ eventoEncontrado.data_fim | date:'dd/MM/yyyy' }}</strong>
-            </div>
-            <div>
-              <label>Carga Horária</label>
-              <strong>{{ eventoEncontrado.carga_horaria }}h</strong>
-            </div>
+            <div><label>Categoria</label><strong>{{ eventoEncontrado.nomeCategoria || 'N/A' }}</strong></div>
+            <div><label>Data Início</label><strong>{{ eventoEncontrado.data_inicio | date:'dd/MM/yyyy' }}</strong></div>
+            <div><label>Data Fim</label><strong>{{ eventoEncontrado.data_fim | date:'dd/MM/yyyy' }}</strong></div>
+            <div><label>Carga Horária</label><strong>{{ eventoEncontrado.carga_horaria }}h</strong></div>
           </div>
-
           <div class="detalhes-grid" style="border-bottom: 1px dashed #ccc; padding-bottom: 18px; margin-top: 18px;">
-            <div>
-              <label>Nº Participantes</label>
-              <strong>{{ eventoEncontrado.numero_participantes }}</strong>
-            </div>
-            <div>
-              <label>Limite Participantes</label>
-              <strong>{{ eventoEncontrado.limite_participantes }}</strong>
-            </div>
-            <div>
-              <label>Nº Atividades</label>
-              <strong>{{ eventoEncontrado.qtd_atividades }}</strong>
-            </div>
-            <div>
-              <label>Nº Palestrantes</label>
-              <strong>{{ eventoEncontrado.qtd_palestrantes }}</strong>
-            </div>
+            <div><label>Nº Participantes</label><strong>{{ eventoEncontrado.numero_participantes }}</strong></div>
+            <div><label>Limite Participantes</label><strong>{{ eventoEncontrado.limite_participantes }}</strong></div>
+            <div><label>Nº Atividades</label><strong>{{ eventoEncontrado.qtd_atividades }}</strong></div>
+            <div><label>Nº Palestrantes</label><strong>{{ eventoEncontrado.qtd_palestrantes }}</strong></div>
           </div>
-
           <div *ngIf="eventoEncontrado.nomeLocal" class="detalhes-grid" style="border-bottom: 1px dashed #ccc; padding-bottom: 18px; margin-top: 18px;">
-            <div>
-              <label>Local</label>
-              <strong>{{ eventoEncontrado.nomeLocal }}</strong>
-            </div>
-            <div style="grid-column: span 3;">
-              <label>Endereço</label>
-              <strong>
-                {{ eventoEncontrado.rua || 'N/A' }}, {{ eventoEncontrado.numeroLocal || 'S/N' }} - {{ eventoEncontrado.cidade || 'N/A' }}, {{ eventoEncontrado.estado || 'N/A' }}
-              </strong>
-            </div>
+            <div><label>Local</label><strong>{{ eventoEncontrado.nomeLocal }}</strong></div>
+            <div style="grid-column: span 3;"><label>Endereço</label><strong>{{ eventoEncontrado.rua || 'N/A' }}, {{ eventoEncontrado.numeroLocal || 'S/N' }} - {{ eventoEncontrado.cidade || 'N/A' }}, {{ eventoEncontrado.estado || 'N/A' }}</strong></div>
           </div>
-
           <div *ngIf="eventoEncontrado.url_evento" class="detalhes-grid" style="margin-top: 18px;">
-            <div>
-              <label>Plataforma</label>
-              <strong>{{ eventoEncontrado.aplicativoTrasmissao }}</strong>
-            </div>
-            <div style="grid-column: span 3;">
-              <label>URL</label>
-              <strong>{{ eventoEncontrado.url_evento }}</strong>
-            </div>
+            <div><label>Plataforma</label><strong>{{ eventoEncontrado.aplicativoTrasmissao }}</strong></div>
+            <div style="grid-column: span 3;"><label>URL</label><strong>{{ eventoEncontrado.url_evento }}</strong></div>
           </div>
         </div>
+      </div>
+    </div>
+    
+    <div *ngIf="modo === 'grafico'" class="tab-content">
+      
+      <div *ngIf="loadingLista" class="loading" style="min-height: 400px;">
+        <span class="spinner"></span> Carregando dados do gráfico...
+      </div>
+      <div *ngIf="errorLista && !loadingLista" class="evento-erro" style="min-height: 400px;">
+        ⚠️ {{ errorLista }}
+      </div>
+      <div *ngIf="!loadingLista && !errorLista && eventos.length === 0" class="evento-vazio" style="min-height: 400px;">
+        <span style="font-size: 1.5rem;">📊</span>
+        <strong>Sem dados para o gráfico.</strong>
+        <p>A view está vazia, não é possível gerar o gráfico.</p>
+      </div>
+
+      <div *ngIf="!loadingLista && !errorLista && eventos.length > 0" class="grafico-container">
+        <div #pieChartContainer class="pie-chart-div"></div>
       </div>
     </div>
     
@@ -155,27 +137,18 @@
 </div>
 
 <style>
-  /* --- Base do Modal e Fonte --- */
   .modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 50px 20px;
-    z-index: 1000;
-    overflow-y: auto;
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 50px 20px; z-index: 1000; overflow-y: auto;
   }
   .modal-content {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px 30px;
-    width: 100%;
-    max-width: 800px; /* Definido inline */
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    position: relative;
+    background: #ffffff; border-radius: 12px;
+    padding: 24px 30px; width: 100%;
+    max-width: 800px; 
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", 
                  Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -189,250 +162,148 @@
     to { transform: scale(1) translateY(0); opacity: 1; }
   }
 
-  /* --- Cabeçalho do Modal --- */
   .modal-close {
-    position: absolute;
-    top: 15px; right: 15px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    color: #888;
-    cursor: pointer;
-    line-height: 1;
-    padding: 5px;
+    position: absolute; top: 15px; right: 15px;
+    background: transparent; border: none; font-size: 1.5rem;
+    color: #888; cursor: pointer; line-height: 1; padding: 5px;
   }
   .modal-close:hover { color: #333; }
   .titulo-pagina {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #333;
-    margin: 0 0 10px 0;
+    font-size: 1.5rem; font-weight: 700;
+    color: #333; margin: 0 0 10px 0;
   }
 
-  /* --- Sistema de Abas --- */
   .tabs-container {
-    display: flex;
-    border-bottom: 2px solid #e9ecef;
-    margin-top: 10px;
+    display: flex; border-bottom: 2px solid #e9ecef; margin-top: 10px;
   }
   .tab-btn {
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    color: #495057;
-    margin-bottom: -2px; 
+    padding: 12px 20px; font-size: 1rem; font-weight: 600;
+    border: none; background-color: transparent; cursor: pointer;
+    color: #495057; margin-bottom: -2px; 
     border-bottom: 3px solid transparent;
   }
   .tab-btn.active {
-    color: #226d44; /* COR TEMA */
-    border-bottom-color: #226d44; /* COR TEMA */
+    color: #226d44;
+    border-bottom-color: #226d44;
   }
-  .tab-btn:hover:not(.active) {
-    background-color: #f8f9fa;
-  }
-  .tab-content {
-    padding-top: 25px;
-  }
+  .tab-btn:hover:not(.active) { background-color: #f8f9fa; }
+  .tab-content { padding-top: 25px; }
 
-  /* --- Estados (Loading, Erro, Vazio) --- */
   .loading, .evento-erro, .evento-vazio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
-    border-radius: 8px;
-    background-color: #f8f9fa;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+    border-radius: 8px; background-color: #f8f9fa;
   }
-  .loading {
-    color: #333;
-    font-weight: 600;
-  }
-  .loading span, .evento-vazio span { 
-    margin-bottom: 15px; 
-  }
-  .evento-vazio strong { 
-    font-size: 1.1rem; 
-    font-weight: 600; 
-    color: #333; 
-  }
-  .evento-vazio p { 
-    margin: 8px 0 0; 
-    color: #6c757d; 
-  }
+  .loading { color: #333; font-weight: 600; }
+  .loading span, .evento-vazio span { margin-bottom: 15px; }
+  .evento-vazio strong { font-size: 1.1rem; font-weight: 600; color: #333; }
+  .evento-vazio p { margin: 8px 0 0; color: #6c757d; }
   .evento-erro {
-    background-color: #fff6f6;
-    color: #c82333;
-    border: 1px solid #f5c6cb;
-    font-weight: 600;
-    font-size: 1.1rem;
+    background-color: #fff6f6; color: #c82333;
+    border: 1px solid #f5c6cb; font-weight: 600; font-size: 1.1rem;
   }
   .spinner {
     width: 40px; height: 40px;
     border: 4px solid #f0f0f0;
-    border-top-color: #226d44; /* COR TEMA */
+    border-top-color: #226d44;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* --- Aba 1: Lista Resumida --- */
   .lista-eventos-view {
-    max-height: 50vh;
-    overflow-y: auto;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
+    max-height: 50vh; overflow-y: auto;
+    border: 1px solid #e9ecef; border-radius: 8px;
   }
   .evento-card-resumo {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: center;
+    padding: 14px 16px; border-bottom: 1px solid #f0f0f0;
   }
   .evento-card-resumo:last-child { border-bottom: none; }
   .evento-card-resumo:hover { background-color: #f8f9fa; }
   .card-resumo-id {
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #226d44; /* COR TEMA */
-    background-color: #f0f6f3; /* Fundo verde claro */
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-right: 15px;
+    font-weight: 700; font-size: 0.9rem;
+    color: #226d44;
+    background-color: #f0f6f3; 
+    padding: 6px 10px; border-radius: 6px; margin-right: 15px;
   }
-  .card-resumo-info {
-    display: flex;
-    flex-direction: column;
-  }
-  .card-resumo-info strong {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #212529;
-  }
-  .card-resumo-info span {
-    font-size: 0.9rem;
-    color: #6c757d;
-  }
+  .card-resumo-info { display: flex; flex-direction: column; }
+  .card-resumo-info strong { font-size: 1rem; font-weight: 600; color: #212529; }
+  .card-resumo-info span { font-size: 0.9rem; color: #6c757d; }
 
-  /* --- Aba 2: Formulário de Busca --- */
-  .form-filtros-busca {
-    display: flex;
-    gap: 15px;
-  }
-  .form-filtros-busca .form-grupo {
-    flex-grow: 1;
-  }
-  .form-filtros-busca .btn-buscar {
-    flex-shrink: 0;
-    align-self: flex-end; /* Alinha com o input */
-  }
+  .form-filtros-busca { display: flex; gap: 15px; }
+  .form-filtros-busca .form-grupo { flex-grow: 1; }
+  .form-filtros-busca .btn-buscar { flex-shrink: 0; align-self: flex-end; }
   
-  /* Grupo de Formulário (Reutilizado) */
-  .form-grupo {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  .form-grupo label {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #495057;
-    margin-bottom: 6px;
-  }
+  .form-grupo { display: flex; flex-direction: column; width: 100%; }
+  .form-grupo label { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
   .form-grupo input[type="number"] {
-    padding: 10px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-family: inherit;
-    min-height: 45px; /* Para alinhar com o botão */
+    padding: 10px 12px; border: 1px solid #ced4da;
+    border-radius: 6px; font-size: 1rem; font-family: inherit;
+    min-height: 45px; 
   }
   .form-grupo input[type="number"]:focus {
-    outline: none;
-    border-color: #226d44; /* COR TEMA */
+    outline: none; border-color: #226d44;
     box-shadow: 0 0 0 3px rgba(34, 109, 68, 0.1);
   }
   
-  /* Botão de Busca (Reutilizado) */
   .btn-buscar {
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: #226d44; /* COR TEMA */
-    border: 1px solid #226d44;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 45px; /* Mesma altura do input */
+    padding: 10px 20px; font-size: 1rem; font-weight: 600;
+    border-radius: 8px; cursor: pointer;
+    background-color: #226d44;
+    border: 1px solid #226d44; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 45px;
   }
   .btn-buscar:hover { background-color: #1a5233; }
   .btn-buscar:disabled { background-color: #9e9e9e; border-color: #9e9e9e; cursor: not-allowed; }
   
-  /* Spinner do Botão */
   .spinner-btn {
     width: 18px; height: 18px;
     border: 3px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
+    border-radius: 50%; border-top-color: #fff;
     animation: spin 0.8s linear infinite;
   }
 
-  /* --- Aba 2: Card de Resultado --- */
-  .area-resultado-busca {
-    margin-top: 25px;
-  }
+  .area-resultado-busca { margin-top: 25px; }
   .evento-card-detalhado {
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    background: #fafcff;
-    padding: 20px 24px;
-    border-left: 5px solid #226d44; /* COR TEMA */
+    border: 1px solid #e0e0e0; border-radius: 10px;
+    background: #fafcff; padding: 20px 24px;
+    border-left: 5px solid #226d44;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
   .evento-card-detalhado h3 {
-    margin: 0 0 20px 0;
-    font-size: 1.4rem;
-    color: #333;
+    margin: 0 0 20px 0; font-size: 1.4rem; color: #333;
   }
   .evento-card-detalhado h3 span {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #6c757d;
-    margin-left: 8px;
+    font-size: 1rem; font-weight: 500;
+    color: #6c757d; margin-left: 8px;
   }
   .detalhes-grid {
     display: grid;
-    /* Ajustado para 180px para caber melhor os 4 itens */
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
     gap: 18px;
   }
   .detalhes-grid div {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+    display: flex; flex-direction: column;
+    background-color: #fff; padding: 12px;
+    border-radius: 6px; border: 1px solid #e9ecef;
   }
   .detalhes-grid label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #6c757d;
-    margin-bottom: 4px;
+    font-size: 0.85rem; font-weight: 500;
+    color: #6c757d; margin-bottom: 4px;
   }
   .detalhes-grid strong {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #212529;
-    word-wrap: break-word; /* Para URLs longas */
+    font-size: 1rem; font-weight: 600;
+    color: #212529; word-wrap: break-word;
+  }
+
+  .grafico-container {
+    width: 100%;
+  }
+  .pie-chart-div {
+    width: 100%;
+    min-height: 450px;
+    margin-top: -20px; 
   }
 </style>
