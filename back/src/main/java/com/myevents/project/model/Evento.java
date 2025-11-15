@@ -12,7 +12,7 @@ public class Evento {
     private LocalDate data_fim;
     private Integer carga_horaria;
     private int limite_participantes;
-    private int expectiva_participantes;
+    private int expectativa_participantes;
     private int numero_participantes;
     private Integer id_categoria;
     private String email_duvidas;

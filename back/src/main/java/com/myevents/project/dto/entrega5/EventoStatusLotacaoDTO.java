@@ -1,4 +1,4 @@
-package com.myevents.project.dto.entrega4;
+package com.myevents.project.dto.entrega5;
 
 import lombok.Data;
 import java.time.LocalDate;

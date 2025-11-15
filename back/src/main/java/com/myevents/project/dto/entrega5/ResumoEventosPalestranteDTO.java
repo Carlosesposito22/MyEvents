@@ -1,14 +1,10 @@
 package com.myevents.project.dto.entrega5;
 
 import lombok.Data;
-import java.time.LocalDate;
 
 @Data
-public class EventoStatusLotacaoDTO {
-    private Integer id_evento;
-    private String nome_evento;
-    private LocalDate data_inicio;
-    private Integer limite_participantes;
-    private Integer numero_participantes;
-    private String statusEvento;
+public class ResumoEventosPalestranteDTO {
+    private Integer id_palestrante;
+    private String nome_palestrante;
+    private String resumo;
 }

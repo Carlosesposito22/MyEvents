@@ -19,7 +19,7 @@ export class AppEventoCriarComponent {
     data_fim: null as string | null,
     carga_horaria: null as number | null,
     limite_participantes: null as number | null,
-    expectiva_participantes: null as number | null,
+    expectativa_participantes: null as number | null,
     numero_participantes: null as number | null,
     id_categoria: null as number | null,
     email_duvidas: '',

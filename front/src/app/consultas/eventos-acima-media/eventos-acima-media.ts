@@ -8,7 +8,7 @@ interface EventoAcimaMediaDTO {
   id_evento: number;
   titulo: string;
   numero_participantes: number;
-  expectiva_participantes: number;
+  expectativa_participantes: number;
 }
 
 let googleChartLoader: Promise<void> | null = null;
@@ -128,7 +128,7 @@ export class EventosAcimaMedia implements OnChanges {
       dataArray.push([
         evento.titulo,
         evento.numero_participantes,
-        evento.expectiva_participantes
+        evento.expectativa_participantes
       ]);
     });
 

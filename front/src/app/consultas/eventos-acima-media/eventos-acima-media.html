@@ -42,12 +42,12 @@
               <td>{{ evento.id_evento }}</td>
               <td>{{ evento.titulo }}</td>
               <td>{{ evento.numero_participantes }}</td>
-              <td>{{ evento.expectiva_participantes }}</td>
+              <td>{{ evento.expectativa_participantes }}</td>
 
-              <td [style.color]="(evento.numero_participantes - evento.expectiva_participantes) >= 0 ? 'green' : 'red'">
+              <td [style.color]="(evento.numero_participantes - evento.expectativa_participantes) >= 0 ? 'green' : 'red'">
                 <strong>
-                  {{ (evento.numero_participantes - evento.expectiva_participantes) > 0 ? '+' : '' }}
-                  {{ evento.numero_participantes - evento.expectiva_participantes }}
+                  {{ (evento.numero_participantes - evento.expectativa_participantes) > 0 ? '+' : '' }}
+                  {{ evento.numero_participantes - evento.expectativa_participantes }}
                 </strong>
               </td>
             </tr>

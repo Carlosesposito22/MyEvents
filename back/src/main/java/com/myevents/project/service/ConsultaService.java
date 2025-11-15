@@ -1,6 +1,7 @@
 package com.myevents.project.service;
 
 import com.myevents.project.dto.entrega4.*;
+import com.myevents.project.dto.entrega5.*;
 import com.myevents.project.repository.ConsultaRepository;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +51,43 @@ public class ConsultaService {
 
     public List<ViewGradeAtividadeDTO> getGradeAtividadesByEventoId(int id_evento) {
         return consultaRepository.findGradeAtividadesByEventoId(id_evento);
+    }
+
+    public Optional<EventoStatusLotacaoDTO> getEventoStatusLotacao(int id_evento) {
+        return consultaRepository.findEventoStatusLotacaoByEventoId(id_evento);
+    }
+
+    public List<EventoStatusLotacaoDTO> getEventosLotados() {
+        return consultaRepository.findAllEventosLotados();
+    }
+
+    public List<ResumoEventosPalestranteDTO> getResumoTodosPalestrantes() {
+        return consultaRepository.findResumoEventosTodosPalestrantes();
+    }
+    public Optional<ResumoEventosPalestranteDTO> getResumoPalestrantePorFiltro(
+            int idPalestrante, Integer ano, Integer idCategoria) {
+        return consultaRepository.findResumoEventosPalestrantePorFiltro(idPalestrante, ano, idCategoria);
+    }
+    public List<RelatorioDetalhadoEventoDTO> getRelatorioDetalhadoEventos() {
+        return consultaRepository.relatorioDetalhadoEventos();
+    }
+
+    // Chama a procedure auditada
+    public void atualizarEventoAuditado(Integer idEvento, String tituloNovo, Integer limiteParticipantesNovo) {
+        consultaRepository.atualizarEventoAuditado(idEvento, tituloNovo, limiteParticipantesNovo);
+    }
+
+    // Lista TODOS os logs
+    public List<EventoAtualizacaoLogDTO> getAllEventoAtualizacaoLogs() {
+        return consultaRepository.findAllEventoAtualizacaoLogs();
+    }
+
+    // Lista logs por evento específico
+    public List<EventoAtualizacaoLogDTO> getEventoAtualizacaoLogsByEventoId(Integer idEvento) {
+        return consultaRepository.findEventoAtualizacaoLogsByEventoId(idEvento);
+    }
+
+    public List<EventoExclusaoLogDTO> getAllEventoExclusaoLogs() {
+        return consultaRepository.findAllEventoExclusaoLogs();
     }
 }

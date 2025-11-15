@@ -66,7 +66,7 @@ public class EventoRepository {
 
     public void save(EventoDTO evento) {
         String sql = "INSERT INTO Evento (titulo, data_inicio, data_fim, carga_horaria, " +
-                    "limite_participantes, expectiva_participantes, numero_participantes, " +
+                    "limite_participantes, expectativa_participantes, numero_participantes, " +
                     "id_categoria, email_duvidas, numero_membros_comissao) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,
@@ -75,7 +75,7 @@ public class EventoRepository {
                 evento.getData_fim(),
                 evento.getCarga_horaria(),
                 evento.getLimite_participantes(),
-                evento.getExpectiva_participantes(),
+                evento.getExpectativa_participantes(),
                 evento.getNumero_participantes(),
                 evento.getId_categoria(),
                 evento.getEmail_duvidas(),
@@ -85,7 +85,7 @@ public class EventoRepository {
 
     public void update(int id_evento, EventoDTO evento) {
         String sql = "UPDATE Evento SET titulo = ?, data_inicio = ?, data_fim = ?, carga_horaria = ?, " +
-                    "limite_participantes = ?, expectiva_participantes = ?, numero_participantes = ?, " +
+                    "limite_participantes = ?, expectativa_participantes = ?, numero_participantes = ?, " +
                     "id_categoria = ?, email_duvidas = ?, numero_membros_comissao = ? " +
                     "WHERE id_evento = ?";
         jdbcTemplate.update(sql,
@@ -94,7 +94,7 @@ public class EventoRepository {
                 evento.getData_fim(),
                 evento.getCarga_horaria(),
                 evento.getLimite_participantes(),
-                evento.getExpectiva_participantes(),
+                evento.getExpectativa_participantes(),
                 evento.getNumero_participantes(),
                 evento.getId_categoria(),
                 evento.getEmail_duvidas(),
@@ -118,7 +118,7 @@ public class EventoRepository {
             evento.setData_fim(rs.getDate("data_fim").toLocalDate());
             evento.setCarga_horaria(rs.getObject("carga_horaria", Integer.class));
             evento.setLimite_participantes(rs.getInt("limite_participantes"));
-            evento.setExpectiva_participantes(rs.getInt("expectativa_participantes"));
+            evento.setExpectativa_participantes(rs.getInt("expectativa_participantes"));
             evento.setNumero_participantes(rs.getInt("numero_participantes"));
             evento.setId_categoria(rs.getInt("id_categoria"));
             evento.setEmail_duvidas(rs.getString("email_duvidas"));
