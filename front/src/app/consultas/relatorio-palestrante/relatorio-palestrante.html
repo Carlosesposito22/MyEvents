@@ -1,0 +1,271 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()" style="max-width: 800px;">
+    <button class="modal-close" (click)="close()">✖</button>
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap:16px; margin-bottom: 10px;">
+      <h2 class="titulo-pagina" style="margin-bottom:0;">
+        <span style="font-size:1.4em; vertical-align:middle;">📊</span> Relatório Geral de Palestrantes
+      </h2>
+      <button
+        *ngIf="modo === 'lista' && relatorio.length > 0"
+        class="btn-baixar-csv"
+        (click)="baixarCSV()"
+        style="margin-top:0;">
+        <span style="font-size:1.2em;">⬇️</span> Baixar CSV
+      </button>
+    </div>
+    <div class="tabs-container">
+      <button class="tab-btn" [class.active]="modo==='lista'" (click)="setModo('lista')">Listar Todos</button>
+      <button class="tab-btn" [class.active]="modo==='individual'" (click)="setModo('individual')">Relatório Individual</button>
+    </div>
+    <div *ngIf="modo==='lista'" class="tab-content">
+      <div *ngIf="loading" class="loading" style="min-height: 300px;">
+        <span class="spinner"></span> Carregando relatório...
+      </div>
+      <div *ngIf="error && !loading" class="evento-erro" style="min-height: 300px;">⚠️ {{ error }}</div>
+      <div *ngIf="!loading && !error && relatorio.length === 0" class="evento-vazio" style="min-height: 300px;">
+        <span style="font-size: 1.5rem;">👤</span>
+        <strong>Nenhum palestrante encontrado no relatório.</strong>
+      </div>
+      <div *ngIf="!loading && relatorio.length > 0" class="lista-grade-view">
+        <table class="grade-tabela">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Palestrante</th>
+            <th>Resumo dos Eventos</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let p of relatorio">
+            <td>{{ p.id_palestrante }}</td>
+            <td>{{ p.nome_palestrante }}</td>
+            <td><pre style="white-space:pre-wrap; font-size:0.97em;">{{ p.resumo }}</pre></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="modo==='individual'" class="tab-content">
+      <div class="form-filtros-busca">
+        <div class="form-grupo">
+          <label for="idBusca">ID do Palestrante</label>
+          <input id="idBusca" type="number" [(ngModel)]="idBusca" (keyup.enter)="buscarIndividual()" placeholder="Digite o ID do palestrante">
+        </div>
+        <button class="btn-buscar" (click)="buscarIndividual()" [disabled]="loadingBusca">
+          <span *ngIf="!loadingBusca">Buscar</span>
+          <span *ngIf="loadingBusca" class="spinner-btn"></span>
+        </button>
+      </div>
+      <div class="area-resultado-busca">
+        <div *ngIf="loadingBusca" class="loading" style="min-height:150px;">
+          <span class="spinner"></span> Buscando palestrante...
+        </div>
+        <div *ngIf="errorBusca && !loadingBusca" class="evento-erro" style="min-height:150px;">
+          ⚠️ {{ errorBusca }}
+        </div>
+        <div *ngIf="!buscaRealizada && !loadingBusca && !errorBusca" class="evento-vazio" style="min-height:150px;">
+          <span style="font-size: 1.5rem;">👆</span>
+          <strong>Digite um ID para buscar</strong>
+        </div>
+        <div *ngIf="buscaRealizada && !loadingBusca && !errorBusca && !relatorioIndividual" class="evento-vazio" style="min-height:150px;">
+          <span style="font-size: 1.5rem;">🚫</span>
+          <strong>Não encontrado</strong>
+          <p>Nenhum palestrante corresponde ao ID '{{ idBuscado }}'.</p>
+        </div>
+        <div *ngIf="relatorioIndividual && !loadingBusca" class="card-resultado-busca animate-scale">
+          <h3>{{ relatorioIndividual.nome_palestrante }} <span>(ID: {{ relatorioIndividual.id_palestrante }})</span></h3>
+          <div style="margin-top:12px; background:#f8f9fa; border-radius:8px; padding:16px;">
+            <pre style="white-space:pre-wrap; font-size:1em; margin:0;">{{ relatorioIndividual.resumo }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 50px 20px; z-index: 1000; overflow-y: auto;
+  }
+  .modal-content {
+    background: #ffffff; border-radius: 12px;
+    padding: 24px 30px; width: 100%;
+    max-width: 800px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .animate-scale {
+    animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  @keyframes scaleIn {
+    from { transform: scale(0.9) translateY(-20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .modal-close {
+    position: absolute; top: 15px; right: 15px;
+    background: transparent; border: none; font-size: 1.5rem;
+    color: #888; cursor: pointer; line-height: 1; padding: 5px;
+  }
+  .modal-close:hover { color: #333; }
+  .titulo-pagina {
+    font-size: 1.5rem; font-weight: 700;
+    color: #333; margin: 0 0 10px 0;
+  }
+  .lista-grade-view {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .tabs-container {
+    display: flex; border-bottom: 2px solid #e9ecef; margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 12px 18px;
+    font-size: 1rem; font-weight: 600;
+    border: none; background-color: transparent; cursor: pointer;
+    color: #495057; margin-bottom: -2px;
+    border-bottom: 3px solid transparent;
+  }
+  .tab-btn.active {
+    color: #226d44;
+    border-bottom-color: #226d44;
+  }
+  .tab-btn:hover:not(.active) { background-color: #f8f9fa; }
+  .tab-content { padding-top: 25px; }
+  .loading, .evento-erro, .evento-vazio {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+    border-radius: 8px; background-color: #f8f9fa;
+  }
+  .loading { color: #333; font-weight: 600; }
+  .loading span, .evento-vazio span { margin-bottom: 15px; }
+  .evento-vazio strong { font-size: 1.1rem; font-weight: 600; color: #333; }
+  .evento-vazio p { margin: 8px 0 0; color: #6c757d; }
+  .evento-erro {
+    background-color: #fff6f6; color: #c82333;
+    border: 1px solid #f5c6cb; font-weight: 600; font-size: 1.1rem;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 4px solid #f0f0f0;
+    border-top-color: #226d44;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .grade-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .grade-tabela th, .grade-tabela td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .grade-tabela th {
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #495057;
+  }
+  .grade-tabela td {
+    font-size: 0.95rem;
+    color: #333;
+  }
+  .grade-tabela tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .grade-tabela tbody tr:hover {
+    background-color: #fcfcfc;
+  }
+  .grade-tabela a {
+    color: #007acc;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .grade-tabela a:hover {
+    text-decoration: underline;
+  }
+  .form-filtros-busca { display: flex; gap: 15px; }
+  .form-filtros-busca .form-grupo { flex-grow: 1; }
+  .form-filtros-busca .btn-buscar { flex-shrink: 0; align-self: flex-end; }
+  .form-grupo { display: flex; flex-direction: column; width: 100%; }
+  .form-grupo label { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+  .form-grupo input[type="number"] {
+    padding: 10px 12px; border: 1px solid #ced4da;
+    border-radius: 6px; font-size: 1rem; font-family: inherit;
+    min-height: 45px;
+  }
+  .form-grupo input[type="number"]:focus {
+    outline: none; border-color: #226d44;
+    box-shadow: 0 0 0 3px rgba(34, 109, 68, 0.1);
+  }
+  .btn-buscar {
+    padding: 10px 20px; font-size: 1rem; font-weight: 600;
+    border-radius: 8px; cursor: pointer;
+    background-color: #226d44;
+    border: 1px solid #226d44; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 45px;
+  }
+  .btn-buscar:hover { background-color: #1a5233; }
+  .btn-buscar:disabled { background-color: #9e9e9e; border-color: #9e9e9e; cursor: not-allowed; }
+  .spinner-btn {
+    width: 18px; height: 18px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%; border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+  }
+  .area-resultado-busca { margin-top: 25px; }
+  .card-resultado-busca {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fafcff;
+    padding: 20px 24px;
+    border-left: 5px solid #226d44;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .card-resultado-busca h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.4rem;
+    color: #333;
+  }
+  .grafico-container {
+    width: 100%;
+  }
+  .grade-chart-div {
+    width: 100%;
+    min-height: 450px;
+    margin-top: -20px;
+  }
+  .btn-baixar-csv {
+    background: #226d44;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 1.07rem;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 7%);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: background 0.12s;
+    margin-right: 40px;
+  }
+  .btn-baixar-csv:hover, .btn-baixar-csv:focus {
+    background: #188d3b;
+    color: #fff;
+  }
+</style>

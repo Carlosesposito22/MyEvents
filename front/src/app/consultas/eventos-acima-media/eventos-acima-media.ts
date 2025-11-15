@@ -8,7 +8,7 @@ interface EventoAcimaMediaDTO {
   id_evento: number;
   titulo: string;
   numero_participantes: number;
-  expectativa_participantes: number;
+  expectiva_participantes: number;
 }
 
 let googleChartLoader: Promise<void> | null = null;
@@ -18,7 +18,7 @@ let googleChartLoader: Promise<void> | null = null;
   standalone: true,
   imports: [CommonModule],
   templateUrl: './eventos-acima-media.html',
-  styleUrls: ['../../app.css'] 
+  styleUrls: ['../../app.css']
 })
 export class EventosAcimaMedia implements OnChanges {
   @Input() open = false;
@@ -32,7 +32,7 @@ export class EventosAcimaMedia implements OnChanges {
 
   constructor(
     private http: HttpClient,
-    private cdr: ChangeDetectorRef 
+    private cdr: ChangeDetectorRef
   ) {
     this.loadGoogleCharts();
   }
@@ -91,8 +91,8 @@ export class EventosAcimaMedia implements OnChanges {
         this.http.get<EventoAcimaMediaDTO[]>('http://localhost:8080/consultas/eventos-acima-media').toPromise()
       ]);
 
-      this.eventos = dados || []; 
-      this.loading = false; 
+      this.eventos = dados || [];
+      this.loading = false;
 
       this.cdr.detectChanges();
 
@@ -128,7 +128,7 @@ export class EventosAcimaMedia implements OnChanges {
       dataArray.push([
         evento.titulo,
         evento.numero_participantes,
-        evento.expectativa_participantes
+        evento.expectiva_participantes
       ]);
     });
 

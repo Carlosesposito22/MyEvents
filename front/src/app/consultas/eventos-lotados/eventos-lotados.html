@@ -1,0 +1,289 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()" style="max-width: 800px;">
+    <button class="modal-close" (click)="close()">✖</button>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+      <h2 class="titulo-pagina"><span class="label-icon">📛</span> Eventos Lotados</h2>
+    </div>
+    <div class="tabs-container">
+      <button class="tab-btn"
+              [class.active]="modo === 'lista'"
+              (click)="setModo('lista')">
+        Listar Todos
+      </button>
+      <button class="tab-btn"
+              [class.active]="modo === 'busca'"
+              (click)="setModo('busca')">
+        Buscar por ID
+      </button>
+      <button class="tab-btn"
+              [class.active]="modo === 'grafico'"
+              (click)="setModo('grafico')">
+        📊 Gráfico
+      </button>
+    </div>
+
+    <!-- Aba Lista -->
+    <div *ngIf="modo === 'lista'" class="tab-content">
+      <div *ngIf="loading" class="loading" style="min-height: 300px;">
+        <span class="spinner"></span> Carregando lista de eventos lotados...
+      </div>
+      <div *ngIf="error && !loading" class="evento-erro" style="min-height: 300px;">
+        ⚠️ {{ error }}
+      </div>
+      <div *ngIf="!loading && !error && eventos.length === 0" class="evento-vazio" style="min-height: 300px;">
+        <span style="font-size: 1.5rem;">🚫</span>
+        <strong>Nenhum evento lotado encontrado.</strong>
+      </div>
+      <div *ngIf="!loading && eventos.length > 0" class="lista-eventos-view">
+        <div *ngFor="let e of eventos" class="evento-card-resumo">
+          <div class="card-resumo-id">#{{ e.id_evento }}</div>
+          <div class="card-resumo-info">
+            <strong>{{ e.nome_evento }}</strong>
+            <span>
+              {{ e.data_inicio | date:'dd/MM/yyyy' }} | Status: {{ e.statusEvento }}
+            </span>
+            <div style="color:#388e3c; font-weight:bold;">
+              Lotação: {{ e.numero_participantes }}/{{ e.limite_participantes }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aba Busca -->
+    <div *ngIf="modo === 'busca'" class="tab-content">
+      <div class="form-filtros-busca">
+        <div class="form-grupo">
+          <label for="busca-id-lotado">ID do Evento</label>
+          <input id="busca-id-lotado" type="number"
+                 [(ngModel)]="idBusca"
+                 (keyup.enter)="buscarPorId()"
+                 placeholder="Digite o ID do evento">
+        </div>
+        <button class="btn-buscar" (click)="buscarPorId()" [disabled]="loadingBusca">
+          <span *ngIf="!loadingBusca">Buscar</span>
+          <span *ngIf="loadingBusca" class="spinner-btn"></span>
+        </button>
+      </div>
+      <div class="area-resultado-busca">
+        <div *ngIf="loadingBusca" class="loading" style="min-height: 150px;">
+          <span class="spinner"></span> Buscando evento...
+        </div>
+        <div *ngIf="errorBusca && !loadingBusca" class="evento-erro" style="min-height: 150px;">
+          ⚠️ {{ errorBusca }}
+        </div>
+        <div *ngIf="!buscaRealizada && !loadingBusca && !errorBusca" class="evento-vazio" style="min-height: 150px;">
+          <span style="font-size: 1.5rem;">👆</span>
+          <strong>Digite um ID para buscar</strong>
+        </div>
+        <div *ngIf="buscaRealizada && !eventoEncontrado && !loadingBusca && !errorBusca" class="evento-vazio" style="min-height: 150px;">
+          <span style="font-size: 1.5rem;">🚫</span>
+          <strong>Evento lotado não encontrado</strong>
+          <p>Nenhum evento corresponde ao ID '{{ idBuscado }}'.</p>
+        </div>
+        <div *ngIf="eventoEncontrado && !loadingBusca" class="evento-card-detalhado animate-scale">
+          <h3>
+            {{ eventoEncontrado.nome_evento }}
+            <span>(ID: {{ eventoEncontrado.id_evento }})</span>
+          </h3>
+          <div class="detalhes-grid" style="padding-bottom: 18px;">
+            <div><label>Status</label><strong>{{ eventoEncontrado.statusEvento }}</strong></div>
+            <div><label>Data Início</label><strong>{{ eventoEncontrado.data_inicio | date:'dd/MM/yyyy' }}</strong></div>
+            <div><label>Nº Participantes</label><strong>{{ eventoEncontrado.numero_participantes }}</strong></div>
+            <div><label>Limite Participantes</label><strong>{{ eventoEncontrado.limite_participantes }}</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aba Gráfico -->
+    <div *ngIf="modo === 'grafico'" class="tab-content">
+      <div *ngIf="loading" class="loading" style="min-height: 400px;">
+        <span class="spinner"></span> Carregando dados do gráfico...
+      </div>
+      <div *ngIf="error && !loading" class="evento-erro" style="min-height: 400px;">
+        ⚠️ {{ error }}
+      </div>
+      <div *ngIf="!loading && !error && eventos.length === 0" class="evento-vazio" style="min-height: 400px;">
+        <span style="font-size: 1.5rem;">📊</span>
+        <strong>Sem dados para o gráfico.</strong>
+        <p>Nenhum evento lotado foi encontrado.</p>
+      </div>
+      <div *ngIf="!loading && !error && eventos.length > 0" class="grafico-container">
+        <div #pieChartContainer class="pie-chart-div"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 50px 20px; z-index: 1000; overflow-y: auto;
+  }
+  .modal-content {
+    background: #ffffff; border-radius: 12px;
+    padding: 24px 30px; width: 100%;
+    max-width: 800px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .animate-scale {
+    animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  @keyframes scaleIn {
+    from { transform: scale(0.9) translateY(-20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .modal-close {
+    position: absolute; top: 15px; right: 15px;
+    background: transparent; border: none; font-size: 1.5rem;
+    color: #888; cursor: pointer; line-height: 1; padding: 5px;
+  }
+  .modal-close:hover { color: #333; }
+  .titulo-pagina {
+    font-size: 1.5rem; font-weight: 700;
+    color: #333; margin: 0 0 10px 0;
+  }
+
+  .tabs-container {
+    display: flex; border-bottom: 2px solid #e9ecef; margin-top: 10px;
+  }
+  .tab-btn {
+    padding: 12px 20px; font-size: 1rem; font-weight: 600;
+    border: none; background-color: transparent; cursor: pointer;
+    color: #495057; margin-bottom: -2px;
+    border-bottom: 3px solid transparent;
+  }
+  .tab-btn.active {
+    color: #226d44;
+    border-bottom-color: #226d44;
+  }
+  .tab-btn:hover:not(.active) { background-color: #f8f9fa; }
+  .tab-content { padding-top: 25px; }
+
+  .loading, .evento-erro, .evento-vazio {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+    border-radius: 8px; background-color: #f8f9fa;
+  }
+  .loading { color: #333; font-weight: 600; }
+  .loading span, .evento-vazio span { margin-bottom: 15px; }
+  .evento-vazio strong { font-size: 1.1rem; font-weight: 600; color: #333; }
+  .evento-vazio p { margin: 8px 0 0; color: #6c757d; }
+  .evento-erro {
+    background-color: #fff6f6; color: #c82333;
+    border: 1px solid #f5c6cb; font-weight: 600; font-size: 1.1rem;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 4px solid #f0f0f0;
+    border-top-color: #226d44;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .lista-eventos-view {
+    max-height: 50vh; overflow-y: auto;
+    border: 1px solid #e9ecef; border-radius: 8px;
+  }
+  .evento-card-resumo {
+    display: flex; align-items: center;
+    padding: 14px 16px; border-bottom: 1px solid #f0f0f0;
+  }
+  .evento-card-resumo:last-child { border-bottom: none; }
+  .evento-card-resumo:hover { background-color: #f8f9fa; }
+  .card-resumo-id {
+    font-weight: 700; font-size: 0.9rem;
+    color: #226d44;
+    background-color: #f0f6f3;
+    padding: 6px 10px; border-radius: 6px; margin-right: 15px;
+  }
+  .card-resumo-info { display: flex; flex-direction: column; }
+  .card-resumo-info strong { font-size: 1rem; font-weight: 600; color: #212529; }
+  .card-resumo-info span { font-size: 0.9rem; color: #6c757d; }
+
+  .form-filtros-busca { display: flex; gap: 15px; }
+  .form-filtros-busca .form-grupo { flex-grow: 1; }
+  .form-filtros-busca .btn-buscar { flex-shrink: 0; align-self: flex-end; }
+
+  .form-grupo { display: flex; flex-direction: column; width: 100%; }
+  .form-grupo label { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+  .form-grupo input[type="number"] {
+    padding: 10px 12px; border: 1px solid #ced4da;
+    border-radius: 6px; font-size: 1rem; font-family: inherit;
+    min-height: 45px;
+  }
+  .form-grupo input[type="number"]:focus {
+    outline: none; border-color: #226d44;
+    box-shadow: 0 0 0 3px rgba(34, 109, 68, 0.1);
+  }
+
+  .btn-buscar {
+    padding: 10px 20px; font-size: 1rem; font-weight: 600;
+    border-radius: 8px; cursor: pointer;
+    background-color: #226d44;
+    border: 1px solid #226d44; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 45px;
+  }
+  .btn-buscar:hover { background-color: #1a5233; }
+  .btn-buscar:disabled { background-color: #9e9e9e; border-color: #9e9e9e; cursor: not-allowed; }
+
+  .spinner-btn {
+    width: 18px; height: 18px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%; border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .area-resultado-busca { margin-top: 25px; }
+  .evento-card-detalhado {
+    border: 1px solid #e0e0e0; border-radius: 10px;
+    background: #fafcff; padding: 20px 24px;
+    border-left: 5px solid #226d44;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .evento-card-detalhado h3 {
+    margin: 0 0 20px 0; font-size: 1.4rem; color: #333;
+  }
+  .evento-card-detalhado h3 span {
+    font-size: 1rem; font-weight: 500;
+    color: #6c757d; margin-left: 8px;
+  }
+  .detalhes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+  }
+  .detalhes-grid div {
+    display: flex; flex-direction: column;
+    background-color: #fff; padding: 12px;
+    border-radius: 6px; border: 1px solid #e9ecef;
+  }
+  .detalhes-grid label {
+    font-size: 0.85rem; font-weight: 500;
+    color: #6c757d; margin-bottom: 4px;
+  }
+  .detalhes-grid strong {
+    font-size: 1rem; font-weight: 600;
+    color: #212529; word-wrap: break-word;
+  }
+
+  .grafico-container {
+    width: 100%;
+  }
+  .pie-chart-div {
+    width: 100%;
+    min-height: 450px;
+    margin-top: -20px;
+  }
+</style>

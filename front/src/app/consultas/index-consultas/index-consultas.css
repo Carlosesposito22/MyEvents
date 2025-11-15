@@ -19,7 +19,7 @@
 }
 
 .voltar-topo {
-    padding: 24px 40px 0; 
+    padding: 24px 40px 0;
     font-weight: 600;
     font-size: 1rem;
     color: #226d44;
@@ -41,7 +41,7 @@
 
 .dash-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     padding: 24px 40px 40px;
 }
@@ -57,7 +57,7 @@
 }
 
 .dash-card-header {
-    background-color: #226d44; 
+    background-color: #226d44;
     color: #ffffff;
     padding: 20px 24px;
     border-bottom: none;
@@ -92,9 +92,9 @@
     cursor: pointer;
     transition: all 0.2s ease-out;
     text-align: left;
-    
-    font-family: inherit; 
-    
+
+    font-family: inherit;
+
     background-color: #fff;
     border: 1px solid #ced4da;
     color: #212529;
@@ -104,13 +104,13 @@
     color: #226d44;
     opacity: 1;
     font-size: 1.15em;
-    min-width: 20px; 
+    min-width: 20px;
     text-align: center;
 }
 
 .dash-btn:hover {
     border-color: #226d44;
-    background-color: #f6f9f7; 
+    background-color: #f6f9f7;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(34, 109, 68, 0.1);
 }
@@ -118,4 +118,41 @@
 .dash-btn:active {
     transform: scale(0.98);
     background-color: #eef3f0;
+}
+
+.dash-card-log {
+    grid-column: 1 / -1; /* Faz o card ocupar toda a linha na grid */
+    background: #fff; /* igual aos outros */
+    border-radius: 12px;
+    border: 1px solid #fff4c2; /* tom amarelo suave */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    margin-top: 0;
+}
+
+.dash-card-log-header {
+    background-color: #ffe066; /* header amarelo */
+    color: #866500 !important;
+    padding: 20px 24px;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.dash-card-log-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #866500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Opcional: ajuste nos botões para combinar */
+.dash-card-log .dash-btn {
+    border-color: #fff4c2;
+}
+.dash-card-log .label-icon {
+    color: #bfa20e;
 }

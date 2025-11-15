@@ -1,60 +1,81 @@
 <div class="dashboard-container">
+  <div class="voltar-topo" (click)="voltarHome()">
+    <span class="seta-voltar">← Voltar para o Dashboard</span>
+  </div>
+  <main class="dash-grid">
+    <section class="dash-card">
+      <div class="dash-card-header">
+        <h3>💾 Consultas Avançadas</h3>
+      </div>
+      <div class="dash-card-body">
+        <button class="dash-btn" (click)="abrirModalLocaisNaoUtilizados()">
+          <span class="label-icon">🏢</span> Ver Locais Não Utilizados
+        </button>
+        <button class="dash-btn" (click)="abrirModalPalestrantesEspecialidades()">
+          <span class="label-icon">🧑‍🏫</span> Palestrantes e Especialidades
+        </button>
+        <button class="dash-btn" (click)="abrirModalEventosAcimaMedia()">
+          <span class="label-icon">📈</span> Eventos Acima da Média
+        </button>
+        <button class="dash-btn" (click)="abrirModalAtividadesFiltradas()">
+          <span class="label-icon">🔍</span> Atividades por Categoria e Data
+        </button>
+      </div>
+    </section>
+    <section class="dash-card">
+      <div class="dash-card-header">
+        <h3>📄 Views do Banco de Dados</h3>
+      </div>
+      <div class="dash-card-body">
+        <button class="dash-btn" (click)="abrirModalViewDetalhesEventos()">
+          <span class="label-icon">ℹ️</span> Detalhes Completos dos Eventos
+        </button>
+        <button class="dash-btn" (click)="abrirModalViewGradeAtividades()">
+          <span class="label-icon">🗓️</span> Grade de Atividades
+        </button>
+      </div>
+    </section>
+    <section class="dash-card">
+      <div class="dash-card-header">
+        <h3>📄 Consultas das funções</h3>
+      </div>
+      <div class="dash-card-body">
+        <button class="dash-btn" (click)="abrirModalEventosLotados()">
+          <span class="label-icon">📛</span> Todos eventos lotados
+        </button>
+        <button class="dash-btn" (click)="abrirModalRelatorioPalestrante()">
+          <span class="label-icon">📊</span> Relatório de palestrantes
+        </button>
+      </div>
+    </section>
 
-    <div class="voltar-topo" (click)="voltarHome()">
-        <span class="seta-voltar">← Voltar para o Dashboard</span>
-    </div>
+    <!-- CARD DE LOGS ABAIXO PEGANDO A LARGURA DOS 3 -->
+    <section class="dash-card dash-card-log">
+      <div class="dash-card-header dash-card-log-header">
+        <h3>
+          <span class="label-icon">🕓</span>
+          Histórico de segurança do sistema
+        </h3>
+      </div>
+      <div class="dash-card-body">
+        <button class="dash-btn" (click)="abrirModalHistoricoEdicoes()">
+          <span class="label-icon">🗂️</span> Histórico de edições completo
+        </button>
+        <button class="dash-btn" (click)="abrirModalHistoricoExclusoes()">
+          <span class="label-icon">⏳</span> Histórico exclusão de eventos
+        </button>
+      </div>
+    </section>
+  </main>
 
-    <main class="dash-grid">
-
-        <section class="dash-card">
-            <div class="dash-card-header">
-                <h3>💾 Consultas Avançadas</h3>
-            </div>
-            <div class="dash-card-body">
-
-                <button class="dash-btn" (click)="abrirModalLocaisNaoUtilizados()">
-                    <span class="label-icon">🏢</span> Ver Locais Não Utilizados
-                </button>
-
-                <button class="dash-btn" (click)="abrirModalPalestrantesEspecialidades()">
-                    <span class="label-icon">🧑‍🏫</span> Palestrantes e Especialidades
-                </button>
-
-                <button class="dash-btn" (click)="abrirModalEventosAcimaMedia()">
-                    <span class="label-icon">📈</span> Eventos Acima da Média
-                </button>
-
-                <button class="dash-btn" (click)="abrirModalAtividadesFiltradas()">
-                    <span class="label-icon">🔍</span> Atividades por Categoria e Data
-                </button>
-
-            </div>
-        </section>
-
-        <section class="dash-card">
-            <div class="dash-card-header">
-                <h3>📄 Views do Banco de Dados</h3>
-            </div>
-            <div class="dash-card-body">
-
-                <button class="dash-btn" (click)="abrirModalViewDetalhesEventos()">
-                    <span class="label-icon">ℹ️</span> Detalhes Completos dos Eventos
-                </button>
-
-                <button class="dash-btn" (click)="abrirModalViewGradeAtividades()">
-                    <span class="label-icon">🗓️</span> Grade de Atividades
-                </button>
-
-            </div>
-        </section>
-
-    </main>
-
-    <app-locais-nao-utilizados [open]="mostrarModalLocaisNaoUtilizados" (fechar)="fecharModalLocaisNaoUtilizados()"></app-locais-nao-utilizados>
-    <app-palestrantes-especialidades [open]="mostrarModalPalestrantesEspecialidades" (fechar)="fecharModalPalestrantesEspecialidades()"></app-palestrantes-especialidades>
-    <app-eventos-acima-media [open]="mostrarModalEventosAcimaMedia" (fechar)="fecharModalEventosAcimaMedia()"></app-eventos-acima-media>
-    <app-atividades-filtradas [open]="mostrarModalAtividadesFiltradas"(fechar)="fecharModalAtividadesFiltradas()"></app-atividades-filtradas>
-    <app-view-detalhes-eventos [open]="mostrarModalViewDetalhesEventos" (fechar)="fecharModalViewDetalhesEventos()"></app-view-detalhes-eventos>
-    <app-view-grade-atividades [open]="mostrarModalViewGradeAtividades" (fechar)="fecharModalViewGradeAtividades()"></app-view-grade-atividades>
-
+  <app-locais-nao-utilizados [open]="mostrarModalLocaisNaoUtilizados" (fechar)="fecharModalLocaisNaoUtilizados()"></app-locais-nao-utilizados>
+  <app-palestrantes-especialidades [open]="mostrarModalPalestrantesEspecialidades" (fechar)="fecharModalPalestrantesEspecialidades()"></app-palestrantes-especialidades>
+  <app-eventos-acima-media [open]="mostrarModalEventosAcimaMedia" (fechar)="fecharModalEventosAcimaMedia()"></app-eventos-acima-media>
+  <app-atividades-filtradas [open]="mostrarModalAtividadesFiltradas" (fechar)="fecharModalAtividadesFiltradas()"></app-atividades-filtradas>
+  <app-view-detalhes-eventos [open]="mostrarModalViewDetalhesEventos" (fechar)="fecharModalViewDetalhesEventos()"></app-view-detalhes-eventos>
+  <app-view-grade-atividades [open]="mostrarModalViewGradeAtividades" (fechar)="fecharModalViewGradeAtividades()"></app-view-grade-atividades>
+  <app-eventos-lotados [open]="mostrarModalEventosLotados" (fechar)="fecharModalEventosLotados()"></app-eventos-lotados>
+  <app-relatorio-palestrante [open]="mostrarModalRelatorioPalestrante" (fechar)="fecharModalRelatorioPalestrante()"></app-relatorio-palestrante>
+  <app-historico-edicoes [open]="mostrarModalHistoricoEdicoes" (fechar)="fecharModalHistoricoEdicoes()"></app-historico-edicoes>
+  <app-historico-exclusoes [open]="mostrarModalHistoricoExclusoes" (fechar)="fecharModalHistoricoExclusoes()"></app-historico-exclusoes>
 </div>

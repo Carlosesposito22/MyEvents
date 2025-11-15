@@ -13,7 +13,7 @@
     <div *ngIf="error && !loading" class="evento-erro" style="min-height: 400px; text-align: center;">
       ⚠️ {{ error }}
     </div>
-    
+
     <div *ngIf="!loading && !error && eventos.length === 0" class="evento-vazio" style="min-height: 400px;">
       <span style="font-size: 1.5rem;">📊</span>
       <strong>Nenhum evento acima da média.</strong>
@@ -21,11 +21,11 @@
     </div>
 
     <div *ngIf="!loading && !error && eventos.length > 0" class="grafico-container">
-      
+
       <div #chartContainer class="chart-div"></div>
 
       <h3 class="subtitulo-tabela">Dados Brutos</h3>
-      
+
       <div class="table-container-modal">
         <table>
           <thead>
@@ -42,12 +42,12 @@
               <td>{{ evento.id_evento }}</td>
               <td>{{ evento.titulo }}</td>
               <td>{{ evento.numero_participantes }}</td>
-              <td>{{ evento.expectativa_participantes }}</td>
-              
-              <td [style.color]="(evento.numero_participantes - evento.expectativa_participantes) >= 0 ? 'green' : 'red'">
+              <td>{{ evento.expectiva_participantes }}</td>
+
+              <td [style.color]="(evento.numero_participantes - evento.expectiva_participantes) >= 0 ? 'green' : 'red'">
                 <strong>
-                  {{ (evento.numero_participantes - evento.expectativa_participantes) > 0 ? '+' : '' }}
-                  {{ evento.numero_participantes - evento.expectativa_participantes }}
+                  {{ (evento.numero_participantes - evento.expectiva_participantes) > 0 ? '+' : '' }}
+                  {{ evento.numero_participantes - evento.expectiva_participantes }}
                 </strong>
               </td>
             </tr>

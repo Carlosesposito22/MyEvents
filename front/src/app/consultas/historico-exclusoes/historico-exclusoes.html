@@ -1,0 +1,232 @@
+<div *ngIf="open" class="modal-overlay" (click)="close()">
+  <div class="modal-content animate-scale" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="close()">✖</button>
+    <div class="cabecalho-modal">
+      <h2 class="titulo-pagina">
+        <span style="font-size:1.2em; vertical-align:middle;">⏳</span>
+        Histórico de Exclusão de Eventos
+      </h2>
+    </div>
+
+    <div class="cards-scroll-area">
+      <div *ngIf="loading" class="loading" style="min-height:180px;">
+        <span class="spinner"></span> Carregando histórico de exclusões...
+      </div>
+      <div *ngIf="error && !loading" class="evento-erro" style="min-height:180px;">⚠️ {{ error }}</div>
+      <div *ngIf="!loading && logs.length === 0 && !error" class="evento-vazio" style="min-height:180px;">
+        <span style="font-size: 2rem;">⏳</span>
+        <strong>Nenhum registro de exclusão encontrado.</strong>
+      </div>
+      <div *ngIf="!loading && logs.length > 0" class="cards-stretched">
+        <div *ngFor="let log of logs" class="evento-card">
+          <div class="evento-cabecalho">
+            <span class="log-id">#{{ log.id_log }}</span>
+            <span class="evento-id">Evento: {{ log.id_evento }}</span>
+            <span class="titulo-evento">{{ log.titulo }}</span>
+          </div>
+          <div class="evento-detalhes">
+            <div>
+              <span class="label">Data Início:</span> {{ log.data_inicio | date:'dd/MM/yyyy' }}
+            </div>
+            <div>
+              <span class="label">Data Fim:</span> {{ log.data_fim | date:'dd/MM/yyyy' }}
+            </div>
+            <div>
+              <span class="label">Participantes:</span> {{ log.numero_participantes }}
+            </div>
+            <div>
+              <span class="label">Limite P.:</span> {{ log.limite_participantes }}
+            </div>
+            <div>
+              <span class="label">Categoria:</span> {{ log.id_categoria }}
+            </div>
+            <div>
+              <span class="label">Email Dúvidas:</span>
+              <span class="break-long">{{ log.email_duvidas }}</span>
+            </div>
+            <div>
+              <span class="label">N° Comissão:</span> {{ log.numero_membros_comissao }}
+            </div>
+            <div>
+              <span class="label">Excluído em:</span> {{ log.data_exclusao | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+            <div style="grid-column:span 2">
+              <span class="label">Usuário:</span> <span class="break-long">{{ log.usuario_acao }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(36, 48, 60, 0.75);
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 48px 15px 32px 15px;
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden !important;
+  }
+  .modal-content {
+    background: #fff; border-radius: 25px;
+    padding: 30px 28px 28px 28px;
+    width: 100%; max-width: 1000px;
+    box-shadow: 0 6px 32px rgba(38, 50, 56, 0.13);
+    position: relative;
+    font-family: system-ui, -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
+  }
+  .animate-scale { animation: scaleIn 0.28s cubic-bezier(0.4, 0.8, 0.2, 1);}
+  @keyframes scaleIn {from { transform: scale(0.91) translateY(-18px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; }}
+  .modal-close {
+    position: absolute; top: 16px; right: 19px;
+    background: #f5f6fa; border: none; font-size: 1.7rem;
+    color: #868e96; cursor: pointer;
+    line-height: 1; padding: 7px 15px; border-radius: 50%;
+    transition: background 0.13s, color 0.13s;
+    box-shadow: 0 2px 8px rgba(30,40,60,0.04);
+  }
+  .modal-close:hover { background: #ececec; color: #23242a; }
+  .cabecalho-modal {
+    margin-bottom: 1.3em; display: flex; align-items: center; gap: 1rem;
+  }
+  .titulo-pagina {
+    font-size: 2.1rem; font-weight: 800;
+    color: #175930; margin: 0; letter-spacing: 0.2px;
+    word-break: break-word;
+    line-height: 1.1;
+  }
+  /* SCROLL ÁREA (lista de cards esticados) */
+  .cards-scroll-area {
+    max-height: 470px;
+    overflow-y: auto;
+    overflow-x: hidden !important;
+    padding-right: 3px;
+    scrollbar-width: thin;
+    scrollbar-color: #d6eada #fff;
+  }
+  .cards-scroll-area::-webkit-scrollbar {
+    width: 7px; background: #fff; border-radius: 15px;
+  }
+  .cards-scroll-area::-webkit-scrollbar-thumb {
+    background: #d6eada; border-radius: 15px;
+  }
+  .cards-stretched {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .evento-card {
+    width: 100%;
+    background: linear-gradient(105deg, #f9fff9, #f1f9f2 90%);
+    border: 1.5px solid #deeddf;
+    border-radius: 14px;
+    box-shadow: 0 2px 13px 0 #d7f0e2cc;
+    padding: 22px 26px 17px 26px;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 0;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .evento-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 17px;
+    margin-bottom: 12px;
+    flex-direction: row;
+    width: 100%;
+    min-width: 0;
+  }
+  .evento-cabecalho .log-id {
+    font-weight: 700; color: #175930; font-size: 1.08em; margin-bottom: 1.5px;
+    flex-shrink: 0;
+  }
+  .evento-cabecalho .evento-id {
+    font-size: 1em; color: #42584f; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .evento-cabecalho .titulo-evento {
+    color: #1A333F;
+    font-size: 1.07em;
+    font-weight: 700;
+    flex-basis: 100%;
+    margin-bottom: 3px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  /* Detalhes duas colunas (desktop) */
+  .evento-detalhes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 40px;
+    font-size: 1.07em;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .evento-detalhes > div {
+    font-weight: 500; color: #184d33;
+    background: rgba(211,246,223,0.03);
+    border-radius: 8px; padding: 1.5px 3px;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  .evento-detalhes .label {
+    color: #46805a;
+    font-size: 1em; font-weight: 700;
+    margin-right: 3px; letter-spacing: 0.01em;
+    word-break: break-word;
+  }
+  .break-long {
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 900px) {
+    .modal-content { padding: 11px 3vw 15px 3vw;}
+    .titulo-pagina { font-size: 1.3rem; }
+    .evento-card { padding: 18px 10px 12px 12px;}
+    .evento-detalhes { grid-template-columns: 1fr; gap: 6px 0;}
+  }
+  @media (max-width: 650px) {
+    .cabecalho-modal { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+    .evento-detalhes { grid-template-columns: 1fr; }
+  }
+
+  .loading, .evento-erro, .evento-vazio {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 44px 10px; text-align: center;
+    border-radius: 14px; background-color: #f4fdf9;
+    min-height: 120px;
+    margin: 0 auto;
+  }
+  .loading { color: #1C4932; font-weight: 700; }
+  .loading span, .evento-vazio span { margin-bottom: 13px;}
+  .evento-vazio strong { font-size: 1.11rem; font-weight: 700; color: #213322; margin-top: 10px;}
+  .evento-erro {
+    background-color: #fff3f4; color: #c82333;
+    border: 1.5px solid #ffe0e3;
+    font-weight: 700; font-size: 1.05rem;
+  }
+  .spinner {
+    width: 38px; height: 38px;
+    border: 4px solid #e9efe7;
+    border-top-color: #1C4932;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>

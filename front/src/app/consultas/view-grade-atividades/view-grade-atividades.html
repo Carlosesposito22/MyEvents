@@ -2,31 +2,31 @@
   <div class="modal-content animate-scale" (click)="$event.stopPropagation()" style="max-width: 800px;">
 
     <button class="modal-close" (click)="close()">✖</button>
-    
+
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <h2 class="titulo-pagina">🗓️ Grade de Atividades</h2>
     </div>
 
     <div class="tabs-container">
-      <button class="tab-btn" 
-              [class.active]="modo === 'lista'" 
+      <button class="tab-btn"
+              [class.active]="modo === 'lista'"
               (click)="setModo('lista')">
         Listar Todos
       </button>
-      <button class="tab-btn" 
-              [class.active]="modo === 'busca'" 
+      <button class="tab-btn"
+              [class.active]="modo === 'busca'"
               (click)="setModo('busca')">
         Buscar por Evento
       </button>
-      <button class="tab-btn" 
-              [class.active]="modo === 'grafico'" 
+      <button class="tab-btn"
+              [class.active]="modo === 'grafico'"
               (click)="setModo('grafico')">
         📊 Distribuicao de carga horária
       </button>
     </div>
 
     <div *ngIf="modo === 'lista'" class="tab-content">
-      
+
       <div *ngIf="loadingLista" class="loading" style="min-height: 300px;">
         <span class="spinner"></span> Carregando grade de atividades...
       </div>
@@ -37,7 +37,7 @@
         <span style="font-size: 1.5rem;">🗓️</span>
         <strong>A view de grade está vazia.</strong>
       </div>
-      
+
       <div *ngIf="!loadingLista && gradeAgrupada.size > 0" class="lista-grade-view">
         <div *ngFor="let nomeEvento of gradeAgrupada.keys()" class="grade-grupo-evento">
           <h3 class="evento-titulo-grupo">
@@ -66,12 +66,12 @@
     </div>
 
     <div *ngIf="modo === 'busca'" class="tab-content">
-      
+
       <div class="form-filtros-busca">
         <div class="form-grupo">
           <label for="busca-id-evento">ID do Evento</label>
-          <input id="busca-id-evento" type="number" 
-                 [(ngModel)]="idBuscaEvento" 
+          <input id="busca-id-evento" type="number"
+                 [(ngModel)]="idBuscaEvento"
                  (keyup.enter)="buscarPorId()"
                  placeholder="Digite o ID do evento">
         </div>
@@ -100,7 +100,7 @@
 
         <div *ngIf="atividadesEncontradas.length > 0 && !loadingBusca" class="card-resultado-busca animate-scale">
           <h3>{{ atividadesEncontradas[0].evento }}</h3>
-          
+
           <table class="grade-tabela">
             <thead>
               <tr>
@@ -133,14 +133,14 @@
         </div>
       </div>
     </div>
-    
+
     <div *ngIf="modo === 'grafico'" class="tab-content">
-      
+
       <div class="form-filtros-busca">
         <div class="form-grupo">
           <label for="busca-id-grafico">ID do Evento</label>
-          <input id="busca-id-grafico" type="number" 
-                 [(ngModel)]="idBuscaGrafico" 
+          <input id="busca-id-grafico" type="number"
+                 [(ngModel)]="idBuscaGrafico"
                  (keyup.enter)="buscarParaGrafico()"
                  placeholder="Digite o ID para gerar o gráfico">
         </div>
@@ -149,7 +149,7 @@
           <span *ngIf="loadingGrafico" class="spinner-btn"></span>
         </button>
       </div>
-      
+
       <div class="area-resultado-busca">
         <div *ngIf="loadingGrafico" class="loading" style="min-height: 300px;">
           <span class="spinner"></span> Gerando gráfico...
@@ -172,7 +172,7 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 </div>
 
@@ -189,7 +189,7 @@
     padding: 24px 30px; width: 100%;
     max-width: 800px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.2); position: relative;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", 
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
                  Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -215,18 +215,18 @@
 
   .tabs-container {
     display: flex; border-bottom: 2px solid #e9ecef; margin-top: 10px;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
   }
   .tab-btn {
-    padding: 12px 18px; 
+    padding: 12px 18px;
     font-size: 1rem; font-weight: 600;
     border: none; background-color: transparent; cursor: pointer;
-    color: #495057; margin-bottom: -2px; 
+    color: #495057; margin-bottom: -2px;
     border-bottom: 3px solid transparent;
   }
   .tab-btn.active {
     color: #226d44;
-    border-bottom-color: #226d44; 
+    border-bottom-color: #226d44;
   }
   .tab-btn:hover:not(.active) { background-color: #f8f9fa; }
   .tab-content { padding-top: 25px; }
@@ -247,7 +247,7 @@
   .spinner {
     width: 40px; height: 40px;
     border: 4px solid #f0f0f0;
-    border-top-color: #226d44; 
+    border-top-color: #226d44;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -268,7 +268,7 @@
     border-bottom: 2px solid #f0f0f0;
     margin: 0 0 15px 0;
   }
-  
+
   .grade-tabela {
     width: 100%;
     border-collapse: collapse;
@@ -309,30 +309,30 @@
   .form-filtros-busca { display: flex; gap: 15px; }
   .form-filtros-busca .form-grupo { flex-grow: 1; }
   .form-filtros-busca .btn-buscar { flex-shrink: 0; align-self: flex-end; }
-  
+
   .form-grupo { display: flex; flex-direction: column; width: 100%; }
   .form-grupo label { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
   .form-grupo input[type="number"] {
     padding: 10px 12px; border: 1px solid #ced4da;
     border-radius: 6px; font-size: 1rem; font-family: inherit;
-    min-height: 45px; 
+    min-height: 45px;
   }
   .form-grupo input[type="number"]:focus {
     outline: none; border-color: #226d44;
     box-shadow: 0 0 0 3px rgba(34, 109, 68, 0.1);
   }
-  
+
   .btn-buscar {
     padding: 10px 20px; font-size: 1rem; font-weight: 600;
     border-radius: 8px; cursor: pointer;
-    background-color: #226d44; 
+    background-color: #226d44;
     border: 1px solid #226d44; color: #fff;
     display: flex; align-items: center; justify-content: center;
     min-height: 45px;
   }
   .btn-buscar:hover { background-color: #1a5233; }
   .btn-buscar:disabled { background-color: #9e9e9e; border-color: #9e9e9e; cursor: not-allowed; }
-  
+
   .spinner-btn {
     width: 18px; height: 18px;
     border: 3px solid rgba(255,255,255,0.3);
@@ -346,7 +346,7 @@
     border-radius: 10px;
     background: #fafcff;
     padding: 20px 24px;
-    border-left: 5px solid #226d44; 
+    border-left: 5px solid #226d44;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
   .card-resultado-busca h3 {
@@ -354,13 +354,13 @@
     font-size: 1.4rem;
     color: #333;
   }
-  
+
   .grafico-container {
     width: 100%;
   }
   .grade-chart-div {
     width: 100%;
     min-height: 450px;
-    margin-top: -20px; 
+    margin-top: -20px;
   }
 </style>

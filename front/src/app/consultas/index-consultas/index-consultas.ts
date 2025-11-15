@@ -7,6 +7,11 @@ import { EventosAcimaMedia } from "../eventos-acima-media/eventos-acima-media";
 import { AtividadesFiltradas } from "../atividades-filtradas/atividades-filtradas";
 import { ViewDetalhesEventos } from "../view-detalhes-eventos/view-detalhes-eventos";
 import { ViewGradeAtividades } from "../view-grade-atividades/view-grade-atividades";
+import { EventosLotados } from "../eventos-lotados/eventos-lotados";
+import { RelatorioPalestrante } from "../relatorio-palestrante/relatorio-palestrante";
+import { HistoricoEdicoes } from "../historico-edicoes/historico-edicoes";
+import { HistoricoExclusoes } from "../historico-exclusoes/historico-exclusoes";
+
 
 @Component({
   selector: 'app-index-consulta',
@@ -18,10 +23,14 @@ import { ViewGradeAtividades } from "../view-grade-atividades/view-grade-ativida
     EventosAcimaMedia,
     AtividadesFiltradas,
     ViewDetalhesEventos,
+    EventosLotados,
+    RelatorioPalestrante,
+    HistoricoEdicoes,
+    HistoricoExclusoes,
     ViewGradeAtividades
 ],
   templateUrl: './index-consultas.html',
-  styleUrls: ['./index-consultas.css'] 
+  styleUrls: ['./index-consultas.css']
 })
 export class IndexConsultas {
 
@@ -31,6 +40,11 @@ export class IndexConsultas {
   mostrarModalAtividadesFiltradas = false;
   mostrarModalViewDetalhesEventos = false;
   mostrarModalViewGradeAtividades = false;
+  mostrarModalEventosLotados = false;
+  mostrarModalRelatorioPalestrante = false;
+  mostrarModalHistoricoEdicoes = false;
+  mostrarModalHistoricoExclusoes = false;
+
 
   constructor(private router: Router) {}
 
@@ -55,4 +69,16 @@ export class IndexConsultas {
 
   abrirModalViewGradeAtividades() { this.mostrarModalViewGradeAtividades = true; }
   fecharModalViewGradeAtividades() { this.mostrarModalViewGradeAtividades = false; }
+
+  abrirModalEventosLotados() { this.mostrarModalEventosLotados = true; }
+  fecharModalEventosLotados() { this.mostrarModalEventosLotados = false; }
+
+  abrirModalRelatorioPalestrante() { this.mostrarModalRelatorioPalestrante = true; }
+  fecharModalRelatorioPalestrante() { this.mostrarModalRelatorioPalestrante = false; }
+
+  abrirModalHistoricoEdicoes() { this.mostrarModalHistoricoEdicoes = true; }
+  fecharModalHistoricoEdicoes() { this.mostrarModalHistoricoEdicoes = false; }
+
+  abrirModalHistoricoExclusoes() { this.mostrarModalHistoricoExclusoes = true; }
+  fecharModalHistoricoExclusoes() { this.mostrarModalHistoricoExclusoes = false; }
 }
