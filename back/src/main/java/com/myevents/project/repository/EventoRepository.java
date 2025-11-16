@@ -126,7 +126,23 @@ public class EventoRepository {
             return evento;
         }
     }
-
+    public void updateWithoutTituloLimite(int id_evento, EventoDTO evento) {
+        String sql = "UPDATE Evento SET data_inicio = ?, data_fim = ?, carga_horaria = ?, " +
+                "expectativa_participantes = ?, numero_participantes = ?, " +
+                "id_categoria = ?, email_duvidas = ?, numero_membros_comissao = ? " +
+                "WHERE id_evento = ?";
+        jdbcTemplate.update(sql,
+                evento.getData_inicio(),
+                evento.getData_fim(),
+                evento.getCarga_horaria(),
+                evento.getExpectativa_participantes(),
+                evento.getNumero_participantes(),
+                evento.getId_categoria(),
+                evento.getEmail_duvidas(),
+                evento.getNumero_membros_comissao(),
+                id_evento
+        );
+    }
     private static class EventoComCategoriaRowMapper implements RowMapper<EventoComCategoriaDTO> {
         @Override
         public EventoComCategoriaDTO mapRow(ResultSet rs, int rowNum) throws SQLException {

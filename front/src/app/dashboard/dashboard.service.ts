@@ -95,7 +95,7 @@ export class DashboardService {
    * Busca todos os dados brutos necessários para o dashboard.
    */
   private getRawData(): Observable<{ eventos: ViewDetalhesEventoDTO[], atividades: ViewGradeAtividadeDTO[], palestrantes: PalestranteEspecialidadeDTO[] }> {
-    
+
     const eventos$ = this.http.get<ViewDetalhesEventoDTO[]>(`${this.apiUrl}/consultas/view/detalhes-eventos`);
     const atividades$ = this.http.get<ViewGradeAtividadeDTO[]>(`${this.apiUrl}/consultas/view/grade-atividades`);
     const palestrantes$ = this.http.get<PalestranteEspecialidadeDTO[]>(`${this.apiUrl}/consultas/palestrantes-especialidades`);
@@ -128,7 +128,7 @@ export class DashboardService {
       })
     );
   }
-  
+
   private aplicarFiltrosEventos(eventos: ViewDetalhesEventoDTO[], filtros: Filtros): ViewDetalhesEventoDTO[] {
       let eventosFiltrados = [...eventos];
 
@@ -148,7 +148,7 @@ export class DashboardService {
           const dataFimFiltro = new Date(filtros.dataFim + 'T23:59:59'); // Adiciona hora para evitar problemas de fuso
           eventosFiltrados = eventosFiltrados.filter(e => new Date(e.data_inicio) <= dataFimFiltro); // Usando data_inicio para ver se "cai" no período
       }
-      
+
       return eventosFiltrados;
   }
 
@@ -156,7 +156,7 @@ export class DashboardService {
    * Transforma os dados brutos da API no formato que o componente espera.
    */
   private processarDados(eventos: ViewDetalhesEventoDTO[], todasAtividades: ViewGradeAtividadeDTO[], palestrantes: PalestranteEspecialidadeDTO[]): DashboardData {
-    
+
     if (eventos.length === 0) {
         // Retorna dados zerados se nenhum evento passar pelo filtro
         return this.getDadosZerados();
@@ -164,7 +164,7 @@ export class DashboardService {
 
     const participantesPorEvento = eventos.map(e => e.numero_participantes);
     const horasPorEvento = eventos.map(e => e.carga_horaria);
-    
+
     // Filtra as atividades para incluir apenas aquelas dos eventos filtrados
     const idsEventosFiltrados = new Set(eventos.map(e => e.id_evento));
     const atividadesFiltradas = todasAtividades.filter(a => idsEventosFiltrados.has(a.id_evento));
@@ -181,7 +181,7 @@ export class DashboardService {
       .map(e => ({ titulo: e.titulo, participantes: e.numero_participantes }));
 
     const categoriasComMaisEventos = this.helpers.groupBy(eventos, 'nomeCategoria');
-    
+
     // CORREÇÃO: Mapeia o resultado do groupBy (que tem 'nome') para o formato esperado (com 'tipo')
     const groupedAtividades = this.helpers.groupBy(atividadesFiltradas, 'tipoAtividade');
     const atividadesPorTipo = groupedAtividades.map(item => ({
@@ -190,7 +190,7 @@ export class DashboardService {
     }));
 
     const tendenciaEventosPorMes = this.helpers.groupByMonth(eventos, 'data_inicio');
-    
+
     const distribuicaoParticipantes = this.helpers.bucketize(participantesPorEvento, [0, 20, 50, 100, Infinity]);
 
     const ocupacaoEventos = eventos
@@ -199,7 +199,7 @@ export class DashboardService {
         titulo: e.titulo,
         percentual: parseFloat(((e.numero_participantes / e.limite_participantes) * 100).toFixed(2))
       }))
-      .slice(0, 7); // Limita para o gráfico de radar não ficar ilegível
+      .slice(0, 10); // Limita para o gráfico de radar não ficar ilegível
 
     const estatisticasParticipantes = {
       media: this.stats.average(participantesPorEvento),
@@ -231,7 +231,7 @@ export class DashboardService {
 
     return dados;
   }
-  
+
   private getDadosZerados(): DashboardData {
     return {
       totalEventos: 0,
@@ -256,19 +256,19 @@ export class DashboardService {
 
   private stats = {
     sum: (arr: number[]): number => arr.reduce((acc, val) => acc + val, 0),
-    
+
     average: (arr: number[]): number => {
       if (arr.length === 0) return 0;
       return this.stats.sum(arr) / arr.length;
     },
-    
+
     median: (arr: number[]): number => {
       if (arr.length === 0) return 0;
       const sorted = [...arr].sort((a, b) => a - b);
       const mid = Math.floor(sorted.length / 2);
       return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
     },
-    
+
     mode: (arr: number[]): number => {
       if (arr.length === 0) return 0;
       const counts: { [key: number]: number } = {};
@@ -283,15 +283,15 @@ export class DashboardService {
       }
       return mode;
     },
-    
+
     variance: (arr: number[]): number => {
       if (arr.length < 1) return 0;
       const mean = this.stats.average(arr);
       return this.stats.sum(arr.map(val => (val - mean) ** 2)) / arr.length;
     },
-    
+
     stdDev: (arr: number[]): number => Math.sqrt(this.stats.variance(arr)),
-    
+
     correlation: (arrX: number[], arrY: number[]): number => {
       if (arrX.length !== arrY.length || arrX.length === 0) return 0;
       const n = arrX.length;
@@ -299,14 +299,14 @@ export class DashboardService {
       const meanY = this.stats.average(arrY);
       const stdDevX = this.stats.stdDev(arrX);
       const stdDevY = this.stats.stdDev(arrY);
-      
+
       if (stdDevX === 0 || stdDevY === 0) return 0; // Evita divisão por zero se os dados forem constantes
 
       let covariance = 0;
       for (let i = 0; i < n; i++) {
         covariance += (arrX[i] - meanX) * (arrY[i] - meanY);
       }
-      
+
       return covariance / (stdDevX * stdDevY) / n;
     }
   };
@@ -326,7 +326,7 @@ export class DashboardService {
     groupByMonth: (arr: ViewDetalhesEventoDTO[], dateKey: keyof ViewDetalhesEventoDTO): Array<{ mes: string, quantidade: number }> => {
       const counts: { [key: number]: number } = {};
       const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-      
+
       arr.forEach(item => {
         const date = new Date(item[dateKey] as string);
         const month = date.getMonth(); // 0-11
@@ -344,13 +344,13 @@ export class DashboardService {
       // Filtra apenas meses que realmente existem no range de dados para não poluir
       const minMonth = Math.min(...Object.keys(counts).map(Number));
       const maxMonth = Math.max(...Object.keys(counts).map(Number));
-      
+
       return result.slice(minMonth, maxMonth + 1);
     },
-    
+
     bucketize: (arr: number[], buckets: number[]): Array<{ faixa: string, quantidade: number }> => {
         const counts: { [key: string]: number } = {};
-        
+
         // Inicializa os buckets
         for (let i = 0; i < buckets.length - 1; i++) {
             const start = buckets[i];
@@ -369,7 +369,7 @@ export class DashboardService {
             for (let i = 0; i < buckets.length - 1; i++) {
                 const start = buckets[i];
                 const end = buckets[i+1];
-                
+
                 if (val >= start && (end === Infinity || val <= end)) {
                      let faixa = (end === Infinity) ? `${start}+` : `${start}-${end}`;
                      counts[faixa]++;
@@ -377,7 +377,7 @@ export class DashboardService {
                 }
             }
         });
-        
+
         return Object.entries(counts).map(([faixa, quantidade]) => ({ faixa, quantidade }));
     }
   };

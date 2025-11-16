@@ -4,13 +4,11 @@
     <h1>📊 Dashboard Estatístico de Eventos</h1>
     <p class="subtitle">Análise completa de indicadores e métricas de eventos</p>
   </header>
-
   <!-- Loading e Error States -->
   <div *ngIf="loading" class="loading-container">
     <div class="spinner"></div>
     <p>Carregando dados do dashboard...</p>
   </div>
-
   <!-- Dashboard Content -->
   <div *ngIf="!loading && !error && dashboardData" class="dashboard-content">
     <!-- Filtros -->
@@ -21,22 +19,17 @@
           <label for="categoria">Categoria:</label>
           <select id="categoria" [(ngModel)]="filtroCategoria">
             <option value="">Todas as Categorias</option>
-            <option value="tecnologia">Tecnologia</option>
-            <option value="negocios">Negócios</option>
-            <option value="educacao">Educação</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{cat}}</option>
           </select>
         </div>
-
         <div class="filter-group">
           <label for="dataInicio">Data Início:</label>
           <input type="date" id="dataInicio" [(ngModel)]="filtroDataInicio">
         </div>
-
         <div class="filter-group">
           <label for="dataFim">Data Fim:</label>
           <input type="date" id="dataFim" [(ngModel)]="filtroDataFim">
         </div>
-
         <div class="filter-actions">
           <button class="btn btn-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
           <button class="btn btn-secondary" (click)="limparFiltros()">Limpar</button>
@@ -44,7 +37,6 @@
         </div>
       </div>
     </section>
-
     <!-- Indicadores Resumidos -->
     <section class="indicators-section">
       <h2>Indicadores Resumidos</h2>
@@ -54,31 +46,26 @@
           <p class="indicator-value">{{ dashboardData.totalEventos }}</p>
           <span class="indicator-label">Eventos cadastrados</span>
         </div>
-
         <div class="indicator-card">
           <h3>Total de Participantes</h3>
           <p class="indicator-value">{{ dashboardData.totalParticipantes }}</p>
           <span class="indicator-label">Participações registradas</span>
         </div>
-
         <div class="indicator-card">
           <h3>Total de Palestrantes</h3>
           <p class="indicator-value">{{ dashboardData.totalPalestrantes }}</p>
           <span class="indicator-label">Palestrantes ativos</span>
         </div>
-
         <div class="indicator-card">
           <h3>Total de Atividades</h3>
           <p class="indicator-value">{{ dashboardData.totalAtividades }}</p>
           <span class="indicator-label">Atividades programadas</span>
         </div>
-
         <div class="indicator-card">
           <h3>Média de Participantes/Evento</h3>
           <p class="indicator-value">{{ dashboardData.mediaParticipantesPorEvento | number }}</p>
           <span class="indicator-label">Participantes por evento</span>
         </div>
-
         <div class="indicator-card">
           <h3>Média de Horas/Evento</h3>
           <p class="indicator-value">{{ dashboardData.mediaHorasPorEvento | number }}h</p>
@@ -86,7 +73,6 @@
         </div>
       </div>
     </section>
-
     <!-- Estatísticas Descritivas -->
     <section class="statistics-section">
       <h2>Estatísticas Descritivas de Participantes</h2>
@@ -95,34 +81,28 @@
           <h4>Média</h4>
           <p class="stat-value">{{ dashboardData.estatisticasParticipantes.media | number}}</p>
         </div>
-
         <div class="stat-card">
           <h4>Mediana</h4>
           <p class="stat-value">{{ dashboardData.estatisticasParticipantes.mediana }}</p>
         </div>
-
         <div class="stat-card">
           <h4>Moda</h4>
           <p class="stat-value">{{ dashboardData.estatisticasParticipantes.moda }}</p>
         </div>
-
         <div class="stat-card">
           <h4>Variância</h4>
           <p class="stat-value">{{ dashboardData.estatisticasParticipantes.variancia | number: '1.2-2' }}</p>
         </div>
-
         <div class="stat-card">
           <h4>Desvio Padrão</h4>
           <p class="stat-value">{{ dashboardData.estatisticasParticipantes.desviopadrao | number: '1.2-2' }}</p>
         </div>
-
         <div class="stat-card">
           <h4>Correlação Horas/Participantes</h4>
           <p class="stat-value">{{ dashboardData.correlacaoHorasParticipantes | number: '1.2-2' }}</p>
         </div>
       </div>
     </section>
-
     <!-- Gráficos Dinâmicos -->
     <section class="charts-section">
       <h2>Visualizações Dinâmicas</h2>
@@ -143,27 +123,36 @@
         </div>
       </div>
 
-      <!-- Gráfico 2: Participantes por Evento (Pizza) -->
+      <!-- Gráfico 2: Participantes por Evento (Pizza)      -->
       <div class="chart-container">
         <h3>Gráfico 2: Distribuição de Participantes por Evento</h3>
         <div class="chart-placeholder">
           <p>🥧 Gráfico de Pizza - Participantes nos 3 eventos mais populares</p>
-          <div class="pie-chart">
-            <div *ngFor="let evento of dashboardData.eventosMaisPopulares" class="pie-slice">
-              <span class="pie-label">{{ evento.titulo }}: {{ evento.participantes }}</span>
-            </div>
-          </div>
+          <!-- >>>>>> AJUSTE AQUI! Canvas para Chart.js puro <<<<<< -->
+          <canvas id="pieCanvas"></canvas>
         </div>
       </div>
+
+      <!-- Os outros gráficos permanece igual, só mudando se você for adicionar mais canvas/Chart.js -->
+      <!-- MANTENHA NORMAL A PARTIR DAQUI -->
 
       <!-- Gráfico 3: Tendência de Eventos (Linha) -->
       <div class="chart-container">
         <h3>Gráfico 3: Tendência de Eventos por Mês</h3>
-        <div class="chart-placeholder">
-          <p>📈 Gráfico de Linha - Evolução mensal de eventos</p>
-          <div class="line-chart">
-            <div *ngFor="let trend of dashboardData.tendenciaEventosPorMes" class="line-point">
-              <span class="point-label">{{ trend.mes }}: {{ trend.quantidade }}</span>
+        <div class="chart-placeholder chart-line-horizontal">
+          <div class="chart-line-canvas">
+            <canvas id="lineCanvas"></canvas>
+          </div>
+          <div class="line-highlights" *ngIf="dashboardData?.tendenciaEventosPorMes?.length">
+            <div class="line-highlight-card high">
+              <span class="label"><span class="icon-up">⬆️</span> Mais eventos</span>
+              <strong class="highlight-value">{{ maiorMes?.mes }}</strong>
+              <span class="subtitle">{{ maiorMes?.quantidade }} eventos</span>
+            </div>
+            <div class="line-highlight-card low">
+              <span class="label"><span class="icon-down">⬇️</span> Menos eventos</span>
+              <strong class="highlight-value">{{ menorMes?.mes }}</strong>
+              <span class="subtitle">{{ menorMes?.quantidade }} eventos</span>
             </div>
           </div>
         </div>
@@ -172,14 +161,21 @@
       <!-- Gráfico 4: Distribuição de Participantes (Barras Horizontal) -->
       <div class="chart-container">
         <h3>Gráfico 4: Distribuição de Participantes por Faixa</h3>
-        <div class="chart-placeholder">
-          <p>📊 Gráfico de Barras Horizontal - Faixas de participantes</p>
-          <div class="horizontal-chart">
-            <div *ngFor="let dist of dashboardData.distribuicaoParticipantes" class="h-bar">
-              <span class="h-label">{{ dist.faixa }}</span>
-              <div class="h-bar-fill" [style.width.%]="(dist.quantidade / 7) * 100">
-                {{ dist.quantidade }}
-              </div>
+        <div class="chart-placeholder chart-donut-horizontal">
+          <div class="chart-donut-canvas">
+            <canvas id="donutFaixaCanvas"></canvas>
+          </div>
+          <div class="donut-highlights" *ngIf="donutFaixaLabels?.length">
+            <div
+              *ngFor="let faixa of donutFaixaLabels; let i = index"
+              class="donut-highlight-card"
+              [ngStyle]="{'border-left': '4px solid ' + donutFaixaColors[i], 'background': 'linear-gradient(87deg,'+ donutFaixaColors[i] +'21 60%, #f3f4f6)'}">
+        <span class="label">
+          <span class="icon-donut" [ngStyle]="{'color': donutFaixaColors[i]}">⬤</span>
+          {{ faixa }}
+        </span>
+              <strong class="highlight-value">{{ donutFaixaData[i] }}</strong>
+              <span class="subtitle">eventos</span>
             </div>
           </div>
         </div>
@@ -187,19 +183,37 @@
 
       <!-- Gráfico 5: Ocupação dos Eventos (Radar) -->
       <div class="chart-container">
-        <h3>Gráfico 5: Ocupação dos Eventos</h3>
-        <div class="chart-placeholder">
-          <p>🎯 Gráfico de Radar - Percentual de ocupação por evento</p>
-          <div class="radar-chart">
-            <div *ngFor="let ocup of dashboardData.ocupacaoEventos" class="radar-item">
-              <span class="radar-label">{{ ocup.titulo }}: {{ ocup.percentual }}%</span>
-              <div class="radar-bar" [style.width.%]="ocup.percentual">
-                {{ ocup.percentual }}%
-              </div>
-            </div>
-          </div>
+        <h3>Gráfico 5: Radar de Ocupação de Eventos</h3>
+      <div class="chart-placeholder chart-radar-horizontal">
+        <div class="radar-top10-list">
+          <table>
+            <thead>
+            <tr>
+              <th style="width:32px">#</th>
+              <th>Evento</th>
+              <th style="width:70px">Ocupação</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let ocup of radarTop10; let i = index">
+              <td>{{ i+1 }}</td>
+              <td>
+            <span class="truncate-td" [title]="ocup.titulo">
+              {{ ocup.titulo }}
+            </span>
+              </td>
+              <td>
+                <strong>{{ ocup.percentual }}%</strong>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="radar-graph">
+          <canvas id="radarCanvas" width="720" height="720"></canvas>
         </div>
       </div>
+  </div>
 
       <!-- Gráfico 6: Atividades por Tipo (Rosca) -->
       <div class="chart-container">
@@ -225,6 +239,5 @@
         </div>
       </div>
     </section>
-
   </div>
 </div>

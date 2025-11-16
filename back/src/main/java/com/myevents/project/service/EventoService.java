@@ -2,7 +2,6 @@ package com.myevents.project.service;
 
 import com.myevents.project.dto.EventoComCategoriaDTO;
 import com.myevents.project.dto.EventoDTO;
-import com.myevents.project.model.Categoria;
 import com.myevents.project.model.Evento;
 import com.myevents.project.repository.CategoriaRepository;
 import com.myevents.project.repository.ConsultaRepository;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 @Service
 public class EventoService {
-
     private final EventoRepository eventoRepository;
     private final CategoriaRepository categoriaRepository;
     private final ConsultaRepository consultaRepository;
@@ -39,11 +37,9 @@ public class EventoService {
         if (dataInicio == null || dataFim == null) {
             throw new IllegalArgumentException("As datas de início e fim do filtro são obrigatórias.");
         }
-
         if (dataInicio.isAfter(dataFim)) {
             throw new IllegalArgumentException("A data de início do filtro não pode ser posterior à data de fim.");
         }
-
         return eventoRepository.findByDataBetween(dataInicio, dataFim);
     }
 
@@ -60,14 +56,26 @@ public class EventoService {
     }
 
     @Transactional
-    public void update(int id_evento, EventoDTO evento) {
-        if (eventoRepository.findById(id_evento).isEmpty()) {
+    public void update(int id_evento, EventoDTO eventoDTO) {
+        Optional<Evento> eventoBDOpt = eventoRepository.findById(id_evento);
+        if (eventoBDOpt.isEmpty()) {
             throw new RuntimeException("Evento não encontrado com o ID: " + id_evento);
         }
-        validateEvento(evento);
+        validateEvento(eventoDTO);
 
-        consultaRepository.atualizarEventoAuditado(id_evento, evento.getTitulo(), evento.getLimite_participantes());
-        eventoRepository.update(id_evento, evento);
+        Evento eventoBD = eventoBDOpt.get();
+        boolean mudouTitulo = !eventoBD.getTitulo().equals(eventoDTO.getTitulo());
+        boolean mudouLimite = eventoBD.getLimite_participantes() != eventoDTO.getLimite_participantes();
+
+        if (mudouTitulo || mudouLimite) {
+            // Se mudou título ou limite, chama procedure
+            consultaRepository.atualizarEventoAuditado(id_evento, eventoDTO.getTitulo(), eventoDTO.getLimite_participantes());
+            // Faz update dos outros campos, sem atualizar titulo e limite
+            eventoRepository.updateWithoutTituloLimite(id_evento, eventoDTO);
+        } else {
+            // Só campos comuns, update puro normal
+            eventoRepository.updateWithoutTituloLimite(id_evento, eventoDTO);
+        }
     }
 
     public void deleteById(int id_evento) {
@@ -81,33 +89,26 @@ public class EventoService {
         if (evento.getTitulo() == null || evento.getTitulo().trim().isEmpty()) {
             throw new IllegalArgumentException("O título do evento é obrigatório.");
         }
-
         if (evento.getTitulo().length() > 300) {
             throw new IllegalArgumentException("O título do evento não pode exceder 300 caracteres.");
         }
-
         if (evento.getData_inicio() != null && evento.getData_fim() != null) {
             if (evento.getData_fim().isBefore(evento.getData_inicio())) {
                 throw new IllegalArgumentException("A data de fim não pode ser anterior à data de início.");
             }
         }
-
         if (evento.getId_categoria() == null) {
             throw new IllegalArgumentException("O ID da categoria é obrigatório.");
         }
-
         if (categoriaRepository.findById(evento.getId_categoria()).isEmpty()) {
             throw new IllegalArgumentException("A categoria com o ID " + evento.getId_categoria() + " não existe.");
         }
-
         if (evento.getCarga_horaria() != null && evento.getCarga_horaria() < 0) {
             throw new IllegalArgumentException("A carga horária não pode ser negativa.");
         }
-
         if (evento.getLimite_participantes() < 0) {
             throw new IllegalArgumentException("O limite de participantes não pode ser negativo.");
         }
-
         if (evento.getEmail_duvidas() != null && !evento.getEmail_duvidas().trim().isEmpty()) {
             String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
             if (!evento.getEmail_duvidas().matches(emailRegex)) {

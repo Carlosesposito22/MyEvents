@@ -1,185 +1,367 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule, NgIf, NgFor } from '@angular/common'; // NgIf/NgFor estão no CommonModule
-import { HttpClientModule } from '@angular/common/http'; // 1. Importar HttpClientModule
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
-
-// 2. Importar o serviço e as interfaces
 import { DashboardService, DashboardData, CategoriaPaiDTO, Filtros } from './dashboard.service';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true, // 3. Adicionar standalone: true
+  standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    HttpClientModule // 4. Adicionar HttpClientModule aos imports
-    // NgIf e NgFor já estão inclusos no CommonModule
+    CommonModule,
+    FormsModule,
+    HttpClientModule
   ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
-  providers: [DashboardService] // 5. Fornecer o serviço
+  providers: [DashboardService]
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
   dashboardData: DashboardData | null = null;
   loading: boolean = true;
   error: string | null = null;
-
-  // Filtros
   filtroCategoria: string = '';
   filtroDataInicio: string = '';
   filtroDataFim: string = '';
-  categorias: string[] = []; // Alterado para lista de nomes (string)
+  categorias: string[] = [];
 
-  // Dados para gráficos
-  chartDataEventosPorCategoria: any;
-  chartDataParticipantesPorEvento: any;
-  chartDataTendenciaEventos: any;
-  chartDataDistribuicaoParticipantes: any;
-  chartDataOcupacaoEventos: any;
-  chartDataAtividadesPorTipo: any;
+  // Para tabela left do radar
+  radarTop10: Array<{titulo: string, percentual: number}> = [];
 
-  // 6. Injetar o DashboardService
+  // Destaques dos meses do gráfico de linha
+  maiorMes: { mes: string, quantidade: number } | null = null;
+  menorMes: { mes: string, quantidade: number } | null = null;
+
+  // Chart.js references & controls
+  private pieChart: Chart | null = null;
+  private lineChart: Chart | null = null;
+  private donutFaixaChart: Chart | null = null;
+  private radarChart: Chart | null = null;
+
+  private pieChartRendered = false;
+  private lineChartRendered = false;
+  private donutFaixaRendered = false;
+  private radarRendered = false;
+
+  donutFaixaLabels: string[] = [];
+  donutFaixaData: number[] = [];
+  donutFaixaColors: string[] = [
+    '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#AAAAAA','#B2FF66','#66FFB2','#FF66AA'
+  ];
+
+  radarLabels: string[] = [];
+  radarData: number[] = [];
+  radarColors: string[] = [
+    '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#AAAAAA','#B2FF66','#66FFB2','#FF66AA'
+  ];
+
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
-    this.carregarCategorias(); // Carrega os filtros
-    this.carregarDados();     // Carrega os dados principais
+    this.carregarCategorias();
+    this.carregarDados();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.dashboardData && !this.loading && !this.error) {
+      if (!this.pieChartRendered) {
+        this.renderPieChart(); this.pieChartRendered = true;
+      }
+      if (!this.lineChartRendered) {
+        this.renderLineChart(); this.lineChartRendered = true;
+      }
+      if (!this.donutFaixaRendered) {
+        this.renderDonutFaixaChart(); this.donutFaixaRendered = true;
+      }
+      if (!this.radarRendered) {
+        this.renderRadarChart(); this.radarRendered = true;
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyPieChart();
+    this.destroyLineChart();
+    this.destroyDonutFaixaChart();
+    this.destroyRadarChart();
   }
 
   carregarCategorias(): void {
     this.dashboardService.getCategorias().subscribe(
       (data: CategoriaPaiDTO[]) => {
-        // Extrai nomes únicos de categorias
         const nomes = data.map(c => c.categoria_nome);
-        this.categorias = [...new Set(nomes)]; // Remove duplicatas
+        this.categorias = [...new Set(nomes)];
       }
-      // O erro já é tratado no serviço
     );
   }
 
   carregarDados(): void {
     this.loading = true;
     this.error = null;
-
-    // 7. Remover dados simulados e chamar o serviço
-    // this.dashboardData = this.gerarDadosSimulados(); // REMOVIDO
-
     const filtrosAtuais: Filtros = {
       categoria: this.filtroCategoria,
       dataInicio: this.filtroDataInicio,
       dataFim: this.filtroDataFim
     };
-
     this.dashboardService.getDashboardData(filtrosAtuais).pipe(
       finalize(() => {
-        this.loading = false; // Garante que o loading termine
+        this.loading = false;
       })
     ).subscribe(
       (data: DashboardData) => {
         this.dashboardData = data;
-        this.prepararGraficos(); // Prepara os gráficos com os dados reais
+        this.pieChartRendered = false;
+        this.lineChartRendered = false;
+        this.donutFaixaRendered = false;
+        this.radarRendered = false;
+        if (data.tendenciaEventosPorMes && data.tendenciaEventosPorMes.length) {
+          this.maiorMes = data.tendenciaEventosPorMes.reduce(
+            (max, curr) => (curr.quantidade > max.quantidade ? curr : max),
+            data.tendenciaEventosPorMes[0]
+          );
+          this.menorMes = data.tendenciaEventosPorMes.reduce(
+            (min, curr) => (curr.quantidade < min.quantidade ? curr : min),
+            data.tendenciaEventosPorMes[0]
+          );
+        } else {
+          this.maiorMes = null;
+          this.menorMes = null;
+        }
       },
       (err: Error) => {
         this.error = err.message || 'Erro desconhecido ao carregar dados.';
-        this.dashboardData = null; // Limpa dados antigos em caso de erro
+        this.dashboardData = null;
+        this.pieChartRendered = false;
+        this.lineChartRendered = false;
+        this.donutFaixaRendered = false;
+        this.radarRendered = false;
+        this.maiorMes = null;
+        this.menorMes = null;
       }
     );
   }
 
-  // 8. Remover a função gerarDadosSimulados()
-  // gerarDadosSimulados(): DashboardData { ... } // REMOVIDO
+  private renderPieChart(): void {
+    this.destroyPieChart();
+    const ctx = document.getElementById('pieCanvas') as HTMLCanvasElement | null;
+    if (!ctx || !this.dashboardData || !this.dashboardData.eventosMaisPopulares.length) return;
+    const eventos = this.dashboardData.eventosMaisPopulares || [];
+    const topN = 12;
+    const topEventos = eventos.slice(0, topN);
+    const restoEventos = eventos.slice(topN);
+    let labels = topEventos.map(e => e.titulo);
+    let data = topEventos.map(e => e.participantes);
+    if (restoEventos.length > 0) {
+      labels.push('Outros');
+      data.push(restoEventos.reduce((sum, e) => sum + e.participantes, 0));
+    }
+    const backgroundColors = [
+      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+      '#FF9F40', '#AAAAAA', '#B2FF66', '#66FFB2', '#FF66AA',
+      '#40C0FF', '#7798EE', '#888888'
+    ];
+    this.pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: backgroundColors.slice(0, labels.length),
+          borderColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'right',
+            align: 'center',
+            labels: {
+              boxWidth: 20,
+              padding: 16,
+              font: {
+                size: 14
+              }
+            }
+          }
+        },
+        layout: {
+          padding: 16
+        }
+      }
+    });
+  }
+  private destroyPieChart(): void {
+    if (this.pieChart) {
+      this.pieChart.destroy();
+      this.pieChart = null;
+    }
+  }
 
-  prepararGraficos(): void {
-    if (!this.dashboardData) return;
+  private renderLineChart(): void {
+    this.destroyLineChart();
+    const ctx = document.getElementById('lineCanvas') as HTMLCanvasElement | null;
+    if (!ctx || !this.dashboardData || !this.dashboardData.tendenciaEventosPorMes.length) return;
+    const labels = this.dashboardData.tendenciaEventosPorMes.map(m => m.mes);
+    const data = this.dashboardData.tendenciaEventosPorMes.map(m => m.quantidade);
+    this.lineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Eventos por mês',
+          data: data,
+          borderColor: '#36A2EB',
+          backgroundColor: 'rgba(54,162,235,0.14)',
+          borderWidth: 3,
+          tension: 0.3,
+          fill: true,
+          pointBackgroundColor: '#2563eb',
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBorderColor: '#fff',
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Qtd eventos'}
+          },
+          x: {
+            title: { display: true, text: 'Mês' }
+          }
+        }
+      }
+    });
+  }
+  private destroyLineChart(): void {
+    if (this.lineChart) {
+      this.lineChart.destroy();
+      this.lineChart = null;
+    }
+  }
 
-    // Gráfico 1: Eventos por Categoria (Gráfico de Barras)
-    this.chartDataEventosPorCategoria = {
-      labels: this.dashboardData.categoriasComMaisEventos.map(c => c.nome),
-      datasets: [{
-        label: 'Quantidade de Eventos',
-        data: this.dashboardData.categoriasComMaisEventos.map(c => c.quantidade),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-        borderWidth: 1
-      }]
-    };
+  private renderDonutFaixaChart(): void {
+    this.destroyDonutFaixaChart();
+    const ctx = document.getElementById('donutFaixaCanvas') as HTMLCanvasElement | null;
+    if (!ctx || !this.dashboardData || !this.dashboardData.distribuicaoParticipantes.length) return;
+    this.donutFaixaLabels = this.dashboardData.distribuicaoParticipantes.map(f => f.faixa);
+    this.donutFaixaData = this.dashboardData.distribuicaoParticipantes.map(f => f.quantidade);
+    this.donutFaixaChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: this.donutFaixaLabels,
+        datasets: [{
+          data: this.donutFaixaData,
+          backgroundColor: this.donutFaixaColors.slice(0, this.donutFaixaLabels.length),
+          borderColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        cutout: '60%',
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        layout: { padding: 16 }
+      }
+    });
+  }
+  private destroyDonutFaixaChart(): void {
+    if (this.donutFaixaChart) {
+      this.donutFaixaChart.destroy();
+      this.donutFaixaChart = null;
+    }
+  }
 
-    // Gráfico 2: Participantes por Evento (Gráfico de Pizza)
-    this.chartDataParticipantesPorEvento = {
-      labels: this.dashboardData.eventosMaisPopulares.map(e => e.titulo),
-      datasets: [{
-        data: this.dashboardData.eventosMaisPopulares.map(e => e.participantes),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-        borderColor: '#fff',
-        borderWidth: 2
-      }]
-    };
+  private renderRadarChart(): void {
+    this.destroyRadarChart();
+    const ctx = document.getElementById('radarCanvas') as HTMLCanvasElement | null;
+    if (!ctx || !this.dashboardData || !this.dashboardData.ocupacaoEventos.length) return;
 
-    // Gráfico 3: Tendência de Eventos por Mês (Gráfico de Linha)
-    this.chartDataTendenciaEventos = {
-      labels: this.dashboardData.tendenciaEventosPorMes.map(t => t.mes),
-      datasets: [{
-        label: 'Quantidade de Eventos',
-        data: this.dashboardData.tendenciaEventosPorMes.map(t => t.quantidade),
-        borderColor: '#36A2EB',
-        backgroundColor: 'rgba(54, 162, 235, 0.1)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.4
-      }]
-    };
-    
-    // ... O restante da função prepararGraficos() permanece igual ...
-    // Gráfico 4: Distribuição de Participantes (Gráfico de Barras Horizontal)
-    this.chartDataDistribuicaoParticipantes = {
-      labels: this.dashboardData.distribuicaoParticipantes.map(d => d.faixa),
-      datasets: [{
-        label: 'Quantidade de Eventos',
-        data: this.dashboardData.distribuicaoParticipantes.map(d => d.quantidade),
-        backgroundColor: '#4BC0C0',
-        borderWidth: 1
-      }]
-    };
+    // TOP 10 ORDENADO
+    const ocupacaoSorted = [...this.dashboardData.ocupacaoEventos]
+      .sort((a, b) => b.percentual - a.percentual)
+      .slice(0, 10);
 
-    // Gráfico 5: Ocupação dos Eventos (Gráfico de Radar)
-    this.chartDataOcupacaoEventos = {
-      labels: this.dashboardData.ocupacaoEventos.map(o => o.titulo),
-      datasets: [{
-        label: 'Percentual de Ocupação (%)',
-        data: this.dashboardData.ocupacaoEventos.map(o => o.percentual),
-        borderColor: '#FF6384',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderWidth: 2
-      }]
-    };
+    this.radarLabels = ocupacaoSorted.map(e => e.titulo); // não truncar aqui!
+    this.radarData   = ocupacaoSorted.map(e => e.percentual);
+    this.radarTop10  = ocupacaoSorted;
 
-    // Gráfico 6: Atividades por Tipo (Gráfico de Rosca)
-    this.chartDataAtividadesPorTipo = {
-      labels: this.dashboardData.atividadesPorTipo.map(a => a.tipo),
-      datasets: [{
-        data: this.dashboardData.atividadesPorTipo.map(a => a.quantidade),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-        borderColor: '#fff',
-        borderWidth: 2
-      }]
-    };
+    this.radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: this.radarLabels,
+        datasets: [{
+          label: 'Ocupação (%)',
+          data: this.radarData,
+          fill: true,
+          backgroundColor: 'rgba(255, 207, 87, 0.15)',
+          borderColor: '#f59e0b',
+          pointBackgroundColor: this.radarColors.slice(0, this.radarLabels.length),
+          pointBorderColor: '#fff',
+          pointRadius: 7,
+          borderWidth: 3,
+          tension: 0.2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        elements: {
+          line: { borderJoinStyle: 'bevel' }
+        },
+        scales: {
+          r: {
+            angleLines: { color: '#e5e7eb' },
+            grid: { color: '#e5e7eb' },
+            pointLabels: {
+              font: { size: 14, weight: 600 },
+              color: '#484848',
+              padding: 2,
+              callback: function(label: string) {
+                return label.length > 22 ? label.substring(0, 20) + "..." : label;
+              }
+            },
+            min: 0,
+            max: 100,
+            ticks: {
+              display: true,
+              stepSize: 10,
+              callback: function(val) { return val + "%" }
+            }
+          }
+        }
+      }
+    });
+  }
+  private destroyRadarChart(): void {
+    if (this.radarChart) {
+      this.radarChart.destroy();
+      this.radarChart = null;
+    }
   }
 
   aplicarFiltros(): void {
-    // Esta função agora busca os dados filtrados da API (via serviço)
-    console.log('Aplicando filtros e recarregando dados...');
     this.carregarDados();
   }
-
   limparFiltros(): void {
     this.filtroCategoria = '';
     this.filtroDataInicio = '';
     this.filtroDataFim = '';
     this.carregarDados();
   }
-
   exportarRelatorio(): void {
     console.log('Exportando relatório...');
-    // Implementar lógica de exportação (provavelmente usando os dados de this.dashboardData)
+    // Implemente conforme necessidade
   }
 }
