@@ -239,24 +239,5 @@
       </div>
     </section>
 
-    <section class="categorias-dashboard-section" *ngIf="categoriasRaizDashboard.length">
-      <h2>Palestrantes por Categoria de Evento</h2>
-      <p style="font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 50px;">
-        📢 Cards - Quantidade de Palestrantes por Tipo de Evento
-      </p>
-      <div class="categorias-list">
-        <div *ngFor="let cat of categoriasRaizDashboard" class="categoria-card">
-          <div class="categoria-header">
-            <span class="categoria-titulo">{{cat.nome}}</span>
-            <span class="palestrantes-total">👨‍🏫 {{cat.totalPalestrantes}} palestrante{{cat.totalPalestrantes==1?'':'s'}}</span>
-          </div>
-          <div class="subcategoria-list" *ngIf="cat.subcategorias.length">
-            <div *ngFor="let sub of cat.subcategorias" class="subcategoria-card">
-              <span>{{sub.nome}}</span>
-              <span>👤 {{sub.totalPalestrantes}}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    
 </div>
