@@ -2,9 +2,25 @@ import { Component, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { finalize } from 'rxjs/operators';
-import { DashboardService, DashboardData, CategoriaPaiDTO, Filtros } from './dashboard.service';
+import { finalize, forkJoin } from 'rxjs'; // forkJoin IMPORTANTE!
+import { DashboardService, DashboardData, CategoriaPaiDTO, PalestranteEspecialidadeDTO, Filtros } from './dashboard.service';
 import Chart from 'chart.js/auto';
+import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
+Chart.register(TreemapController, TreemapElement);
+
+// --------- INTERFACE CARDS ----------
+interface CategoriaRaizDashboard {
+  id: number;
+  nome: string;
+  totalPalestrantes: number;
+  destaque: 'mais' | 'menos' | null;
+  subcategorias: Array<{
+    id: number;
+    nome: string;
+    totalPalestrantes: number;
+    destaque: 'mais' | 'menos' | null;
+  }>;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -26,44 +42,36 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
   filtroDataInicio: string = '';
   filtroDataFim: string = '';
   categorias: string[] = [];
-
-  // Para tabela left do radar
   radarTop10: Array<{titulo: string, percentual: number}> = [];
-
-  // Destaques dos meses do gráfico de linha
   maiorMes: { mes: string, quantidade: number } | null = null;
   menorMes: { mes: string, quantidade: number } | null = null;
-
-  // Chart.js references & controls
+  categoriasRaizDashboard: CategoriaRaizDashboard[] = [];
   private pieChart: Chart | null = null;
   private lineChart: Chart | null = null;
   private donutFaixaChart: Chart | null = null;
   private radarChart: Chart | null = null;
-
+  private treemapChart: Chart | null = null;
   private pieChartRendered = false;
   private lineChartRendered = false;
   private donutFaixaRendered = false;
   private radarRendered = false;
-
+  private treemapRendered = false;
   donutFaixaLabels: string[] = [];
   donutFaixaData: number[] = [];
   donutFaixaColors: string[] = [
     '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#AAAAAA','#B2FF66','#66FFB2','#FF66AA'
   ];
-
   radarLabels: string[] = [];
   radarData: number[] = [];
   radarColors: string[] = [
     '#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#AAAAAA','#B2FF66','#66FFB2','#FF66AA'
   ];
-
   constructor(private dashboardService: DashboardService) {}
-
   ngOnInit(): void {
     this.carregarCategorias();
     this.carregarDados();
+    this.carregarCategoriasRaizesESubcategorias();
   }
-
   ngAfterViewChecked(): void {
     if (this.dashboardData && !this.loading && !this.error) {
       if (!this.pieChartRendered) {
@@ -78,16 +86,18 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
       if (!this.radarRendered) {
         this.renderRadarChart(); this.radarRendered = true;
       }
+      if (!this.treemapRendered) {
+        this.renderTreemapChart(); this.treemapRendered = true;
+      }
     }
   }
-
   ngOnDestroy(): void {
     this.destroyPieChart();
     this.destroyLineChart();
     this.destroyDonutFaixaChart();
     this.destroyRadarChart();
+    this.destroyTreemapChart();
   }
-
   carregarCategorias(): void {
     this.dashboardService.getCategorias().subscribe(
       (data: CategoriaPaiDTO[]) => {
@@ -95,6 +105,51 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
         this.categorias = [...new Set(nomes)];
       }
     );
+  }
+
+  // AQUI COMEÇA O AJUSTE PARA O CARD DE CATEGORIA/SUBCOM PALESTRANTES
+  carregarCategoriasRaizesESubcategorias(): void {
+    forkJoin({
+      categorias: this.dashboardService.getCategorias(),
+      palestrantesEsp: this.dashboardService.getPalestrantesEspecialidades()
+    }).subscribe(({categorias, palestrantesEsp}) => {
+      const raizes = categorias.filter(c => c.pai_nome === null || c.pai_nome === 'Categoria Raiz');
+      const subs   = categorias.filter(c => c.pai_nome !== null && c.pai_nome !== 'Categoria Raiz');
+
+      const getPalestrantesSub = (subcatNome: string): number =>
+        palestrantesEsp.filter(p => p.nomeEspecialidade === subcatNome).length;
+      const getPalestrantesRaiz = (raizNome: string, subsArr: CategoriaPaiDTO[]): number => {
+        const subNomes = subsArr.filter(s => s.pai_nome === raizNome).map(s => s.categoria_nome);
+        return palestrantesEsp.filter(p => subNomes.includes(p.nomeEspecialidade)).length;
+      };
+
+      let lista: CategoriaRaizDashboard[] = raizes.map(raiz => {
+        const suasSubs = subs.filter(s => s.pai_nome === raiz.categoria_nome);
+        // Só mantém subcategorias com palestrante ≥ 1!
+        const subcats = suasSubs
+                        .map(sub => ({
+                          id: -1,
+                          nome: sub.categoria_nome,
+                          totalPalestrantes: getPalestrantesSub(sub.categoria_nome),
+                          destaque: null
+                        }))
+                        .filter(sub => sub.totalPalestrantes > 0);
+
+        const total = getPalestrantesRaiz(raiz.categoria_nome, subs);
+        return {
+          id: -1,
+          nome: raiz.categoria_nome,
+          totalPalestrantes: total,
+          destaque: null,
+          subcategorias: subcats
+        };
+      })
+      // Tira categoria pai 0 palestrantes e ord. decrescente
+      .filter(cat => cat.totalPalestrantes > 0)
+      .sort((a, b) => b.totalPalestrantes - a.totalPalestrantes);
+
+      this.categoriasRaizDashboard = lista;
+    });
   }
 
   carregarDados(): void {
@@ -116,6 +171,7 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
         this.lineChartRendered = false;
         this.donutFaixaRendered = false;
         this.radarRendered = false;
+        this.treemapRendered = false;
         if (data.tendenciaEventosPorMes && data.tendenciaEventosPorMes.length) {
           this.maiorMes = data.tendenciaEventosPorMes.reduce(
             (max, curr) => (curr.quantidade > max.quantidade ? curr : max),
@@ -137,12 +193,12 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
         this.lineChartRendered = false;
         this.donutFaixaRendered = false;
         this.radarRendered = false;
+        this.treemapRendered = false;
         this.maiorMes = null;
         this.menorMes = null;
       }
     );
   }
-
   private renderPieChart(): void {
     this.destroyPieChart();
     const ctx = document.getElementById('pieCanvas') as HTMLCanvasElement | null;
@@ -200,7 +256,6 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
       this.pieChart = null;
     }
   }
-
   private renderLineChart(): void {
     this.destroyLineChart();
     const ctx = document.getElementById('lineCanvas') as HTMLCanvasElement | null;
@@ -248,7 +303,6 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
       this.lineChart = null;
     }
   }
-
   private renderDonutFaixaChart(): void {
     this.destroyDonutFaixaChart();
     const ctx = document.getElementById('donutFaixaCanvas') as HTMLCanvasElement | null;
@@ -282,21 +336,16 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
       this.donutFaixaChart = null;
     }
   }
-
   private renderRadarChart(): void {
     this.destroyRadarChart();
     const ctx = document.getElementById('radarCanvas') as HTMLCanvasElement | null;
     if (!ctx || !this.dashboardData || !this.dashboardData.ocupacaoEventos.length) return;
-
-    // TOP 10 ORDENADO
     const ocupacaoSorted = [...this.dashboardData.ocupacaoEventos]
       .sort((a, b) => b.percentual - a.percentual)
       .slice(0, 10);
-
-    this.radarLabels = ocupacaoSorted.map(e => e.titulo); // não truncar aqui!
+    this.radarLabels = ocupacaoSorted.map(e => e.titulo);
     this.radarData   = ocupacaoSorted.map(e => e.percentual);
     this.radarTop10  = ocupacaoSorted;
-
     this.radarChart = new Chart(ctx, {
       type: 'radar',
       data: {
@@ -350,7 +399,53 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
       this.radarChart = null;
     }
   }
-
+  private renderTreemapChart(): void {
+    this.destroyTreemapChart();
+    const ctx = document.getElementById('treemapCanvas') as HTMLCanvasElement | null;
+    if (!ctx || !this.dashboardData || !this.dashboardData.atividadesPorTipo.length) return;
+    const treemapData = this.dashboardData.atividadesPorTipo.map((ativ: any) => ({
+      g: ativ.tipo,
+      Tipo: ativ.quantidade
+    }));
+    const boxColors = [
+      '#7c2886', '#439aff', '#fd9f3c', '#ffdc19', '#a73ac6',
+      '#49b46c', '#fa63a5', '#567dcd', '#c4a000'
+    ];
+    this.treemapChart = new Chart(ctx, {
+      type: 'treemap' as any,
+      data: {
+        datasets: [{
+          type: 'treemap',
+          tree: treemapData,
+          key: 'Tipo',
+          groups: ['g'],
+          backgroundColor: (c: any) => boxColors[c.dataIndex % boxColors.length],
+          borderWidth: 4,
+          borderColor: '#fff',
+          labels: {
+            display: true,
+            align: 'center',
+            color: 'white',
+            font: { size: 16 } as any,
+            formatter: (ctx: any) => {
+              return `${ctx.raw.g}`;
+            }
+          }
+        } as any]
+      },
+      options: {
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  }
+  private destroyTreemapChart(): void {
+    if (this.treemapChart) {
+      this.treemapChart.destroy();
+      this.treemapChart = null;
+    }
+  }
   aplicarFiltros(): void {
     this.carregarDados();
   }
@@ -362,6 +457,5 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
   }
   exportarRelatorio(): void {
     console.log('Exportando relatório...');
-    // Implemente conforme necessidade
   }
 }

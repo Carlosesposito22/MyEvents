@@ -82,6 +82,10 @@ export class DashboardService {
   /**
    * Busca as categorias para popular o dropdown de filtro.
    */
+   // No dashboard.service.ts:
+  getPalestrantesEspecialidades(): Observable<PalestranteEspecialidadeDTO[]> {
+     return this.http.get<PalestranteEspecialidadeDTO[]>(`${this.apiUrl}/consultas/palestrantes-especialidades`);
+  }
   getCategorias(): Observable<CategoriaPaiDTO[]> {
     return this.http.get<CategoriaPaiDTO[]>(`${this.apiUrl}/categoria/hierarquia`).pipe(
       catchError(err => {

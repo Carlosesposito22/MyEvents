@@ -137,8 +137,13 @@
       <!-- MANTENHA NORMAL A PARTIR DAQUI -->
 
       <!-- Gráfico 3: Tendência de Eventos (Linha) -->
+      <!-- Gráfico 3: Tendência de Eventos (Linha) -->
       <div class="chart-container">
         <h3>Gráfico 3: Tendência de Eventos por Mês</h3>
+        <!-- DESCRIÇÃO ANTES DO FLEX, igual ao Gráfico 2 -->
+        <p style="font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 0;">
+          📈 Gráfico de Linha - Evolução mensal do número de eventos realizados ao longo do período analisado
+        </p>
         <div class="chart-placeholder chart-line-horizontal">
           <div class="chart-line-canvas">
             <canvas id="lineCanvas"></canvas>
@@ -157,10 +162,13 @@
           </div>
         </div>
       </div>
-
       <!-- Gráfico 4: Distribuição de Participantes (Barras Horizontal) -->
       <div class="chart-container">
         <h3>Gráfico 4: Distribuição de Participantes por Faixa</h3>
+        <!-- DESCRIÇÃO ANTES DO FLEX, igual ao Gráfico 2 -->
+        <p style="font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 0;">
+          🍩 Gráfico de Rosca - Distribuição por Faixa de Participantes
+        </p>
         <div class="chart-placeholder chart-donut-horizontal">
           <div class="chart-donut-canvas">
             <canvas id="donutFaixaCanvas"></canvas>
@@ -184,6 +192,9 @@
       <!-- Gráfico 5: Ocupação dos Eventos (Radar) -->
       <div class="chart-container">
         <h3>Gráfico 5: Radar de Ocupação de Eventos</h3>
+        <p style="font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 0;">
+          🛰️ Gráfico de Radar - Eventos com Maiores Taxas de Ocupação de Participantes
+        </p>
       <div class="chart-placeholder chart-radar-horizontal">
         <div class="radar-top10-list">
           <table>
@@ -217,27 +228,34 @@
 
       <!-- Gráfico 6: Atividades por Tipo (Rosca) -->
       <div class="chart-container">
-        <h3>Gráfico 6: Atividades por Tipo</h3>
+        <h3>Gráfico 6: Total de Atividades por Tipo</h3>
+        <p style="font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 0;">
+          🏔️️ Gráfico de Área - Proporção de Distribuição de Atividades por Tipo
+        </p>
         <div class="chart-placeholder">
-          <p>🍩 Gráfico de Rosca - Distribuição de tipos de atividades</p>
-          <div class="donut-chart">
-            <div *ngFor="let ativ of dashboardData.atividadesPorTipo" class="donut-segment">
-              <span class="donut-label">{{ ativ.tipo }}: {{ ativ.quantidade }}</span>
+          <canvas id="treemapCanvas" width="900" height="500"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="categorias-dashboard-section" *ngIf="categoriasRaizDashboard.length">
+      <h2>Palestrantes por Categoria de Evento</h2>
+      <p style="font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 50px;">
+        📢 Cards - Quantidade de Palestrantes por Tipo de Evento
+      </p>
+      <div class="categorias-list">
+        <div *ngFor="let cat of categoriasRaizDashboard" class="categoria-card">
+          <div class="categoria-header">
+            <span class="categoria-titulo">{{cat.nome}}</span>
+            <span class="palestrantes-total">👨‍🏫 {{cat.totalPalestrantes}} palestrante{{cat.totalPalestrantes==1?'':'s'}}</span>
+          </div>
+          <div class="subcategoria-list" *ngIf="cat.subcategorias.length">
+            <div *ngFor="let sub of cat.subcategorias" class="subcategoria-card">
+              <span>{{sub.nome}}</span>
+              <span>👤 {{sub.totalPalestrantes}}</span>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- Eventos Mais Populares -->
-    <section class="popular-events-section">
-      <h2>Eventos Mais Populares</h2>
-      <div class="events-list">
-        <div *ngFor="let evento of dashboardData.eventosMaisPopulares" class="event-item">
-          <h4>{{ evento.titulo }}</h4>
-          <p>👥 {{ evento.participantes }} participantes</p>
-        </div>
-      </div>
-    </section>
-  </div>
 </div>
