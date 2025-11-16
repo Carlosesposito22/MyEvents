@@ -5,6 +5,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { DashboardService, DashboardData, CategoriaPaiDTO, Filtros } from './dashboard.service';
 import Chart from 'chart.js/auto';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-dashboard',
@@ -60,6 +62,7 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.carregarCategorias();
     this.carregarDados();
   }
@@ -360,8 +363,107 @@ export class Dashboard implements OnInit, AfterViewChecked, OnDestroy {
     this.filtroDataFim = '';
     this.carregarDados();
   }
+  
   exportarRelatorio(): void {
-    console.log('Exportando relatório...');
-    // Implemente conforme necessidade
+    console.log('Iniciando exportação paginada ordenada...');
+
+    // this.loading = true; 
+
+    const reportElement = document.getElementById('dashboard-report-container');
+    if (!reportElement) {
+      console.error('Elemento do relatório "dashboard-report-container" não encontrado.');
+      return;
+    }
+
+    // 2. Salvar estilos originais
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalBodyHeight = document.body.style.height;
+    const originalHtmlHeight = document.documentElement.style.height;
+
+    // 3. Forçar estilos para captura total
+    document.body.style.overflow = 'visible';
+    document.documentElement.style.overflow = 'visible';
+    document.body.style.height = 'auto';
+    document.documentElement.style.height = 'auto';
+
+    window.scrollTo(0, 0);
+
+    // 4. Delay para repintura do CSS
+    setTimeout(() => {
+      
+      const options = {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: reportElement.scrollWidth,
+        height: reportElement.scrollHeight, // Garantia de altura total
+        x: 0,
+        y: 0,
+        scrollY: -window.scrollY
+      };
+
+      html2canvas(reportElement, options).then(canvas => {
+        // 5. Configuração do PDF (voltamos ao A4)
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+
+        const pdf = new jsPDF({
+          orientation: 'p', // 'p' = portrait (retrato)
+          unit: 'mm',       // unidade em milímetros
+          format: 'a4'      // formato A4
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth(); // Largura da página A4 em mm
+        const pdfHeight = pdf.internal.pageSize.getHeight(); // Altura da página A4 em mm
+
+        // 6. Calcular a proporção
+        // Escalamos a altura da IMAGEM para caber na LARGURA do PDF
+        const ratio = imgHeight / imgWidth;
+        const imgHeightOnPdf = pdfWidth * ratio; // Altura total da imagem *dentro* do PDF
+
+        // 7. LÓGICA DE PAGINAÇÃO CORRIGIDA (GARANTE A ORDEM)
+        
+        let position = 0; // Posição Y (vertical) de onde a fatia começa
+
+        // Adiciona a primeira página
+        // (Adiciona a imagem inteira, mas o PDF "corta" o que passa da pdfHeight)
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeightOnPdf);
+        
+        // Incrementa a posição pela altura de UMA página
+        position = pdfHeight;
+
+        // Loop: Enquanto a posição que já usamos for menor que a altura total da imagem
+        while (position < imgHeightOnPdf) {
+          pdf.addPage(); // Adiciona uma nova página em branco
+
+          // Adiciona a imagem novamente, mas "puxada para cima"
+          // O valor de 'position' negativo (ex: -297mm) age como um offset
+          // "puxando" a imagem para cima, alinhando a próxima fatia ao topo
+          // da nova página.
+          pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, imgHeightOnPdf);
+          
+          // Move a posição para a próxima fatia
+          position += pdfHeight;
+        }
+        
+        // 8. Salvar o PDF
+        pdf.save('Relatorio_Dashboard_Paginado.pdf');
+
+      }).catch(err => {
+        console.error('Erro ao gerar o PDF paginado:', err);
+        alert('Ocorreu um erro ao tentar gerar o PDF paginado.');
+      }).finally(() => {
+        
+        // 9. RESTAURAR os estilos originais
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.height = originalBodyHeight;
+        document.documentElement.style.height = originalHtmlHeight;
+        
+        // this.loading = false;
+      });
+    }, 200);
   }
 }
