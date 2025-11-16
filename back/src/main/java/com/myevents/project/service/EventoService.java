@@ -5,8 +5,10 @@ import com.myevents.project.dto.EventoDTO;
 import com.myevents.project.model.Categoria;
 import com.myevents.project.model.Evento;
 import com.myevents.project.repository.CategoriaRepository;
+import com.myevents.project.repository.ConsultaRepository;
 import com.myevents.project.repository.EventoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,10 +19,12 @@ public class EventoService {
 
     private final EventoRepository eventoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ConsultaRepository consultaRepository;
 
-    public EventoService(EventoRepository eventoRepository, CategoriaRepository categoriaRepository) {
+    public EventoService(EventoRepository eventoRepository, CategoriaRepository categoriaRepository, ConsultaRepository consultaRepository) {
         this.eventoRepository = eventoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.consultaRepository = consultaRepository;
     }
 
     public Optional<Evento> findById(int id_evento) {
@@ -55,11 +59,14 @@ public class EventoService {
         eventoRepository.save(evento);
     }
 
+    @Transactional
     public void update(int id_evento, EventoDTO evento) {
         if (eventoRepository.findById(id_evento).isEmpty()) {
             throw new RuntimeException("Evento não encontrado com o ID: " + id_evento);
         }
         validateEvento(evento);
+
+        consultaRepository.atualizarEventoAuditado(id_evento, evento.getTitulo(), evento.getLimite_participantes());
         eventoRepository.update(id_evento, evento);
     }
 
