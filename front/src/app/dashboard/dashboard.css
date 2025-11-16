@@ -22,6 +22,7 @@
   background-color: var(--light-bg);
   color: var(--dark-text);
   min-height: 100vh;
+  animation: fadeInPage 0.4s ease-out;
   padding: 0;
   margin: 0;
 }
