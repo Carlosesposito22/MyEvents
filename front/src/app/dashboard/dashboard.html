@@ -11,11 +11,6 @@
     <p>Carregando dados do dashboard...</p>
   </div>
 
-  <div *ngIf="error" class="error-container">
-    <p>{{ error }}</p>
-    <button (click)="carregarDados()">Tentar Novamente</button>
-  </div>
-
   <!-- Dashboard Content -->
   <div *ngIf="!loading && !error && dashboardData" class="dashboard-content">
     <!-- Filtros -->
