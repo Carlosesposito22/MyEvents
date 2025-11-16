@@ -35,6 +35,8 @@
     "chart.js": "^4.5.1",
     "chartjs-chart-treemap": "^3.1.0",
     "express": "^5.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.3",
     "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

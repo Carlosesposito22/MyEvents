@@ -1,7 +1,8 @@
-<div class="dashboard-container">
+<div class="dashboard-container" id="dashboard-report-container">
   <!-- Header -->
   <header class="dashboard-header">
-    <h1>📊 Dashboard Estatístico de Eventos</h1>
+    <a href="/" class="btn btn-secondary estilo-btn"><span style="font-size: 1.2rem; line-height: 1;">&larr;</span>Voltar</a>
+    <h1>📊 Dashboard Estatístico</h1>
     <p class="subtitle">Análise completa de indicadores e métricas de eventos</p>
   </header>
   <!-- Loading e Error States -->
@@ -63,12 +64,12 @@
         </div>
         <div class="indicator-card">
           <h3>Média de Participantes/Evento</h3>
-          <p class="indicator-value">{{ dashboardData.mediaParticipantesPorEvento | number }}</p>
+          <p class="indicator-value">{{ dashboardData.mediaParticipantesPorEvento | number:'1.2-2' }}</p>
           <span class="indicator-label">Participantes por evento</span>
         </div>
         <div class="indicator-card">
           <h3>Média de Horas/Evento</h3>
-          <p class="indicator-value">{{ dashboardData.mediaHorasPorEvento | number }}h</p>
+          <p class="indicator-value">{{ dashboardData.mediaHorasPorEvento | number:'1.2-2' }}h</p>
           <span class="indicator-label">Carga horária média</span>
         </div>
       </div>

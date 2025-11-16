@@ -280,7 +280,7 @@ export class DashboardService {
       let maxFreq = 0;
       let mode = NaN;
       for (const val in counts) {
-        if (counts[val] > maxFreq) {
+        if (counts[val] >= maxFreq) {
           maxFreq = counts[val];
           mode = Number(val);
         }
