@@ -16,7 +16,7 @@ CREATE TABLE Evento (
     data_fim DATE,
     carga_horaria INT,
     limite_participantes INT DEFAULT (0),
-    expectiva_participantes INT DEFAULT (0),
+    expectativa_participantes INT DEFAULT (0),
     numero_participantes INT NOT NULL DEFAULT (0),
     id_categoria INT NOT NULL,
 	email_duvidas VARCHAR(100),

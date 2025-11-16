@@ -65,7 +65,7 @@ DELIMITER ;
  * pesadas (um COUNT em Atividades e um GROUP_CONCAT em Palestrantes,
  * envolvendo 3 tabelas).
  */
-DELIMITPER $$
+DELIMITER $$
 CREATE PROCEDURE sp_relatorio_detalhado_eventos()
 BEGIN
     DECLARE done INT DEFAULT 0;
@@ -74,6 +74,10 @@ BEGIN
     DECLARE v_qtd_atividades INT;
     DECLARE v_lista_palestrantes TEXT;
 
+    DECLARE cur_eventos CURSOR FOR
+        SELECT id_evento, titulo FROM Evento;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
     DROP TEMPORARY TABLE IF EXISTS tmp_relatorio_eventos;
     CREATE TEMPORARY TABLE tmp_relatorio_eventos (
         id_evento INT,
@@ -81,10 +85,6 @@ BEGIN
         qtd_atividades INT,
         palestrantes TEXT
     );
-
-    DECLARE cur_eventos CURSOR FOR
-        SELECT id_evento, titulo FROM Evento;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
     OPEN cur_eventos;
     evento_loop: LOOP

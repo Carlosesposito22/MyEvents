@@ -1,3 +1,359 @@
+CREATE DATABASE myEvents_db;
+USE myEvents_db;
+
+CREATE TABLE Categoria (
+    id_categoria INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    descricao VARCHAR(200),
+    id_categoria_pai INT,
+    FOREIGN KEY (id_categoria_pai) REFERENCES Categoria(id_categoria) ON DELETE SET NULL
+);
+
+CREATE TABLE Evento (
+    id_evento INT PRIMARY KEY AUTO_INCREMENT,
+	titulo VARCHAR(300) NOT NULL,
+    data_inicio DATE,
+    data_fim DATE,
+    carga_horaria INT,
+    limite_participantes INT DEFAULT (0),
+    expectativa_participantes INT DEFAULT (0),
+    numero_participantes INT NOT NULL DEFAULT (0),
+    id_categoria INT NOT NULL,
+	email_duvidas VARCHAR(100),
+    numero_membros_comissao INT NOT NULL DEFAULT (0),
+    FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria) ON DELETE RESTRICT,
+    CONSTRAINT chk_datas_evento CHECK (data_fim >= data_inicio)
+);
+
+CREATE TABLE Local (
+    id_local INT PRIMARY KEY AUTO_INCREMENT,
+    NomeLocal VARCHAR(100) NOT NULL,
+    capacidade INT CHECK (capacidade >= 0),
+    rua VARCHAR(100),
+    numero INT,
+    cidade VARCHAR(100),
+    estado VARCHAR(50),
+    cep VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE EventoOnline (
+    id_evento INT PRIMARY KEY,
+    url_evento VARCHAR(200) NOT NULL UNIQUE,
+    aplicativoTrasmissao VARCHAR(50),
+    FOREIGN KEY (id_evento) REFERENCES Evento(id_evento) ON DELETE CASCADE
+);
+
+CREATE TABLE EventoPresencial (
+    id_evento INT PRIMARY KEY,
+    id_local INT NOT NULL,
+    FOREIGN KEY (id_evento) REFERENCES Evento(id_evento) ON DELETE CASCADE,
+    FOREIGN KEY (id_local) REFERENCES Local(id_local) ON DELETE RESTRICT
+);
+
+CREATE TABLE TipoAtividade (
+    id_tipoAtividade INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    descricao VARCHAR(200)
+);
+
+CREATE TABLE Atividade (
+    id_atividade INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(100) NOT NULL,
+    descricao VARCHAR(200),
+    limite_vagas INT CHECK (limite_vagas >= 0),
+    link_transmissao_atividade VARCHAR(100) NULL UNIQUE,
+    carga_horaria INT,
+    id_evento INT NOT NULL,
+    id_tipoAtividade INT NOT NULL,
+    FOREIGN KEY (id_evento) REFERENCES Evento(id_evento) ON DELETE CASCADE,
+    FOREIGN KEY (id_tipoAtividade) REFERENCES TipoAtividade(id_tipoAtividade) ON DELETE RESTRICT
+); 
+
+CREATE TABLE Palestrante (
+    id_palestrante INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    biografia VARCHAR(1000),
+    linkedin VARCHAR(100) UNIQUE,
+    lattes VARCHAR(100) UNIQUE
+);
+
+CREATE TABLE Especialidade (
+    id_especialidade INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Palestrante_Especialidade (
+    id_palestrante INT NOT NULL,
+    id_especialidade INT NOT NULL,
+    PRIMARY KEY (id_palestrante, id_especialidade),
+    FOREIGN KEY (id_palestrante) REFERENCES Palestrante(id_palestrante) ON DELETE CASCADE,
+    FOREIGN KEY (id_especialidade) REFERENCES Especialidade(id_especialidade) ON DELETE RESTRICT
+);
+
+CREATE TABLE Apresentacao (
+    id_palestrante INT NOT NULL,
+    id_atividade INT NOT NULL,
+    PRIMARY KEY (id_palestrante, id_atividade),
+    FOREIGN KEY (id_palestrante) REFERENCES Palestrante(id_palestrante) ON DELETE CASCADE,
+    FOREIGN KEY (id_atividade) REFERENCES Atividade(id_atividade) ON DELETE CASCADE
+);
+
+CREATE TABLE MaterialDeApoio (
+    id_material INT PRIMARY KEY AUTO_INCREMENT,
+    tipo_arquivo VARCHAR(50),
+    url_do_arquivo VARCHAR(100) NOT NULL UNIQUE,
+    id_palestrante INT NOT NULL,
+    id_atividade INT NOT NULL,
+	FOREIGN KEY (id_palestrante, id_atividade) REFERENCES Apresentacao(id_palestrante, id_atividade) ON DELETE CASCADE
+);
+
+DELIMITER $$
+CREATE FUNCTION fn_status_evento_lotacao(p_id_evento INT)
+RETURNS VARCHAR(100)
+DETERMINISTIC
+BEGIN
+    DECLARE v_limite INT;
+    DECLARE v_atual INT;
+    DECLARE v_percentual FLOAT;
+    SELECT limite_participantes, numero_participantes INTO v_limite, v_atual  FROM Evento WHERE id_evento = p_id_evento;
+    
+    IF v_limite = 0 THEN
+        RETURN 'Evento sem limite de participantes';
+    END IF;
+
+    SET v_percentual = (v_atual / v_limite) * 100;
+
+    IF v_atual >= v_limite THEN
+        RETURN CONCAT('Evento lotado. Participantes: ', v_atual, '/', v_limite,
+                      '. Considere aumentar o limite.');
+    ELSEIF v_percentual >= 90 THEN
+        RETURN CONCAT('Quase cheio (', v_atual, '/', v_limite, 
+                      '). Apenas ', v_limite - v_atual, ' vagas restantes.');
+    ELSEIF v_percentual >= 60 THEN
+        RETURN CONCAT('Ocupação moderada (', v_atual, '/', v_limite, ').');
+    ELSE
+        RETURN CONCAT('Muitas vagas disponíveis (', v_atual, '/', v_limite, ').');
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION fn_resumo_eventos_palestrante(
+    p_id_palestrante INT,
+    p_ano INT,
+    p_id_categoria INT
+)
+RETURNS TEXT
+DETERMINISTIC
+BEGIN
+    DECLARE v_resultado TEXT;
+
+    SELECT 
+        IFNULL(CONCAT(
+            'Total: ', COUNT(DISTINCT E.id_evento), '. Eventos: ',
+            GROUP_CONCAT(DISTINCT E.titulo SEPARATOR '; ')
+        ), 'Nenhuma apresentação encontrada.')
+    INTO v_resultado
+    FROM Apresentacao AP
+    JOIN Atividade A ON AP.id_atividade = A.id_atividade
+    JOIN Evento E ON A.id_evento = E.id_evento
+    WHERE AP.id_palestrante = p_id_palestrante
+      AND (YEAR(E.data_inicio) = p_ano OR p_ano IS NULL)
+      AND (E.id_categoria = p_id_categoria OR p_id_categoria IS NULL);
+
+    RETURN v_resultado;
+END $$
+DELIMITER ;
+
+CREATE VIEW vw_DetalhesCompletosEvento AS
+SELECT
+    E.id_evento,
+    E.titulo,
+    E.data_inicio,
+    E.data_fim,
+    E.numero_participantes,
+    E.limite_participantes,
+    E.carga_horaria,
+    C.nome AS NomeCategoria,
+    L.NomeLocal,
+    L.cidade,
+    L.estado,
+    L.rua,
+    L.numero AS NumeroLocal,
+    EO.url_evento,
+    EO.aplicativoTrasmissao,
+    (SELECT COUNT(*) FROM Atividade A WHERE A.id_evento = E.id_evento) AS qtd_atividades,
+    (SELECT COUNT(DISTINCT AP.id_palestrante) FROM Atividade A2 JOIN Apresentacao AP ON AP.id_atividade = A2.id_atividade WHERE A2.id_evento = E.id_evento) AS qtd_palestrantes
+FROM
+    Evento AS E
+JOIN
+    Categoria AS C ON E.id_categoria = C.id_categoria
+LEFT JOIN
+    EventoPresencial AS EP ON E.id_evento = EP.id_evento
+LEFT JOIN
+    Local AS L ON EP.id_local = L.id_local
+LEFT JOIN
+    EventoOnline AS EO ON E.id_evento = EO.id_evento;
+
+CREATE VIEW vw_GradeAtividadesPalestrates AS
+SELECT
+    E.id_evento,
+    E.titulo AS Evento,
+    A.titulo AS Atividade,
+    A.descricao AS DescricaoAtividade,
+    A.carga_horaria,
+    TA.nome AS TipoAtividade,
+    P.nome AS Palestrante,
+    P.biografia AS BioPalestrante,
+    P.linkedin
+FROM
+    Atividade AS A
+JOIN
+    Evento AS E ON A.id_evento = E.id_evento
+JOIN
+    TipoAtividade AS TA ON A.id_tipoAtividade = TA.id_tipoAtividade
+LEFT JOIN
+    Apresentacao AS AP ON A.id_atividade = AP.id_atividade
+LEFT JOIN
+    Palestrante AS P ON AP.id_palestrante = P.id_palestrante;
+
+CREATE INDEX idx_apresentacao_por_atividade ON Apresentacao(id_atividade);
+
+CREATE INDEX idx_evento_categoria_data ON Evento(id_categoria, data_inicio DESC);
+
+/*
+ * TABELA DE LOG (necessária para o Procedimento 1)
+ * JUSTIFICATIVA: Esta tabela é essencial para auditoria. Ela armazena o "antes" e o "depois"
+ * de alterações em campos críticos do evento, permitindo rastrear quem
+ * e quando alterou dados importantes.
+ */
+CREATE TABLE EventoAtualizacaoLog (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_evento INT,
+    campo_alterado VARCHAR(50),
+    valor_antigo VARCHAR(300),
+    valor_novo VARCHAR(300),
+    data_alteracao DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_atualiza_evento`(
+    IN p_id_evento INT,
+    IN p_titulo_novo VARCHAR(300),
+    IN p_limite_participantes_novo INT
+)
+BEGIN
+    DECLARE v_titulo_atual VARCHAR(300);
+    DECLARE v_limite_atual INT;
+
+    SELECT titulo, limite_participantes
+      INTO v_titulo_atual, v_limite_atual
+      FROM Evento WHERE id_evento = p_id_evento;
+
+    IF v_titulo_atual <> p_titulo_novo THEN
+        UPDATE Evento SET titulo = p_titulo_novo WHERE id_evento = p_id_evento;
+        INSERT INTO EventoAtualizacaoLog (id_evento, campo_alterado, valor_antigo, valor_novo)
+        VALUES (p_id_evento, 'titulo', v_titulo_atual, p_titulo_novo);
+    END IF;
+
+    IF v_limite_atual <> p_limite_participantes_novo THEN
+        UPDATE Evento SET limite_participantes = p_limite_participantes_novo WHERE id_evento = p_id_evento;
+        INSERT INTO EventoAtualizacaoLog (id_evento, campo_alterado, valor_antigo, valor_novo)
+        VALUES (p_id_evento, 'limite_participantes', v_limite_atual, p_limite_participantes_novo);
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE sp_relatorio_detalhado_eventos()
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE v_id_evento INT;
+    DECLARE v_titulo VARCHAR(300);
+    DECLARE v_qtd_atividades INT;
+    DECLARE v_lista_palestrantes TEXT;
+    
+    DECLARE cur_eventos CURSOR FOR
+        SELECT id_evento, titulo FROM Evento;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    DROP TEMPORARY TABLE IF EXISTS tmp_relatorio_eventos;
+    CREATE TEMPORARY TABLE tmp_relatorio_eventos (
+        id_evento INT,
+        titulo VARCHAR(300),
+        qtd_atividades INT,
+        palestrantes TEXT
+    );
+
+    OPEN cur_eventos;
+    evento_loop: LOOP
+        FETCH cur_eventos INTO v_id_evento, v_titulo;
+        IF done THEN
+            LEAVE evento_loop;
+        END IF;
+
+        SELECT COUNT(*) INTO v_qtd_atividades FROM Atividade WHERE id_evento = v_id_evento;
+
+        SELECT GROUP_CONCAT(DISTINCT P.nome SEPARATOR '; ') INTO v_lista_palestrantes
+        FROM Atividade A
+        JOIN Apresentacao AP ON A.id_atividade = AP.id_atividade
+        JOIN Palestrante P ON AP.id_palestrante = P.id_palestrante
+        WHERE A.id_evento = v_id_evento;
+
+        INSERT INTO tmp_relatorio_eventos VALUES (
+            v_id_evento, v_titulo, v_qtd_atividades, IFNULL(v_lista_palestrantes, 'Nenhum')
+        );
+    END LOOP;
+    CLOSE cur_eventos;
+
+    SELECT * FROM tmp_relatorio_eventos;
+END $$
+DELIMITER ;
+
+CREATE TABLE EventoExclusaoLog (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    id_evento INT,
+    titulo VARCHAR(300),
+    data_inicio DATE,
+    data_fim DATE,
+    numero_participantes INT,
+    limite_participantes INT,
+    id_categoria INT,
+    email_duvidas VARCHAR(100),
+    numero_membros_comissao INT,
+    data_exclusao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    usuario_acao VARCHAR(100)
+);
+
+DELIMITER $$
+CREATE TRIGGER trg_log_exclusao_evento
+BEFORE DELETE ON Evento
+FOR EACH ROW
+BEGIN
+    INSERT INTO EventoExclusaoLog (
+        id_evento, titulo, data_inicio, data_fim, numero_participantes,
+        limite_participantes, id_categoria, email_duvidas, numero_membros_comissao,
+        usuario_acao
+    ) VALUES (
+        OLD.id_evento, OLD.titulo, OLD.data_inicio, OLD.data_fim, OLD.numero_participantes,
+        OLD.limite_participantes, OLD.id_categoria, OLD.email_duvidas, OLD.numero_membros_comissao,
+        CURRENT_USER()
+    );
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER trg_bloqueia_update_data_evento
+BEFORE UPDATE ON Evento
+FOR EACH ROW
+BEGIN
+    IF (OLD.data_fim < CURDATE() AND NEW.data_fim <> OLD.data_fim) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Não é permitido alterar datas de eventos já encerrados.';
+    END IF;
+END $$
+DELIMITER ;
+
 USE myEvents_db;
 
 INSERT INTO Categoria (nome, descricao, id_categoria_pai) VALUES
