@@ -75,13 +75,13 @@
 
         <div class="indicator-card">
           <h3>Média de Participantes/Evento</h3>
-          <p class="indicator-value">{{ dashboardData.mediaParticipantesPorEvento }}</p>
+          <p class="indicator-value">{{ dashboardData.mediaParticipantesPorEvento | number }}</p>
           <span class="indicator-label">Participantes por evento</span>
         </div>
 
         <div class="indicator-card">
           <h3>Média de Horas/Evento</h3>
-          <p class="indicator-value">{{ dashboardData.mediaHorasPorEvento }}h</p>
+          <p class="indicator-value">{{ dashboardData.mediaHorasPorEvento | number }}h</p>
           <span class="indicator-label">Carga horária média</span>
         </div>
       </div>
@@ -93,7 +93,7 @@
       <div class="statistics-grid">
         <div class="stat-card">
           <h4>Média</h4>
-          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.media }}</p>
+          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.media | number}}</p>
         </div>
 
         <div class="stat-card">
