@@ -1,0 +1,235 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <h1>📊 Dashboard Estatístico de Eventos</h1>
+    <p class="subtitle">Análise completa de indicadores e métricas de eventos</p>
+  </header>
+
+  <!-- Loading e Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando dados do dashboard...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button (click)="carregarDados()">Tentar Novamente</button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && !error && dashboardData" class="dashboard-content">
+    <!-- Filtros -->
+    <section class="filters-section">
+      <h2>Filtros</h2>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="categoria">Categoria:</label>
+          <select id="categoria" [(ngModel)]="filtroCategoria">
+            <option value="">Todas as Categorias</option>
+            <option value="tecnologia">Tecnologia</option>
+            <option value="negocios">Negócios</option>
+            <option value="educacao">Educação</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="dataInicio">Data Início:</label>
+          <input type="date" id="dataInicio" [(ngModel)]="filtroDataInicio">
+        </div>
+
+        <div class="filter-group">
+          <label for="dataFim">Data Fim:</label>
+          <input type="date" id="dataFim" [(ngModel)]="filtroDataFim">
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
+          <button class="btn btn-secondary" (click)="limparFiltros()">Limpar</button>
+          <button class="btn btn-export" (click)="exportarRelatorio()">📥 Exportar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Indicadores Resumidos -->
+    <section class="indicators-section">
+      <h2>Indicadores Resumidos</h2>
+      <div class="indicators-grid">
+        <div class="indicator-card">
+          <h3>Total de Eventos</h3>
+          <p class="indicator-value">{{ dashboardData.totalEventos }}</p>
+          <span class="indicator-label">Eventos cadastrados</span>
+        </div>
+
+        <div class="indicator-card">
+          <h3>Total de Participantes</h3>
+          <p class="indicator-value">{{ dashboardData.totalParticipantes }}</p>
+          <span class="indicator-label">Participações registradas</span>
+        </div>
+
+        <div class="indicator-card">
+          <h3>Total de Palestrantes</h3>
+          <p class="indicator-value">{{ dashboardData.totalPalestrantes }}</p>
+          <span class="indicator-label">Palestrantes ativos</span>
+        </div>
+
+        <div class="indicator-card">
+          <h3>Total de Atividades</h3>
+          <p class="indicator-value">{{ dashboardData.totalAtividades }}</p>
+          <span class="indicator-label">Atividades programadas</span>
+        </div>
+
+        <div class="indicator-card">
+          <h3>Média de Participantes/Evento</h3>
+          <p class="indicator-value">{{ dashboardData.mediaParticipantesPorEvento }}</p>
+          <span class="indicator-label">Participantes por evento</span>
+        </div>
+
+        <div class="indicator-card">
+          <h3>Média de Horas/Evento</h3>
+          <p class="indicator-value">{{ dashboardData.mediaHorasPorEvento }}h</p>
+          <span class="indicator-label">Carga horária média</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estatísticas Descritivas -->
+    <section class="statistics-section">
+      <h2>Estatísticas Descritivas de Participantes</h2>
+      <div class="statistics-grid">
+        <div class="stat-card">
+          <h4>Média</h4>
+          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.media }}</p>
+        </div>
+
+        <div class="stat-card">
+          <h4>Mediana</h4>
+          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.mediana }}</p>
+        </div>
+
+        <div class="stat-card">
+          <h4>Moda</h4>
+          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.moda }}</p>
+        </div>
+
+        <div class="stat-card">
+          <h4>Variância</h4>
+          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.variancia | number: '1.2-2' }}</p>
+        </div>
+
+        <div class="stat-card">
+          <h4>Desvio Padrão</h4>
+          <p class="stat-value">{{ dashboardData.estatisticasParticipantes.desviopadrao | number: '1.2-2' }}</p>
+        </div>
+
+        <div class="stat-card">
+          <h4>Correlação Horas/Participantes</h4>
+          <p class="stat-value">{{ dashboardData.correlacaoHorasParticipantes | number: '1.2-2' }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gráficos Dinâmicos -->
+    <section class="charts-section">
+      <h2>Visualizações Dinâmicas</h2>
+
+      <!-- Gráfico 1: Eventos por Categoria (Barras) -->
+      <div class="chart-container">
+        <h3>Gráfico 1: Eventos por Categoria</h3>
+        <div class="chart-placeholder">
+          <p>📊 Gráfico de Barras - Distribuição de eventos por categoria</p>
+          <div class="chart-data">
+            <div *ngFor="let cat of dashboardData.categoriasComMaisEventos" class="chart-bar">
+              <span class="bar-label">{{ cat.nome }}</span>
+              <div class="bar" [style.width.%]="(cat.quantidade / 8) * 100">
+                {{ cat.quantidade }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 2: Participantes por Evento (Pizza) -->
+      <div class="chart-container">
+        <h3>Gráfico 2: Distribuição de Participantes por Evento</h3>
+        <div class="chart-placeholder">
+          <p>🥧 Gráfico de Pizza - Participantes nos 3 eventos mais populares</p>
+          <div class="pie-chart">
+            <div *ngFor="let evento of dashboardData.eventosMaisPopulares" class="pie-slice">
+              <span class="pie-label">{{ evento.titulo }}: {{ evento.participantes }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 3: Tendência de Eventos (Linha) -->
+      <div class="chart-container">
+        <h3>Gráfico 3: Tendência de Eventos por Mês</h3>
+        <div class="chart-placeholder">
+          <p>📈 Gráfico de Linha - Evolução mensal de eventos</p>
+          <div class="line-chart">
+            <div *ngFor="let trend of dashboardData.tendenciaEventosPorMes" class="line-point">
+              <span class="point-label">{{ trend.mes }}: {{ trend.quantidade }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 4: Distribuição de Participantes (Barras Horizontal) -->
+      <div class="chart-container">
+        <h3>Gráfico 4: Distribuição de Participantes por Faixa</h3>
+        <div class="chart-placeholder">
+          <p>📊 Gráfico de Barras Horizontal - Faixas de participantes</p>
+          <div class="horizontal-chart">
+            <div *ngFor="let dist of dashboardData.distribuicaoParticipantes" class="h-bar">
+              <span class="h-label">{{ dist.faixa }}</span>
+              <div class="h-bar-fill" [style.width.%]="(dist.quantidade / 7) * 100">
+                {{ dist.quantidade }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 5: Ocupação dos Eventos (Radar) -->
+      <div class="chart-container">
+        <h3>Gráfico 5: Ocupação dos Eventos</h3>
+        <div class="chart-placeholder">
+          <p>🎯 Gráfico de Radar - Percentual de ocupação por evento</p>
+          <div class="radar-chart">
+            <div *ngFor="let ocup of dashboardData.ocupacaoEventos" class="radar-item">
+              <span class="radar-label">{{ ocup.titulo }}: {{ ocup.percentual }}%</span>
+              <div class="radar-bar" [style.width.%]="ocup.percentual">
+                {{ ocup.percentual }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráfico 6: Atividades por Tipo (Rosca) -->
+      <div class="chart-container">
+        <h3>Gráfico 6: Atividades por Tipo</h3>
+        <div class="chart-placeholder">
+          <p>🍩 Gráfico de Rosca - Distribuição de tipos de atividades</p>
+          <div class="donut-chart">
+            <div *ngFor="let ativ of dashboardData.atividadesPorTipo" class="donut-segment">
+              <span class="donut-label">{{ ativ.tipo }}: {{ ativ.quantidade }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Eventos Mais Populares -->
+    <section class="popular-events-section">
+      <h2>Eventos Mais Populares</h2>
+      <div class="events-list">
+        <div *ngFor="let evento of dashboardData.eventosMaisPopulares" class="event-item">
+          <h4>{{ evento.titulo }}</h4>
+          <p>👥 {{ evento.participantes }} participantes</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

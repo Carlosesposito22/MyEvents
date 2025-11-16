@@ -1,4 +1,4 @@
-<div *ngIf="!router.url.startsWith('/graficos') && !router.url.startsWith('/consultas'); else onlyDashboard" class="dashboard-container">
+<div *ngIf="!router.url.startsWith('/graficos') && !router.url.startsWith('/consultas') && !router.url.startsWith('/dashboard'); else onlyDashboard" class="dashboard-container">
 
   <br/>
   <br/>
@@ -126,6 +126,14 @@
         <p>Execute consultas complexas e acesse views do banco.</p>
       </div>
       <span class="grafico-link">Acessar Consultas ➔</span>
+    </section>
+
+    <section class="dash-card dash-card-graficos" style="background: linear-gradient(100deg, #FFEF1F 0%, #FFEF00 100%);" [routerLink]="['/dashboard']">
+      <div>
+        <h3>📊 Dashboard</h3>
+        <p>Visualize métricas e indicadores chave do sistema.</p>
+      </div>
+      <span class="grafico-link">Acessar Dashboard ➔</span>
     </section>
 
   </main>
